@@ -8,18 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		2A54A2FD2C5ECD2900D657BC /* castrApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A2FC2C5ECD2900D657BC /* castrApp.swift */; };
-		2A54A2FF2C5ECD2900D657BC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A2FE2C5ECD2900D657BC /* ContentView.swift */; };
 		2A54A3012C5ECD2B00D657BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3002C5ECD2B00D657BC /* Assets.xcassets */; };
 		2A54A3042C5ECD2B00D657BC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */; };
+		2A54A30D2C5ED7B300D657BC /* toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A30C2C5ED7B300D657BC /* toolbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		2A54A2F92C5ECD2900D657BC /* castr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = castr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A54A2FC2C5ECD2900D657BC /* castrApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = castrApp.swift; sourceTree = "<group>"; };
-		2A54A2FE2C5ECD2900D657BC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2A54A3002C5ECD2B00D657BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2A54A3052C5ECD2B00D657BC /* castr.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = castr.entitlements; sourceTree = "<group>"; };
+		2A54A30C2C5ED7B300D657BC /* toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toolbar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,8 +52,8 @@
 		2A54A2FB2C5ECD2900D657BC /* castr */ = {
 			isa = PBXGroup;
 			children = (
+				2A54A30B2C5ED7A300D657BC /* Views */,
 				2A54A2FC2C5ECD2900D657BC /* castrApp.swift */,
-				2A54A2FE2C5ECD2900D657BC /* ContentView.swift */,
 				2A54A3002C5ECD2B00D657BC /* Assets.xcassets */,
 				2A54A3052C5ECD2B00D657BC /* castr.entitlements */,
 				2A54A3022C5ECD2B00D657BC /* Preview Content */,
@@ -67,6 +67,14 @@
 				2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		2A54A30B2C5ED7A300D657BC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				2A54A30C2C5ED7B300D657BC /* toolbar.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,8 +147,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A54A2FF2C5ECD2900D657BC /* ContentView.swift in Sources */,
 				2A54A2FD2C5ECD2900D657BC /* castrApp.swift in Sources */,
+				2A54A30D2C5ED7B300D657BC /* toolbar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
