@@ -11,6 +11,8 @@ import SwiftUI
 
 struct ScenesPanel: View {
     
+    @ObservedObject var scenesState = ScenesState.shared
+    
     var body: some View {
         
         CustomGroupBox {
@@ -26,30 +28,15 @@ struct ScenesPanel: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    SceneCard(
-                        title: "Scene 1",
-                        subtitle: "7 sources",
-                        isSelected: false,
-                        onPress: {
-                            print("pressed")
-                        }
-                    )
-                    SceneCard(
-                        title: "Scene 2",
-                        subtitle: "4 sources",
-                        isSelected: false,
-                        onPress: {
-                            print("pressed")
-                        }
-                    )
-                    SceneCard(
-                        title: "Scene 3",
-                        subtitle: "0 sources",
-                        isSelected: true,
-                        onPress: {
-                            print("pressed")
-                        }
-                    )
+                    ForEach(scenesState.scenes) { scene in
+                        SceneCard(
+                            scene: scene,
+                            onPress: {
+                                print("pressed")
+                                scenesState.setSelectedSceneId(sceneId: scene.id)
+                            }
+                        )
+                    }
                 }
                 .padding(.vertical, 10)
                 
@@ -64,10 +51,12 @@ struct ScenesPanel: View {
                     size: 12,
                     imageName: "plus",
                     onPress: {
-                        print("button is pressed")
+                        scenesState.addScene(name: "")
+                        print("adding a scene")
                     }
                 )
-                .padding(.horizontal, 4)
+                .padding(.leading, 5)
+                .padding(.trailing, 4)
                 
                 Spacer().frame(maxWidth: 1, maxHeight: .infinity).background(Color(nsColor: .quinaryLabel)).padding(.vertical, 8)
                 
@@ -75,12 +64,30 @@ struct ScenesPanel: View {
                     size: 12,
                     imageName: "minus",
                     onPress: {
-                        print("button is pressed")
+                        scenesState.deleteSelectedScene()
+                        print("deleting a scene")
                     }
                 )
                 .padding(.horizontal, 4)
                 
                 Spacer()
+                
+                Menu("Options") {
+                    Button("Add Scene") {
+                        print("option 1 has been pressed")
+                    }
+                    Button("Delete Scene") {
+                        print("option 2 has been pressed")
+                    }
+                    Button("Duplicate Scene") {
+                        print("option 3 has been pressed")
+                    }
+                    Button("Set as Active Scene") {
+                        print("option 4 has been pressed")
+                    }
+                }
+                .fixedSize(horizontal: true, vertical: true)
+                .padding(.trailing, 5)
                 
             }
             .frame(maxWidth: .infinity, maxHeight: 32, alignment: .leading)
@@ -98,9 +105,7 @@ struct ScenesPanel: View {
 
 
 struct SceneCard: View {
-    @State var title: String
-    @State var subtitle: String
-    @State var isSelected: Bool
+    @ObservedObject var scene: SceneModel
     @State var isHovered = false
     var onPress: () -> Void
     
@@ -124,9 +129,9 @@ struct SceneCard: View {
                 
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(title)
+                    Text(scene.name)
                     .fixedSize()
-                    Text(subtitle)
+                    Text("\(scene.sources.count) Sources")
                     .font(.subheadline)
                     .foregroundColor(Color(nsColor: NSColor.secondaryLabelColor))
                     .fixedSize()
@@ -136,11 +141,12 @@ struct SceneCard: View {
                 Spacer()
                
             }
-            .background(isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : (isHovered ? Color(nsColor: .quinaryLabel) : Color.clear))
+            .background(scene.isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : (isHovered ? Color(nsColor: .quinaryLabel) : Color.clear))
 //            .background(isHovered ? (isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : Color(nsColor: .quinaryLabel)) : (isSelected ?  Color(red: 42/255, green: 85/255, blue: 180/255) : Color.clear))
             .frame(maxWidth: .infinity, maxHeight: 100)
             .cornerRadius(6)
             .padding(.horizontal, 5)
+           
     
         }
         .buttonStyle(PlainButtonStyle())
@@ -158,7 +164,6 @@ struct SceneCard: View {
             }
         }
     }
-    
 }
 
 

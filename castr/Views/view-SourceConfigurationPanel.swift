@@ -10,12 +10,17 @@ import SwiftUI
 
 struct SourceConfigurationPanel: View {
     
+    @ObservedObject var sourcesState = SourcesState.shared
     @State var isHovered = false
+    
+    var selectedSource: SourceModel? {
+        sourcesState.globalSources.first { $0.id == sourcesState.selectedSourceId }
+    }
     
     var body: some View {
         CustomGroupBox {
             HStack {
-                Text("Source Details").sourcesTextStyle()
+                Text("Source Configuration").sourcesTextStyle()
 
             }
             .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
@@ -42,96 +47,30 @@ struct SourceConfigurationPanel: View {
             Spacer().panelMainSeparatorStyle()
             
             
-            MacOSScreenCaptureConfiguration()
+            if let source = selectedSource {
+                switch source.type {
+                case .screenCapture:     ScreenCaptureConfiguration()
+                case .windowCapture:     WindowCaptureConfiguration()
+                   // Add more cases for other source types as needed
+               }
+            } else {
+                Text("No source selected")
+            }
+            
+//            ScreenCaptureConfiguration()
+            
+//            WindowCaptureConfiguration()
+            
+//            SystemAudioCaptureConfiguration()
             
             
         }
         .padding(10)
-        .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
-    }
-}
-
-
-
-
-
-
-struct MacOSScreenCaptureConfiguration: View {
-    
-    @State var sourceName = "Screen Capture 1"
-    @FocusState var isTextFieldFocused: Bool
-    @State var selectedDisplay = "Option 1"
-    
-    let displays = ["Option 1", "Option 2", "Option 3"]
-    
-    var body: some View {
-        
-        HStack {
-            Text("Name")
-
-            Spacer()
-            
-            TextField("Source Name", text: $sourceName)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .fixedSize(horizontal: true, vertical: true)
-            .disabled(true)
-//            .focused($isTextFieldFocused)
-//            .onAppear {
-//                DispatchQueue.main.async {
-//                    isTextFieldFocused = false
-//                }
-//            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-//        .border(Color.red, width: 1)
-        
-        Spacer().panelSubSeparatorStyle()
-        
-        HStack {
-            Text("Display")
-
-            Spacer()
-            
-            Picker("", selection: $selectedDisplay) {
-                ForEach(displays, id: \.self) { option in
-                    Text(option).tag(option)
-                }
-            }
-            .labelsHidden()
-            .fixedSize(horizontal: true, vertical: true)
-        }
-        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        
-        Spacer().panelSubSeparatorStyle()
-        
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Pick and choose which applications and windows you would like to display.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .padding(.bottom, 10)
-            
-
-            Text("Apps")
-            .padding(.bottom, 8)
-            
-            ScrollView {
-                VStack {
-//                    Text("Hello")
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .border(Color.red)
-           
-        }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        
-        
-        
+        .onChange(of: sourcesState.selectedSourceId) { newValue in
+//                    print("Selected Source ID changed to: \(newValue)")
+                }
     }
 }
+
+

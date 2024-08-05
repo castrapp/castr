@@ -11,6 +11,9 @@ import SwiftUI
 struct Previewer: NSViewRepresentable {
 
     static let shared = Previewer()
+    
+//    @ObservedObject var previewerManager = PreviewerManager.shared
+    
     let contentLayer = CALayer()
     
     private init() {

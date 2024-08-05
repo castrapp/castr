@@ -11,7 +11,6 @@ import SwiftUI
 struct ContentView: View {
     
     @StateObject var layout = LayoutState.shared
-    let previewer = Previewer.shared
     
     var body: some View {
         HStack(spacing: 0) {
@@ -49,11 +48,7 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                previewer
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
-                .border(Color.red, width: 1)
-                .padding(.horizontal, 10)
+                PreviewPanel()
                 
                 Spacer()
                 
@@ -101,8 +96,9 @@ struct ContentView: View {
                     Spacer().toolbarPanelLineStyle()
                     
                     SourceConfigurationPanel()
+                    
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .frame(maxWidth: .infinity, alignment: .top)
                
             }
             .frame(maxWidth: layout.isRightPanelOpen ? layout.rightPanelMaxWidth : 0, maxHeight: .infinity)
