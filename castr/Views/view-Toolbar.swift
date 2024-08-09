@@ -12,7 +12,7 @@ import SwiftUI
 
 struct Toolbar: View {
     
-    @StateObject var layout = LayoutState.shared
+    @StateObject var layout = GlobalState.shared
     
     var body: some View {
         HStack(spacing: 0) {

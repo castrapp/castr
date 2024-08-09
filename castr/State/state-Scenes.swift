@@ -8,14 +8,7 @@
 import Foundation
 
 
-class ScenesState: ObservableObject {
-    
-    static let shared = ScenesState()
-    
-    @Published var scenes:[SceneModel]  = [];
-    @Published var selectedSceneId: String = ""
-    
-    private init() {}
+extension GlobalState {
     
     func addScene(name: String) {
         let newSceneId = UUID().uuidString
@@ -24,21 +17,10 @@ class ScenesState: ObservableObject {
                 id: newSceneId,
                 name: name.isEmpty ? "Scene \(scenes.count + 1)" : name,
                 isActive: false,
-                isSelected: false,
                 sources: []
             )
         )
-        setSelectedSceneId(sceneId: newSceneId)
-    }
-    
-    func setSelectedSceneId(sceneId: String) {
-        // Set the isSelected Property of the selected scene
-        scenes.indices.forEach { index in
-            scenes[index].isSelected = (scenes[index].id == sceneId)
-        }
-        
-        // Set the selectedSceneId to the one passed in
-        selectedSceneId = sceneId
+        selectedSceneId = newSceneId
     }
     
     func deleteSelectedScene(sceneId: String? = nil) {
@@ -63,9 +45,6 @@ class ScenesState: ObservableObject {
             // If no scenes left, clear the selection
             selectedSceneId = ""
         }
-        
-        // Update isSelected for the newly selected scene
-        setSelectedSceneId(sceneId: selectedSceneId)
     }
     
     func addSourceIdToScene(sourceId: String) {

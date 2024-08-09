@@ -11,7 +11,7 @@ import SwiftUI
 
 struct ScenesPanel: View {
     
-    @ObservedObject var scenesState = ScenesState.shared
+    @ObservedObject var globalState = GlobalState.shared
     
     var body: some View {
         
@@ -28,12 +28,12 @@ struct ScenesPanel: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(scenesState.scenes) { scene in
+                    ForEach(globalState.scenes) { scene in
                         SceneCard(
                             scene: scene,
                             onPress: {
                                 print("pressed")
-                                scenesState.setSelectedSceneId(sceneId: scene.id)
+                                globalState.selectedSceneId = scene.id
                             }
                         )
                     }
@@ -51,7 +51,7 @@ struct ScenesPanel: View {
                     size: 12,
                     imageName: "plus",
                     onPress: {
-                        scenesState.addScene(name: "")
+                        globalState.addScene(name: "")
                         print("adding a scene")
                     }
                 )
@@ -64,7 +64,7 @@ struct ScenesPanel: View {
                     size: 12,
                     imageName: "minus",
                     onPress: {
-                        scenesState.deleteSelectedScene()
+                        globalState.deleteSelectedScene()
                         print("deleting a scene")
                     }
                 )
@@ -105,6 +105,7 @@ struct ScenesPanel: View {
 
 
 struct SceneCard: View {
+    @ObservedObject var globalState = GlobalState.shared
     @ObservedObject var scene: SceneModel
     @State var isHovered = false
     var onPress: () -> Void
@@ -141,7 +142,7 @@ struct SceneCard: View {
                 Spacer()
                
             }
-            .background(scene.isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : (isHovered ? Color(nsColor: .quinaryLabel) : Color.clear))
+            .background(scene.id == globalState.selectedSceneId ? Color(red: 42/255, green: 85/255, blue: 180/255) : (isHovered ? Color(nsColor: .quinaryLabel) : Color.clear))
 //            .background(isHovered ? (isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : Color(nsColor: .quinaryLabel)) : (isSelected ?  Color(red: 42/255, green: 85/255, blue: 180/255) : Color.clear))
             .frame(maxWidth: .infinity, maxHeight: 100)
             .cornerRadius(6)

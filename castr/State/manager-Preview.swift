@@ -41,7 +41,7 @@ class PreviewerManager: ObservableObject {
                     previewer.contentLayer.contentsCenter = CGRect(x: 0, y: 0, width: 1, height: 1)
                     previewer.contentLayer.contentsGravity = .resizeAspect
                 
-                print("rendering frame")
+//                print("rendering frame")
             }
         } catch {
             print("Error: \(error.localizedDescription)")

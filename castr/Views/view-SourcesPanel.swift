@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SourcesPanel: View {
     
-    @ObservedObject var sourcesState = SourcesState.shared
+    @ObservedObject var globalState = GlobalState.shared
     @State var isHovered = false
     @State private var showPopover = false
     
@@ -45,14 +45,18 @@ struct SourcesPanel: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(sourcesState.localSources) { source in
-                        SourceCard(
-                            source: source,
-                            onPress: {
-//                                print("selecting source")
-                                sourcesState.setSelectedSource(sourceId: source.id)
-                            }
-                        )
+                    ForEach(globalState.sources) { source in
+
+                      
+                        if source.scenes.contains(globalState.selectedSceneId) {
+                            SourceCard(
+                                source: source,
+                                onPress: {
+    //                                print("selecting source")
+                                    globalState.selectedSourceId = source.id
+                                }
+                            )
+                        }
                     }
                 }
                 .padding(.vertical, 10)
@@ -77,13 +81,17 @@ struct SourcesPanel: View {
                 .popover(isPresented: $showPopover, attachmentAnchor: .point(.bottom), arrowEdge: .bottom) {
                     VStack{
                         Button("Screen Capture Source") {
-                            sourcesState.addSource(sourceType: .screenCapture, name: "")
+                            globalState.addSource(sourceType: .screenCapture, name: "")
                             print("Adding screen capture")
                             
                         }
-                        Button("Window Capture") {
-                            sourcesState.addSource(sourceType: .windowCapture, name: "")
+                        Button("Window Capture Source") {
+                            globalState.addSource(sourceType: .windowCapture, name: "")
                             print("adding window capture")
+                        }
+                        Button("Color Source") {
+                            globalState.addSource(sourceType: .color, name: "")
+                            print("adding color capture")
                         }
                     }
                 }
@@ -131,6 +139,7 @@ struct SourcesPanel: View {
 
 
 struct SourceCard: View {
+    @ObservedObject var globalState = GlobalState.shared
     @ObservedObject var source: SourceModel
     @State var isHovered = false
     var onPress: () -> Void
@@ -167,7 +176,7 @@ struct SourceCard: View {
                 Spacer()
                
             }
-            .background(source.isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : (isHovered ? Color(nsColor: .quinaryLabel) : Color.clear))
+            .background(globalState.selectedSourceId == source.id ? Color(red: 42/255, green: 85/255, blue: 180/255) : (isHovered ? Color(nsColor: .quinaryLabel) : Color.clear))
 //            .background(isHovered ? (isSelected ? Color(red: 42/255, green: 85/255, blue: 180/255) : Color(nsColor: .quinaryLabel)) : (isSelected ?  Color(red: 42/255, green: 85/255, blue: 180/255) : Color.clear))
             .frame(maxWidth: .infinity, maxHeight: 100)
             .cornerRadius(6)

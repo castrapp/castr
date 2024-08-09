@@ -11,7 +11,6 @@
 		2A54A3012C5ECD2B00D657BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3002C5ECD2B00D657BC /* Assets.xcassets */; };
 		2A54A3042C5ECD2B00D657BC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */; };
 		2A54A30D2C5ED7B300D657BC /* view-Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A30C2C5ED7B300D657BC /* view-Toolbar.swift */; };
-		2A54A3102C5EF2E600D657BC /* state-Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A30F2C5EF2E600D657BC /* state-Layout.swift */; };
 		2A54A3122C5EFDB800D657BC /* view-Panel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3112C5EFDB800D657BC /* view-Panel.swift */; };
 		2A54A3172C5F096C00D657BC /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3162C5F096C00D657BC /* ContentView.swift */; };
 		2A54A31D2C5F1A6400D657BC /* view-ScenesPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A31C2C5F1A6400D657BC /* view-ScenesPanel.swift */; };
@@ -30,10 +29,10 @@
 		2A54A33B2C603E2200D657BC /* enum-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A33A2C603E2200D657BC /* enum-Source.swift */; };
 		2A54A33D2C603E9C00D657BC /* model-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A33C2C603E9C00D657BC /* model-Source.swift */; };
 		2A54A33F2C60502800D657BC /* manager-Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A33E2C60502800D657BC /* manager-Preview.swift */; };
-		2A54A3412C60510600D657BC /* state-SourceConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3402C60510600D657BC /* state-SourceConfiguration.swift */; };
 		2A54A3432C60594F00D657BC /* view-PreviewPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3422C60594F00D657BC /* view-PreviewPanel.swift */; };
 		2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3452C60611B00D657BC /* ScreenRecorder.swift */; };
 		2A54A3482C60619B00D657BC /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3472C60619B00D657BC /* CaptureEngine.swift */; };
+		2A8D2A172C657BB400E1B5EF /* state-Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A162C657BB400E1B5EF /* state-Global.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +42,6 @@
 		2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2A54A3052C5ECD2B00D657BC /* castr.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = castr.entitlements; sourceTree = "<group>"; };
 		2A54A30C2C5ED7B300D657BC /* view-Toolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Toolbar.swift"; sourceTree = "<group>"; };
-		2A54A30F2C5EF2E600D657BC /* state-Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-Layout.swift"; sourceTree = "<group>"; };
 		2A54A3112C5EFDB800D657BC /* view-Panel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Panel.swift"; sourceTree = "<group>"; };
 		2A54A3162C5F096C00D657BC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		2A54A31C2C5F1A6400D657BC /* view-ScenesPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ScenesPanel.swift"; sourceTree = "<group>"; };
@@ -62,10 +60,10 @@
 		2A54A33A2C603E2200D657BC /* enum-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "enum-Source.swift"; sourceTree = "<group>"; };
 		2A54A33C2C603E9C00D657BC /* model-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "model-Source.swift"; sourceTree = "<group>"; };
 		2A54A33E2C60502800D657BC /* manager-Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "manager-Preview.swift"; sourceTree = "<group>"; };
-		2A54A3402C60510600D657BC /* state-SourceConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-SourceConfiguration.swift"; sourceTree = "<group>"; };
 		2A54A3422C60594F00D657BC /* view-PreviewPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-PreviewPanel.swift"; sourceTree = "<group>"; };
 		2A54A3452C60611B00D657BC /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		2A54A3472C60619B00D657BC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
+		2A8D2A162C657BB400E1B5EF /* state-Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-Global.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,10 +138,9 @@
 		2A54A30E2C5EF2CA00D657BC /* State */ = {
 			isa = PBXGroup;
 			children = (
-				2A54A30F2C5EF2E600D657BC /* state-Layout.swift */,
+				2A8D2A162C657BB400E1B5EF /* state-Global.swift */,
 				2A54A3332C60239D00D657BC /* state-Scenes.swift */,
 				2A54A3372C60395500D657BC /* state-Sources.swift */,
-				2A54A3402C60510600D657BC /* state-SourceConfiguration.swift */,
 				2A54A33E2C60502800D657BC /* manager-Preview.swift */,
 			);
 			path = State;
@@ -278,10 +275,9 @@
 				2A54A3122C5EFDB800D657BC /* view-Panel.swift in Sources */,
 				2A54A32A2C5F428400D657BC /* view-Previewer.swift in Sources */,
 				2A54A32D2C5FF73100D657BC /* view-ScreenCaptureConfiguration.swift in Sources */,
-				2A54A3412C60510600D657BC /* state-SourceConfiguration.swift in Sources */,
+				2A8D2A172C657BB400E1B5EF /* state-Global.swift in Sources */,
 				2A54A30D2C5ED7B300D657BC /* view-Toolbar.swift in Sources */,
 				2A54A3342C60239D00D657BC /* state-Scenes.swift in Sources */,
-				2A54A3102C5EF2E600D657BC /* state-Layout.swift in Sources */,
 				2A54A33F2C60502800D657BC /* manager-Preview.swift in Sources */,
 				2A54A3362C60251C00D657BC /* model-Scene.swift in Sources */,
 				2A54A31D2C5F1A6400D657BC /* view-ScenesPanel.swift in Sources */,

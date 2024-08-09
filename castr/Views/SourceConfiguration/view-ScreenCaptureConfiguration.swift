@@ -7,9 +7,13 @@
 
 import Foundation
 import SwiftUI
+import ScreenCaptureKit
 
 
 struct ScreenCaptureConfiguration: View {
+    
+    @ObservedObject var globalState = GlobalState.shared
+    @ObservedObject var model: ScreenCaptureSourceModel
     
     @State var sourceName = "Screen Capture 1"
     @FocusState var isTextFieldFocused: Bool
@@ -24,10 +28,13 @@ struct ScreenCaptureConfiguration: View {
 
             Spacer()
             
-            TextField("Source Name", text: $sourceName)
+            TextField("Source Name", text: $model.name)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .fixedSize(horizontal: true, vertical: true)
             .disabled(true)
+            .onAppear {
+                
+            }
 //            .focused($isTextFieldFocused)
 //            .onAppear {
 //                DispatchQueue.main.async {
@@ -47,9 +54,10 @@ struct ScreenCaptureConfiguration: View {
 
             Spacer()
             
-            Picker("", selection: $selectedDisplay) {
-                ForEach(displays, id: \.self) { option in
-                    Text(option).tag(option)
+            Picker("Display", selection: $model.selectedDisplay) {
+                ForEach(model.availableDisplays, id: \.self) { display in
+                    Text(display.displayName)
+                        .tag(SCDisplay?.some(display))
                 }
             }
             .labelsHidden()
@@ -75,30 +83,17 @@ struct ScreenCaptureConfiguration: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    ScreenCaptureCard(
-                        title: "AdobeXD",
-                        subtitle: "10 Windows",
-                        isSelected: false,
-                        onPress: {
-                            print("pressed")
-                        }
-                    )
-                    ScreenCaptureCard(
-                        title: "Chrome",
-                        subtitle: "7 Windows",
-                        isSelected: false,
-                        onPress: {
-                            print("pressed")
-                        }
-                    )
-                    ScreenCaptureCard(
-                        title: "Safari",
-                        subtitle: "4 Windows",
-                        isSelected: false,
-                        onPress: {
-                            print("pressed")
-                        }
-                    )
+                    ForEach(model.availableApps, id: \.self) { app in
+                        ScreenCaptureCard(
+                            title: app.applicationName,
+//                            subtitle: "10 Windows",
+                            isSelected: false,
+                            onPress: {
+                                print("pressed")
+                            }
+                        )
+                            
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -119,7 +114,7 @@ struct ScreenCaptureConfiguration: View {
 
 struct ScreenCaptureCard: View {
     @State var title: String
-    @State var subtitle: String
+    @State var subtitle: String?
     @State var isSelected: Bool
     @State var isHovered = false
     var onPress: () -> Void
@@ -139,10 +134,12 @@ struct ScreenCaptureCard: View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(title)
                     .fixedSize()
-                    Text(subtitle)
-                    .font(.subheadline)
-                    .foregroundColor(Color(nsColor: NSColor.secondaryLabelColor))
-                    .fixedSize()
+                    if let subtitle = subtitle {
+                        Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundColor(Color(nsColor: NSColor.secondaryLabelColor))
+                        .fixedSize()
+                    }
                 }
                 .padding(.vertical, 4)
                 

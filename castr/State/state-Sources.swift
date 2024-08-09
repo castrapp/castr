@@ -1,111 +1,95 @@
-//
-//  state-Sources.swift
-//  castr
-//
-//  Created by Harrison Hall on 8/4/24.
-//
+import Foundation
+
+
+
 
 import Foundation
 
-class SourcesState: ObservableObject {
-    
-    static let shared = SourcesState()
-    
-    var scenesState = ScenesState.shared
-    var previewManager = PreviewerManager.shared
-    
-    @Published var globalSources:[SourceModel] = []
-    @Published var localSources:[SourceModel] = []
-    @Published var selectedSourceId: String = ""
-    var localSourcesModificationToken: Date { localSources.map { $0.lastModified }.max() ?? Date.distantPast}
-    
-    private init() {}
+
+extension GlobalState {
     
     func addSource(sourceType: SourceType, name: String) {
-        guard !scenesState.selectedSceneId.isEmpty else {
+        guard !selectedSceneId.isEmpty else {
             print("Error: No scene selected. Please select a scene before adding a source.")
             return
         }
         
+        let sourceName = name.isEmpty ? "Source" : name
+        
         switch sourceType {
-            case .screenCapture:    addScreenCaptureSource(name: name)
-            case .windowCapture:    addWindowCaptureSource(name: name)
+        case .screenCapture:
+            addScreenCaptureSource(name: sourceName)
+        case .windowCapture:
+            addWindowCaptureSource(name: sourceName)
+        case .image:
+            addImageSource(name: sourceName)
+        case .color:
+            addColorSource(name: sourceName)
         }
     }
     
-    private func addScreenCaptureSource(name: String) {
-        let newSourceId = UUID().uuidString
-        globalSources.append(
-            ScreenCaptureSourceModel(
-                type: .screenCapture,
-                id: newSourceId,
-                name: name.isEmpty ? "Screen Capture" : name,
-                isActive: false,
-                isSelected: false,
-                display: "",
-                excludedApps: []
-            )
-        )
+
+    func addScreenCaptureSource(name: String) {
         
-        setSelectedSource(sourceId: newSourceId)
+            // TODO: Create the new Source Model
+            let screenCaptureSource = ScreenCaptureSourceModel(name: name)
         
-        scenesState.addSourceIdToScene(sourceId: newSourceId)
+            // TODO: Add the selectedSceneId to the source's scenes array
+            screenCaptureSource.scenes.append(selectedSceneId)
         
-        updateLocalSources()
+            // TODO: Add the sourceId to the selected scene's sources array
+            addSourceIdToScene(sourceId: screenCaptureSource.id)
         
-        Task {
-            await previewManager.addScreenCapture()
-        }
-     
+            // TODO: Add the new source model the sources array
+            sources.append(screenCaptureSource)
+        
+            // TODO: Set the selectedSourceId to the new source's id
+            selectedSourceId = screenCaptureSource.id
+        
+            // TODO: Start the source
+            Task {
+               await screenCaptureSource.start()
+            }
+        
+      
+        
+//        Task {
+//            await screenCaptureSource.initializeContent()
+//        }
     }
     
-    private func addWindowCaptureSource(name: String) {
-        let newSourceId = UUID().uuidString
-        globalSources.append(
-            WindowCaptureSourceModel(
-                type: .windowCapture,
-                id: newSourceId,
-                name: name.isEmpty ? "Window Capture" : name,
-                isActive: false,
-                isSelected: false,
-                window: ""
-            )
-        )
-        
-        setSelectedSource(sourceId: newSourceId)
-        
-        scenesState.addSourceIdToScene(sourceId: newSourceId)
-        
-        updateLocalSources()
+    func addWindowCaptureSource(name: String) {
+        let windowCaptureSource = WindowCaptureSourceModel(name: name)
+        windowCaptureSource.scenes.append(selectedSceneId)
+        sources.append(windowCaptureSource)
+        selectedSourceId = windowCaptureSource.id
+        addSourceIdToScene(sourceId: windowCaptureSource.id)
     }
     
-    func updateLocalSources() {
-        // Find the selected scene
-        guard let selectedScene = scenesState.scenes.first(where: { $0.id == scenesState.selectedSceneId }) else {
-            // If no scene is selected, clear local sources
-            localSources = []
-            return
-        }
+    
+    
+    func addImageSource(name: String) {
         
-        // Update local sources based on the selected scene's sources
-        localSources = selectedScene.sources.compactMap { sourceId in
-            // Find the corresponding source in globalSources
-            globalSources.first { $0.id == sourceId }
-        }
     }
     
-    func setSelectedSource(sourceId: String) {
-        globalSources.indices.forEach { index in
-            globalSources[index].isSelected = (globalSources[index].id == sourceId)
-        }
-        
-        selectedSourceId = sourceId
-    }
     
-    func deleteSelectedSource(sourceId: String? = nil) {
-        let idToDelete = sourceId ?? selectedSourceId
-        
-        
-        
+    func addColorSource(name: String) {
+        // TODO: Create the new Source Model
+        let colorSource = ColorSource(name: name)
+    
+        // TODO: Add the selectedSceneId to the source's scenes array
+        colorSource.scenes.append(selectedSceneId)
+    
+        // TODO: Add the sourceId to the selected scene's sources array
+        addSourceIdToScene(sourceId: colorSource.id)
+    
+        // TODO: Add the new source model the sources array
+        sources.append(colorSource)
+    
+        // TODO: Set the selectedSourceId to the new source's id
+        selectedSourceId = colorSource.id
+    
+        // TODO: Start the source
+        colorSource.start()
     }
 }
