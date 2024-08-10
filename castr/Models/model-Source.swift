@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import ScreenCaptureKit
 import Combine
+import AVFoundation
 
 class SourceModel: Identifiable, ObservableObject {
     
@@ -690,3 +691,108 @@ class SourceModel: Identifiable, ObservableObject {
 
 
 
+
+
+
+        class VideoSourceModel: SourceModel {
+            var layer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer()
+            private var captureSession: AVCaptureSession?
+            
+            @Published var availableCameras: [AVCaptureDevice] = []
+            @Published var selectedCamera: AVCaptureDevice? {
+                didSet {
+                    Task { @MainActor in
+                        await updateCaptureDevice()
+                    }
+                }
+            }
+            
+            private var cancellables: Set<AnyCancellable> = []
+            
+            init(name: String) {
+                super.init(type: .video, name: name)
+                
+                setupObservers()
+                fetchAvailableCameras()
+            }
+            
+            deinit {
+                Task { @MainActor in
+                    await stop()
+                }
+                cancellables.forEach { $0.cancel() }
+            }
+            
+            private func setupObservers() {
+                GlobalState.shared.$selectedSceneId.sink { [weak self] newSceneId in
+                    self?.handleSceneChange(newSceneId)
+                }
+                .store(in: &cancellables)
+            }
+            
+            private func handleSceneChange(_ newSceneId: String) {
+                print("scene is changing")
+                Task { @MainActor in
+                    scenes.contains(newSceneId) ? await start() : await stop()
+                }
+            }
+            
+            private func fetchAvailableCameras() {
+                availableCameras = AVCaptureDevice.DiscoverySession(
+                    deviceTypes: [.builtInWideAngleCamera, .externalUnknown],
+                    mediaType: .video,
+                    position: .unspecified
+                ).devices
+                
+                selectedCamera = availableCameras.first
+            }
+            
+            @MainActor
+            private func updateCaptureDevice() async {
+                await stop()
+                await start()
+            }
+            
+            @MainActor
+            func start() async {
+                guard let camera = selectedCamera else { return }
+                
+                captureSession = AVCaptureSession()
+                
+                do {
+                    let input = try AVCaptureDeviceInput(device: camera)
+                    captureSession?.addInput(input)
+                } catch {
+                    print("Failed to set camera input: \(error.localizedDescription)")
+                    return
+                }
+                
+                layer = AVCaptureVideoPreviewLayer(session: captureSession!)
+                layer.videoGravity = .resizeAspect
+                layer.frame = Previewer.shared.contentLayer.bounds
+                
+                Previewer.shared.contentLayer.addSublayer(layer)
+                
+                captureSession?.startRunning()
+                print("starting video")
+                
+            }
+            
+            @MainActor
+            func stop() async {
+                captureSession?.stopRunning()
+                layer.removeFromSuperlayer()
+                
+                // Properly clean up the capture session
+                if let inputs = captureSession?.inputs as? [AVCaptureDeviceInput] {
+                    for input in inputs {
+                        captureSession?.removeInput(input)
+                    }
+                }
+                
+                captureSession = nil
+                layer.contents = nil
+                
+                print("stopping video")
+            }
+        }

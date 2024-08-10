@@ -19,6 +19,7 @@ extension GlobalState {
         switch sourceType {
         case .screenCapture:    addScreenCaptureSource(name: sourceName)
         case .windowCapture:    addWindowCaptureSource(name: sourceName)
+        case .video:            addVideoSource(name: sourceName)
         case .image:            addImageSource(name: sourceName)
         case .color:            addColorSource(name: sourceName)
         case .text:             addTextSource(name: sourceName)
@@ -68,6 +69,30 @@ extension GlobalState {
         // TODO: Start the source
         Task { @MainActor in
            await windowCaptureSource.start()
+        }
+    }
+    
+    
+    
+    func addVideoSource(name: String) {
+        // TODO: Create the new Source Model
+        let videoSource = VideoSourceModel(name: name)
+    
+        // TODO: Add the selectedSceneId to the source's scenes array
+        videoSource.scenes.append(selectedSceneId)
+    
+        // TODO: Add the sourceId to the selected scene's sources array
+        addSourceIdToScene(sourceId: videoSource.id)
+    
+        // TODO: Add the new source model the sources array
+        sources.append(videoSource)
+    
+        // TODO: Set the selectedSourceId to the new source's id
+        selectedSourceId = videoSource.id
+    
+        // TODO: Start the source
+        Task { @MainActor in
+            await videoSource.start()
         }
     }
     

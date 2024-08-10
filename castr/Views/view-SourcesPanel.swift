@@ -83,11 +83,14 @@ struct SourcesPanel: View {
                         Button("Screen Capture Source") {
                             globalState.addSource(sourceType: .screenCapture, name: "Screen Capture Source")
                             print("Adding screen capture")
-                            
                         }
                         Button("Window Capture Source") {
                             globalState.addSource(sourceType: .windowCapture, name: "Window Capture Source")
                             print("adding window capture")
+                        }
+                        Button("Video Source") {
+                            globalState.addSource(sourceType: .video, name: "Video Source")
+                            print("adding video capture")
                         }
                         Button("Image Source") {
                             globalState.addSource(sourceType: .image, name: "Image Source")

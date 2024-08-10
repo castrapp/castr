@@ -48,6 +48,7 @@ struct SourceConfigurationPanel: View {
                 switch source.type {
                 case .screenCapture:     ScreenCaptureConfiguration(model: (source as? ScreenCaptureSourceModel)!)
                 case .windowCapture:     WindowCaptureConfiguration(model: (source as? WindowCaptureSourceModel)!)
+                case .video:     Text("video config")
                 case .image:     ImageConfiguration(model: (source as? ImageSourceModel)!)
                 case .color:     ColorConfiguration(model: (source as? ColorSourceModel)!)
                 case .text:     TextConfiguration(model: (source as? TextSourceModel)!)

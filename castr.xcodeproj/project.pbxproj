@@ -72,6 +72,7 @@
 		2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ImageConfiguration.swift"; sourceTree = "<group>"; };
 		2A8D2A1F2C671DBC00E1B5EF /* view-ColorConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ColorConfiguration.swift"; sourceTree = "<group>"; };
 		2A8D2A212C6733BD00E1B5EF /* view-TextConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-TextConfiguration.swift"; sourceTree = "<group>"; };
+		2A8D2A232C673FDB00E1B5EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +106,7 @@
 		2A54A2FB2C5ECD2900D657BC /* castr */ = {
 			isa = PBXGroup;
 			children = (
+				2A8D2A232C673FDB00E1B5EF /* Info.plist */,
 				2A54A3202C5F37BF00D657BC /* Styles */,
 				2A54A3392C603E0E00D657BC /* Enums */,
 				2A54A3322C601AF800D657BC /* Models */,
@@ -439,6 +441,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = castr/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to capture video for streaming.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -466,6 +470,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = castr/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to capture video for streaming.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
