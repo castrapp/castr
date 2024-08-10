@@ -44,6 +44,9 @@ class SourceModel: Identifiable, ObservableObject {
             @Published var excludedApps: Set<String> {
                 didSet {
                     print("new thing was added or removed")
+                    Task { @MainActor in
+                        screenRecorder?.updateExcludedApps(excludedApps: excludedApps)
+                    }
                 }
             }
             
@@ -56,6 +59,7 @@ class SourceModel: Identifiable, ObservableObject {
                 super.init(type: .screenCapture, name: name)
                 
                 setupObservers()
+                print("INITIALIZING SCREEN CAPTURE")
             }
             
             deinit {
@@ -108,7 +112,7 @@ class SourceModel: Identifiable, ObservableObject {
             //
                 
                 if(newSourceId == id) {
-                    Task { await startMonitoringAvailableContent() }
+//                    Task { await startMonitoringAvailableContent() }
                 } else {
                     stopMonitoringAvailableContent()
                 }
@@ -120,7 +124,7 @@ class SourceModel: Identifiable, ObservableObject {
                     // TODO: Refresh the available content once
                     await self.refreshAvailableContent()
                     
-                    guard let display = selectedDisplay else { return }
+                    guard let display = selectedDisplay, screenRecorder == nil else { return }
                     
                     // TODO: Create the ScreenRecorder and pass in the CALayer
                     screenRecorder = ScreenRecorder(
@@ -128,8 +132,8 @@ class SourceModel: Identifiable, ObservableObject {
                         availableDisplays: availableDisplays,
                         availableApps: availableApps,
                         availableWindows: availableWindows,
-                        selectedDisplay: display
-//                        excludedApps: excludedApps
+                        selectedDisplay: display,
+                        excludedApps: excludedApps
                     )
                     
                     // TODO: Set the CALayer to be take up the full width and height of its superlayer by default
@@ -139,8 +143,9 @@ class SourceModel: Identifiable, ObservableObject {
                     // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
                     Previewer.shared.contentLayer.addSublayer(layer)
                     
-                   
+                print("SCREEN RECORDER IS: ", screenRecorder)
                     await screenRecorder?.start()
+                    
             }
             
             @MainActor

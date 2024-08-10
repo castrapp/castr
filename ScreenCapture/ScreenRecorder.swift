@@ -26,22 +26,25 @@ class ScreenRecorder: NSObject, ObservableObject {
     var availableApps: [SCRunningApplication]
     var availableWindows: [SCWindow]
     var selectedDisplay: SCDisplay { didSet { updateEngine() } }
-//    var excludedApps: Set<String>
+    var excludedApps: Set<String> { didSet { updateEngine() } }
+    var selectedWindow: SCWindow? { didSet { updateEngine() } }
 
     init(
         capturePreview: CALayer,
         availableDisplays: [SCDisplay],
         availableApps: [SCRunningApplication],
         availableWindows: [SCWindow],
-        selectedDisplay: SCDisplay
-//        excludedApps: Set<String>
+        selectedDisplay: SCDisplay,
+        excludedApps: Set<String>,
+        selectedWindow: SCWindow? = nil,
     ) {
         self.capturePreview = capturePreview
         self.availableDisplays = availableDisplays
         self.availableApps = availableApps
         self.availableWindows = availableWindows
         self.selectedDisplay = selectedDisplay
-//        self.excludedApps = excludedApps
+        self.excludedApps = excludedApps
+        self.selectedWindow = selectedWindow
     }
     
     private let logger = Logger()
@@ -53,9 +56,7 @@ class ScreenRecorder: NSObject, ObservableObject {
 //    @Published var selectedDisplay: SCDisplay? {
 //        didSet { updateEngine() }
 //    }
-    @Published var selectedWindow: SCWindow? {
-        didSet { updateEngine() }
-    }
+
     @Published var isAppExcluded = true {
         didSet { updateEngine() }
     }
@@ -86,14 +87,15 @@ class ScreenRecorder: NSObject, ObservableObject {
     }
     
     private var contentFilter: SCContentFilter {
-//        guard let display = selectedDisplay else { fatalError("No display selected.") }
-        
         // TODO: Implement the excluded apps somewhere in here
+        var excludedApplications = availableApps.filter { app in
+            excludedApps.contains(app.bundleIdentifier)
+        }
         
         // Create a content filter with excluded apps.
         return SCContentFilter(
             display: selectedDisplay,
-            excludingApplications: [],
+            excludingApplications: excludedApplications,
             exceptingWindows: []
         )
     }
@@ -135,6 +137,9 @@ class ScreenRecorder: NSObject, ObservableObject {
         self.availableDisplays = displays
         self.availableApps = apps
         self.availableWindows = windows
+    }
+    func updateExcludedApps(excludedApps: Set<String>) {
+        self.excludedApps = excludedApps
     }
     
     
@@ -195,6 +200,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     /// - Tag: UpdateCaptureConfig
     private func updateEngine() {
         guard isRunning else { return }
+        print("updating engine")
         Task {
             let filter = contentFilter
             await captureEngine.update(configuration: streamConfiguration, filter: filter)

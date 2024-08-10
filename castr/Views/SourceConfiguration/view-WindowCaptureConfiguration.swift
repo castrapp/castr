@@ -10,7 +10,9 @@ import SwiftUI
 
 struct WindowCaptureConfiguration: View {
     
-    @State var sourceName = "Window Capture 1"
+    @ObservedObject var globalState = GlobalState.shared
+    @ObservedObject var model: WindowCaptureSourceModel
+    
     @FocusState var isTextFieldFocused: Bool
     @State var selectedWindow = "Option 1"
     
@@ -23,7 +25,7 @@ struct WindowCaptureConfiguration: View {
 
             Spacer()
             
-            TextField("Source Name", text: $sourceName)
+            TextField("Source Name", text: $model.name)
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .fixedSize(horizontal: true, vertical: true)
             .disabled(true)

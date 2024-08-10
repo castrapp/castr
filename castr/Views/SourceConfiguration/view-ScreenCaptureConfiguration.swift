@@ -15,7 +15,6 @@ struct ScreenCaptureConfiguration: View {
     @ObservedObject var globalState = GlobalState.shared
     @ObservedObject var model: ScreenCaptureSourceModel
     
-    @State var sourceName = "Screen Capture 1"
     @FocusState var isTextFieldFocused: Bool
     @State var selectedDisplay = "Option 1"
     
@@ -84,22 +83,23 @@ struct ScreenCaptureConfiguration: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(model.availableApps, id: \.self) { app in
-//                        ScreenCaptureCard(
-//                            title: app.applicationName,
-////                            subtitle: "10 Windows",
-//                            isSelected: false,
-//                            isHidden:  model.excludedApps.contains(app.bundleIdentifier),
-//                            onPress: {
-//                                if (model.excludedApps.contains(app.bundleIdentifier)) {
-//                                    model.excludedApps.remove(app.bundleIdentifier)
-//                                } else {
-//                                    model.excludedApps.insert(app.bundleIdentifier)
-//                                }
-//                                print("toggling application: ", app.bundleIdentifier)
-//                               
-//                                
-//                            }
-//                        )
+                        ScreenCaptureCard(
+                            model: model,
+                            app: app,
+                            title: app.applicationName,
+//                            subtitle: "10 Windows",
+                            isSelected: false,
+                            onPress: {
+                                if (model.excludedApps.contains(app.bundleIdentifier)) {
+                                    model.excludedApps.remove(app.bundleIdentifier)
+                                } else {
+                                    model.excludedApps.insert(app.bundleIdentifier)
+                                }
+                                
+                               
+                                
+                            }
+                        )
                             
                     }
                 }
@@ -121,10 +121,14 @@ struct ScreenCaptureConfiguration: View {
 
 
 struct ScreenCaptureCard: View {
+    var model: ScreenCaptureSourceModel
+    var app: SCRunningApplication
     @State var title: String
     @State var subtitle: String?
+    var isHidden: Bool {
+        model.excludedApps.contains(app.bundleIdentifier)
+    }
     @State var isSelected: Bool
-    @State var isHidden: Bool
     @State var isHovered = false
     var onPress: () -> Void
     

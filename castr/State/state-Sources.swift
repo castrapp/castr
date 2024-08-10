@@ -47,7 +47,7 @@ extension GlobalState {
             selectedSourceId = screenCaptureSource.id
         
             // TODO: Start the source
-            Task {
+            Task { @MainActor in
                await screenCaptureSource.start()
             }
         
