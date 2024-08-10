@@ -16,9 +16,7 @@ struct ScreenCaptureConfiguration: View {
     @ObservedObject var model: ScreenCaptureSourceModel
     
     @FocusState var isTextFieldFocused: Bool
-    @State var selectedDisplay = "Option 1"
     
-    let displays = ["Option 1", "Option 2", "Option 3"]
     
     var body: some View {
         

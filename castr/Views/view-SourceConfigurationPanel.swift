@@ -44,12 +44,13 @@ struct SourceConfigurationPanel: View {
             Spacer().panelMainSeparatorStyle()
             
             
-            if let source = globalState.sources.first{ $0.id == globalState.selectedSourceId } {
+            if let source = globalState.sources.first { $0.id == globalState.selectedSourceId } {
                 switch source.type {
                 case .screenCapture:     ScreenCaptureConfiguration(model: (source as? ScreenCaptureSourceModel)!)
                 case .windowCapture:     WindowCaptureConfiguration(model: (source as? WindowCaptureSourceModel)!)
-                case .image:     Text("Image Configuration")
-                case .color:     Text("Color Configuration")
+                case .image:     ImageConfiguration(model: (source as? ImageSourceModel)!)
+                case .color:     ColorConfiguration(model: (source as? ColorSourceModel)!)
+                case .text:     TextConfiguration(model: (source as? TextSourceModel)!)
                    // Add more cases for other source types as needed
                }
             } else {

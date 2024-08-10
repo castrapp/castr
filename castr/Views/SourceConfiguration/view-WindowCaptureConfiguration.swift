@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import ScreenCaptureKit
 
 struct WindowCaptureConfiguration: View {
     
@@ -14,9 +15,6 @@ struct WindowCaptureConfiguration: View {
     @ObservedObject var model: WindowCaptureSourceModel
     
     @FocusState var isTextFieldFocused: Bool
-    @State var selectedWindow = "Option 1"
-    
-    let windows = ["Option 1", "Option 2", "Option 3"]
     
     var body: some View {
         
@@ -48,13 +46,14 @@ struct WindowCaptureConfiguration: View {
 
             Spacer()
             
-            Picker("", selection: $selectedWindow) {
-                ForEach(windows, id: \.self) { option in
-                    Text(option).tag(option)
+            Picker("Display", selection: $model.selectedWindow) {
+                ForEach(model.availableWindows, id: \.self) { window in
+                    Text(window.displayName)
+                        .tag(SCWindow?.some(window))
                 }
             }
             .labelsHidden()
-            .fixedSize(horizontal: true, vertical: true)
+//            .fixedSize(horizontal: true, vertical: true)
         }
         .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
         .padding(.horizontal, 10)

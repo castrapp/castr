@@ -26,7 +26,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     var availableApps: [SCRunningApplication]
     var availableWindows: [SCWindow]
     var selectedDisplay: SCDisplay { didSet { updateEngine() } }
-    var excludedApps: Set<String> { didSet { updateEngine() } }
+    var excludedApps: Set<String>? { didSet { updateEngine() } }
     var selectedWindow: SCWindow? { didSet { updateEngine() } }
 
     init(
@@ -35,8 +35,8 @@ class ScreenRecorder: NSObject, ObservableObject {
         availableApps: [SCRunningApplication],
         availableWindows: [SCWindow],
         selectedDisplay: SCDisplay,
-        excludedApps: Set<String>,
-        selectedWindow: SCWindow? = nil,
+        excludedApps: Set<String> = Set(),
+        selectedWindow: SCWindow? = nil
     ) {
         self.capturePreview = capturePreview
         self.availableDisplays = availableDisplays
@@ -87,9 +87,20 @@ class ScreenRecorder: NSObject, ObservableObject {
     }
     
     private var contentFilter: SCContentFilter {
+        
+        if let window = selectedWindow {
+            return SCContentFilter(desktopIndependentWindow: window)
+        }
+      
         // TODO: Implement the excluded apps somewhere in here
-        var excludedApplications = availableApps.filter { app in
-            excludedApps.contains(app.bundleIdentifier)
+        let excludedApplications: [SCRunningApplication]
+           
+        if let excludedApps = excludedApps {
+            excludedApplications = availableApps.filter { app in
+                excludedApps.contains(app.bundleIdentifier)
+            }
+        } else {
+            excludedApplications = []
         }
         
         // Create a content filter with excluded apps.
@@ -120,6 +131,13 @@ class ScreenRecorder: NSObject, ObservableObject {
             streamConfig.height = Int(window.frame.height) * 2
         }
         
+        if selectedWindow != nil {
+            streamConfig.scalesToFit = true
+            streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
+            streamConfig.backgroundColor = .clear
+            streamConfig.shouldBeOpaque = true
+        }
+        
         // Set the capture interval at 60 fps.
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 60)
         
@@ -140,6 +158,10 @@ class ScreenRecorder: NSObject, ObservableObject {
     }
     func updateExcludedApps(excludedApps: Set<String>) {
         self.excludedApps = excludedApps
+    }
+    func updateSelectedWindow(selectedWindow: SCWindow) {
+        print("updating window")
+        self.selectedWindow = selectedWindow
     }
     
     

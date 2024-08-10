@@ -81,17 +81,25 @@ struct SourcesPanel: View {
                 .popover(isPresented: $showPopover, attachmentAnchor: .point(.bottom), arrowEdge: .bottom) {
                     VStack{
                         Button("Screen Capture Source") {
-                            globalState.addSource(sourceType: .screenCapture, name: "")
+                            globalState.addSource(sourceType: .screenCapture, name: "Screen Capture Source")
                             print("Adding screen capture")
                             
                         }
                         Button("Window Capture Source") {
-                            globalState.addSource(sourceType: .windowCapture, name: "")
+                            globalState.addSource(sourceType: .windowCapture, name: "Window Capture Source")
                             print("adding window capture")
                         }
+                        Button("Image Source") {
+                            globalState.addSource(sourceType: .image, name: "Image Source")
+                            print("adding image source")
+                        }
                         Button("Color Source") {
-                            globalState.addSource(sourceType: .color, name: "")
-                            print("adding color capture")
+                            globalState.addSource(sourceType: .color, name: "Color Source")
+                            print("adding color source")
+                        }
+                        Button("Text Source") {
+                            globalState.addSource(sourceType: .text, name: "Text Source")
+                            print("adding text source")
                         }
                     }
                 }

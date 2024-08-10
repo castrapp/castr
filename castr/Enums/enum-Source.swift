@@ -12,6 +12,7 @@ enum SourceType: String {
     case windowCapture
     case image
     case color
+    case text
     
     var displayName: String {
         switch self {
@@ -19,6 +20,7 @@ enum SourceType: String {
             case .windowCapture: return "Window Capture Source"
             case .image: return "Image Source"
             case .color: return "Color Source"
+            case .text: return "Text Source"
         }
     }
 }
