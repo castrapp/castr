@@ -13,9 +13,6 @@ struct SourceConfigurationPanel: View {
     @ObservedObject var globalState = GlobalState.shared
     @State var isHovered = false
     
-//    var selectedSource: SourceModel? {
-//        globalState.globalSources.first { $0.id == globalState.selectedSourceId }
-//    }
     
     var body: some View {
         CustomGroupBox {
@@ -63,42 +60,6 @@ struct SourceConfigurationPanel: View {
         .padding(10)
         .frame(maxWidth: .infinity)
         
-        // TODO: iterate through all of the global sources and if the source type is
-        // TODO: .screencapture or .windowcapture, then check if the selectedSourceId
-        // TODO: is equal to the selectedSourcesId or not:
-        // TODO: (This logic will need to be slightly changed at some point to make sure we don't double poll)
-        //
-        //  If the selectedSourceId IS EQUAL to the source's Id, then:
-        //  • Call startMonitoringAvailableContent()
-        //
-        //  If the selectedSourceId IS NOT EQUAL to the source's Id, then:
-        //  • Call stopMonitoringAvailableContent ()
-        //
-        // for every source of globalState.sources
-//        .onChange(of: globalState.selectedSourceId) { newValue in
-//            for source in globalState.sources {
-//                guard source.type == .screenCapture || source.type == .windowCapture else { return }
-//                if source.id == globalState.selectedSourceId {
-//                    switch source {
-//                    case let screenCaptureSource as ScreenCaptureSourceModel:
-//                        Task { await screenCaptureSource.startMonitoringAvailableContent() }
-//                    case let windowCaptureSource as WindowCaptureSourceModel:
-//                        Task { await windowCaptureSource.startMonitoringAvailableContent() }
-//                    default:
-//                        break
-//                    }
-//                } else {
-//                    switch source {
-//                    case let screenCaptureSource as ScreenCaptureSourceModel:
-//                        screenCaptureSource.stopMonitoringAvailableContent()
-//                    case let windowCaptureSource as WindowCaptureSourceModel:
-//                        windowCaptureSource.stopMonitoringAvailableContent()
-//                    default:
-//                        break
-//                    }
-//                }
-//            }
-//        }
     }
 }
 

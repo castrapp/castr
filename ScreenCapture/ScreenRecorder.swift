@@ -26,6 +26,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     var availableApps: [SCRunningApplication]
     var availableWindows: [SCWindow]
     var selectedDisplay: SCDisplay { didSet { updateEngine() } }
+//    var excludedApps: Set<String>
 
     init(
         capturePreview: CALayer,
@@ -33,12 +34,14 @@ class ScreenRecorder: NSObject, ObservableObject {
         availableApps: [SCRunningApplication],
         availableWindows: [SCWindow],
         selectedDisplay: SCDisplay
+//        excludedApps: Set<String>
     ) {
         self.capturePreview = capturePreview
         self.availableDisplays = availableDisplays
         self.availableApps = availableApps
         self.availableWindows = availableWindows
         self.selectedDisplay = selectedDisplay
+//        self.excludedApps = excludedApps
     }
     
     private let logger = Logger()

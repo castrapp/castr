@@ -90,6 +90,8 @@ extension GlobalState {
         selectedSourceId = colorSource.id
     
         // TODO: Start the source
-        colorSource.start()
+        Task {
+            await colorSource.start()
+        }
     }
 }

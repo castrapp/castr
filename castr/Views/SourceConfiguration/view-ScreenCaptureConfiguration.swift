@@ -84,14 +84,22 @@ struct ScreenCaptureConfiguration: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(model.availableApps, id: \.self) { app in
-                        ScreenCaptureCard(
-                            title: app.applicationName,
-//                            subtitle: "10 Windows",
-                            isSelected: false,
-                            onPress: {
-                                print("pressed")
-                            }
-                        )
+//                        ScreenCaptureCard(
+//                            title: app.applicationName,
+////                            subtitle: "10 Windows",
+//                            isSelected: false,
+//                            isHidden:  model.excludedApps.contains(app.bundleIdentifier),
+//                            onPress: {
+//                                if (model.excludedApps.contains(app.bundleIdentifier)) {
+//                                    model.excludedApps.remove(app.bundleIdentifier)
+//                                } else {
+//                                    model.excludedApps.insert(app.bundleIdentifier)
+//                                }
+//                                print("toggling application: ", app.bundleIdentifier)
+//                               
+//                                
+//                            }
+//                        )
                             
                     }
                 }
@@ -116,6 +124,7 @@ struct ScreenCaptureCard: View {
     @State var title: String
     @State var subtitle: String?
     @State var isSelected: Bool
+    @State var isHidden: Bool
     @State var isHovered = false
     var onPress: () -> Void
     
@@ -148,7 +157,9 @@ struct ScreenCaptureCard: View {
                 ZStack {
                     Circle()
                     .frame(width: 30, height: 30)
-                    .foregroundColor(Color(nsColor: NSColor.quaternaryLabelColor))
+                    .foregroundColor(
+                        !isHidden ? Color(nsColor: NSColor.controlAccentColor) : Color(nsColor: NSColor.quaternaryLabelColor)
+                    )
                     
                     Image(systemName: "rectangle.3.group.fill")
                     .resizable()

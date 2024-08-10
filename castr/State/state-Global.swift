@@ -30,8 +30,7 @@ class GlobalState: ObservableObject {
     @Published var scenes:[SceneModel]  = [];
     @Published var selectedSceneId: String = "" {
         didSet {
-            print("selected Scene Id has changed: ", selectedSceneId)
-            // Iterate through local scenes
+            selectedSourceId = ""
         }
     }
     

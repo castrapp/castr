@@ -33,6 +33,7 @@
 		2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3452C60611B00D657BC /* ScreenRecorder.swift */; };
 		2A54A3482C60619B00D657BC /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3472C60619B00D657BC /* CaptureEngine.swift */; };
 		2A8D2A172C657BB400E1B5EF /* state-Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A162C657BB400E1B5EF /* state-Global.swift */; };
+		2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		2A54A3452C60611B00D657BC /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		2A54A3472C60619B00D657BC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
 		2A8D2A162C657BB400E1B5EF /* state-Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-Global.swift"; sourceTree = "<group>"; };
+		2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "protocol-Source.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,6 +172,7 @@
 			children = (
 				2A54A3352C60251C00D657BC /* model-Scene.swift */,
 				2A54A33C2C603E9C00D657BC /* model-Source.swift */,
+				2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 				2A54A33B2C603E2200D657BC /* enum-Source.swift in Sources */,
 				2A54A32F2C5FF78900D657BC /* view-WindowCaptureConfiguration.swift in Sources */,
 				2A54A3262C5F3F7600D657BC /* view-SourcesPanel.swift in Sources */,
+				2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */,
 				2A54A3122C5EFDB800D657BC /* view-Panel.swift in Sources */,
 				2A54A32A2C5F428400D657BC /* view-Previewer.swift in Sources */,
 				2A54A32D2C5FF73100D657BC /* view-ScreenCaptureConfiguration.swift in Sources */,
