@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A3AFDE32C688D100046718B /* Converter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDE22C688D100046718B /* Converter.swift */; };
 		2A54A2FD2C5ECD2900D657BC /* castr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A2FC2C5ECD2900D657BC /* castr.swift */; };
 		2A54A3012C5ECD2B00D657BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3002C5ECD2B00D657BC /* Assets.xcassets */; };
 		2A54A3042C5ECD2B00D657BC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */; };
@@ -37,9 +38,40 @@
 		2A8D2A1E2C671DAD00E1B5EF /* view-ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */; };
 		2A8D2A202C671DBC00E1B5EF /* view-ColorConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A1F2C671DBC00E1B5EF /* view-ColorConfiguration.swift */; };
 		2A8D2A222C6733BD00E1B5EF /* view-TextConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A212C6733BD00E1B5EF /* view-TextConfiguration.swift */; };
+		2A8D2A252C674B3300E1B5EF /* SystemExtensionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */; };
+		2A8D2A432C687CD600E1B5EF /* view-Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A422C687CD600E1B5EF /* view-Settings.swift */; };
+		2A8D2A452C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A442C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift */; };
+		2A8D2A4D2C68828B00E1B5EF /* virtualcameraProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A4C2C68828B00E1B5EF /* virtualcameraProvider.swift */; };
+		2A8D2A4F2C68828B00E1B5EF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A4E2C68828B00E1B5EF /* main.swift */; };
+		2A8D2A542C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = 2A8D2A4A2C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		2A8D2A522C68828B00E1B5EF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2A54A2F12C5ECD2900D657BC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A8D2A492C68828B00E1B5EF;
+			remoteInfo = virtualcamera;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2A8D2A582C68828B00E1B5EF /* Embed System Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(SYSTEM_EXTENSIONS_FOLDER_PATH)";
+			dstSubfolderSpec = 16;
+			files = (
+				2A8D2A542C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension in Embed System Extensions */,
+			);
+			name = "Embed System Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		2A3AFDE22C688D100046718B /* Converter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Converter.swift; sourceTree = "<group>"; };
 		2A54A2F92C5ECD2900D657BC /* castr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = castr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A54A2FC2C5ECD2900D657BC /* castr.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = castr.swift; sourceTree = "<group>"; };
 		2A54A3002C5ECD2B00D657BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -73,10 +105,25 @@
 		2A8D2A1F2C671DBC00E1B5EF /* view-ColorConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ColorConfiguration.swift"; sourceTree = "<group>"; };
 		2A8D2A212C6733BD00E1B5EF /* view-TextConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-TextConfiguration.swift"; sourceTree = "<group>"; };
 		2A8D2A232C673FDB00E1B5EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemExtensionManager.swift; sourceTree = "<group>"; };
+		2A8D2A422C687CD600E1B5EF /* view-Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Settings.swift"; sourceTree = "<group>"; };
+		2A8D2A442C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Settings-VirtualCamera.swift"; sourceTree = "<group>"; };
+		2A8D2A4A2C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = harrisonhall.castr.virtualcamera.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A8D2A4C2C68828B00E1B5EF /* virtualcameraProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = virtualcameraProvider.swift; sourceTree = "<group>"; };
+		2A8D2A4E2C68828B00E1B5EF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		2A8D2A502C68828B00E1B5EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2A8D2A512C68828B00E1B5EF /* virtualcamera.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = virtualcamera.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		2A54A2F62C5ECD2900D657BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2A8D2A472C68828B00E1B5EF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -89,8 +136,9 @@
 		2A54A2F02C5ECD2900D657BC = {
 			isa = PBXGroup;
 			children = (
-				2A54A3442C6060E000D657BC /* ScreenCapture */,
+				2A54A3442C6060E000D657BC /* Utility */,
 				2A54A2FB2C5ECD2900D657BC /* castr */,
+				2A8D2A4B2C68828B00E1B5EF /* virtualcamera */,
 				2A54A2FA2C5ECD2900D657BC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -99,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				2A54A2F92C5ECD2900D657BC /* castr.app */,
+				2A8D2A4A2C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -132,6 +181,7 @@
 		2A54A30B2C5ED7A300D657BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2A8D2A412C687CC000E1B5EF /* Settings */,
 				2A54A30C2C5ED7B300D657BC /* view-Toolbar.swift */,
 				2A54A3112C5EFDB800D657BC /* view-Panel.swift */,
 				2A54A31C2C5F1A6400D657BC /* view-ScenesPanel.swift */,
@@ -196,13 +246,35 @@
 			path = Enums;
 			sourceTree = "<group>";
 		};
-		2A54A3442C6060E000D657BC /* ScreenCapture */ = {
+		2A54A3442C6060E000D657BC /* Utility */ = {
 			isa = PBXGroup;
 			children = (
 				2A54A3452C60611B00D657BC /* ScreenRecorder.swift */,
 				2A54A3472C60619B00D657BC /* CaptureEngine.swift */,
+				2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */,
+				2A3AFDE22C688D100046718B /* Converter.swift */,
 			);
-			path = ScreenCapture;
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		2A8D2A412C687CC000E1B5EF /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				2A8D2A422C687CD600E1B5EF /* view-Settings.swift */,
+				2A8D2A442C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		2A8D2A4B2C68828B00E1B5EF /* virtualcamera */ = {
+			isa = PBXGroup;
+			children = (
+				2A8D2A4C2C68828B00E1B5EF /* virtualcameraProvider.swift */,
+				2A8D2A4E2C68828B00E1B5EF /* main.swift */,
+				2A8D2A502C68828B00E1B5EF /* Info.plist */,
+				2A8D2A512C68828B00E1B5EF /* virtualcamera.entitlements */,
+			);
+			path = virtualcamera;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,15 +287,34 @@
 				2A54A2F52C5ECD2900D657BC /* Sources */,
 				2A54A2F62C5ECD2900D657BC /* Frameworks */,
 				2A54A2F72C5ECD2900D657BC /* Resources */,
+				2A8D2A582C68828B00E1B5EF /* Embed System Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				2A8D2A532C68828B00E1B5EF /* PBXTargetDependency */,
 			);
 			name = castr;
 			productName = castr;
 			productReference = 2A54A2F92C5ECD2900D657BC /* castr.app */;
 			productType = "com.apple.product-type.application";
+		};
+		2A8D2A492C68828B00E1B5EF /* virtualcamera */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A8D2A552C68828B00E1B5EF /* Build configuration list for PBXNativeTarget "virtualcamera" */;
+			buildPhases = (
+				2A8D2A462C68828B00E1B5EF /* Sources */,
+				2A8D2A472C68828B00E1B5EF /* Frameworks */,
+				2A8D2A482C68828B00E1B5EF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = virtualcamera;
+			productName = virtualcamera;
+			productReference = 2A8D2A4A2C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension */;
+			productType = "com.apple.product-type.system-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -236,6 +327,9 @@
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					2A54A2F82C5ECD2900D657BC = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					2A8D2A492C68828B00E1B5EF = {
 						CreatedOnToolsVersion = 15.2;
 					};
 				};
@@ -254,6 +348,7 @@
 			projectRoot = "";
 			targets = (
 				2A54A2F82C5ECD2900D657BC /* castr */,
+				2A8D2A492C68828B00E1B5EF /* virtualcamera */,
 			);
 		};
 /* End PBXProject section */
@@ -268,6 +363,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2A8D2A482C68828B00E1B5EF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -277,12 +379,16 @@
 			files = (
 				2A54A2FD2C5ECD2900D657BC /* castr.swift in Sources */,
 				2A54A3312C5FF8D700D657BC /* view-SystemAudioCaptureConfiguration.swift in Sources */,
+				2A3AFDE32C688D100046718B /* Converter.swift in Sources */,
 				2A54A3172C5F096C00D657BC /* ContentView.swift in Sources */,
+				2A8D2A452C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift in Sources */,
 				2A54A3282C5F3FA000D657BC /* view-ControlsPanel.swift in Sources */,
 				2A54A33D2C603E9C00D657BC /* model-Source.swift in Sources */,
+				2A8D2A252C674B3300E1B5EF /* SystemExtensionManager.swift in Sources */,
 				2A8D2A1E2C671DAD00E1B5EF /* view-ImageConfiguration.swift in Sources */,
 				2A8D2A202C671DBC00E1B5EF /* view-ColorConfiguration.swift in Sources */,
 				2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */,
+				2A8D2A432C687CD600E1B5EF /* view-Settings.swift in Sources */,
 				2A54A3222C5F37D300D657BC /* style-Text.swift in Sources */,
 				2A54A31F2C5F367700D657BC /* view-SourceConfigurationPanel.swift in Sources */,
 				2A54A33B2C603E2200D657BC /* enum-Source.swift in Sources */,
@@ -306,7 +412,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		2A8D2A462C68828B00E1B5EF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2A8D2A4F2C68828B00E1B5EF /* main.swift in Sources */,
+				2A8D2A4D2C68828B00E1B5EF /* virtualcameraProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2A8D2A532C68828B00E1B5EF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A8D2A492C68828B00E1B5EF /* virtualcamera */;
+			targetProxy = 2A8D2A522C68828B00E1B5EF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2A54A3062C5ECD2B00D657BC /* Debug */ = {
@@ -430,6 +553,7 @@
 		2A54A3092C5ECD2B00D657BC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = castr/castr.entitlements;
@@ -459,6 +583,7 @@
 		2A54A30A2C5ECD2B00D657BC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = castr/castr.entitlements;
@@ -485,6 +610,58 @@
 			};
 			name = Release;
 		};
+		2A8D2A562C68828B00E1B5EF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = virtualcamera/virtualcamera.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 67C4BBFCAC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = virtualcamera/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = virtualcamera;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = harrisonhall.castr.virtualcamera;
+				PRODUCT_NAME = "$(inherited)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		2A8D2A572C68828B00E1B5EF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = virtualcamera/virtualcamera.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 67C4BBFCAC;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = virtualcamera/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = virtualcamera;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = harrisonhall.castr.virtualcamera;
+				PRODUCT_NAME = "$(inherited)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -502,6 +679,15 @@
 			buildConfigurations = (
 				2A54A3092C5ECD2B00D657BC /* Debug */,
 				2A54A30A2C5ECD2B00D657BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2A8D2A552C68828B00E1B5EF /* Build configuration list for PBXNativeTarget "virtualcamera" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A8D2A562C68828B00E1B5EF /* Debug */,
+				2A8D2A572C68828B00E1B5EF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

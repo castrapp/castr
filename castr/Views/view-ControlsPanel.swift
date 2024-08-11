@@ -7,10 +7,15 @@
 
 import Foundation
 import SwiftUI
+import AVFoundation
 
 struct ControlsPanel: View {
     
     @State var isHovered = false
+
+     @State private var assetWriter: AVAssetWriter?
+     @State private var assetWriterInput: AVAssetWriterInput?
+     @State private var isRecording = false
     
     var body: some View {
         CustomGroupBox {
@@ -45,22 +50,25 @@ struct ControlsPanel: View {
             
             HStack {
                 CustomControlBox(
-                    title: "Hello",
+                    title: "start recording",
                     subtitle: "world",
                     isSelected: false,
                     onPress: {
-                        print("selecting")
+                        print("starting recording")
+                        showSavePanel()
                     }
                 ) {
                     Text("Hello")
                 }
                 
                 CustomControlBox(
-                    title: "Hello",
+                    title: "stop recording",
                     subtitle: "world",
                     isSelected: false,
                     onPress: {
-                        print("selecting")
+                        // When you're done:
+                        stopRecording()
+                        
                     }
                 ) {
                     Text("Hello")
@@ -74,6 +82,71 @@ struct ControlsPanel: View {
         }
         .padding(10)
         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
+    }
+    
+    func showSavePanel() {
+            let savePanel = NSSavePanel()
+            savePanel.allowedContentTypes = [.mpeg4Movie]
+            savePanel.canCreateDirectories = true
+            savePanel.nameFieldStringValue = "output.mp4"
+            
+            savePanel.begin { response in
+                if response == .OK, let url = savePanel.url {
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        self.startConverter(outputURL: url)
+                    }
+                }
+            }
+        }
+    
+    func startConverter(outputURL: URL) {
+        print("attempting to start converter")
+        guard !isRecording else { return }
+        
+        print("starting converter")
+        do {
+            assetWriter = try AVAssetWriter(outputURL: outputURL, fileType: .mov)
+            
+            let videoSettings: [String: Any] = [
+                AVVideoCodecKey: AVVideoCodecType.h264,
+                AVVideoWidthKey: 868,
+                AVVideoHeightKey: 561
+            ]
+            
+            assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
+            assetWriterInput?.expectsMediaDataInRealTime = true
+            
+            if let assetWriter = assetWriter, let assetWriterInput = assetWriterInput {
+                assetWriter.add(assetWriterInput)
+                assetWriter.startWriting()
+                assetWriter.startSession(atSourceTime: CMTime.zero)
+                
+                isRecording = true
+                
+                LayerToSampleBufferConverter.shared.start { sampleBuffer in
+                    if assetWriterInput.isReadyForMoreMediaData {
+                        print("sample buffer is: ", sampleBuffer)
+                        assetWriterInput.append(sampleBuffer)
+                    }
+                }
+            }
+        } catch {
+            print("Error setting up asset writer: \(error)")
+        }
+    }
+    
+    func stopRecording() {
+        guard isRecording else { return }
+        
+        LayerToSampleBufferConverter.shared.stop()
+        
+        assetWriterInput?.markAsFinished()
+        assetWriter?.finishWriting {
+            print("Finished writing video to: \(self.assetWriter?.outputURL.path ?? "unknown")")
+            self.assetWriter = nil
+            self.assetWriterInput = nil
+            self.isRecording = false
+        }
     }
 }
 

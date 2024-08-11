@@ -13,6 +13,7 @@ struct PreviewPanel: View {
     
     @ObservedObject var globalState = GlobalState.shared
     let previewer = Previewer.shared
+    
 
     
     var body: some View {

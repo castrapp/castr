@@ -18,6 +18,7 @@ struct Previewer: NSViewRepresentable {
     
     private init() {
         contentLayer.contentsGravity = .resizeAspect
+        LayerToSampleBufferConverter.shared.setRootLayer(contentLayer)
     }
     
     func makeNSView(context: Context) -> CaptureVideoPreview {

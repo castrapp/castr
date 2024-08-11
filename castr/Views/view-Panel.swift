@@ -78,7 +78,7 @@ struct CustomControlBox<Content: View>: View {
                 .font(.system(size: 16))
 //                .padding(.leading, 10)
                 
-                Text("Virtual Camera")
+                Text(title)
                     .font(.subheadline)
             }
             .frame(maxWidth: 75, maxHeight: 70)
