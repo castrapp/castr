@@ -110,6 +110,7 @@ struct ContentView: View {
 //        .border(Color.red, width: 1)
         .overlay(alignment: .top) {
             Toolbar()
+        
         }
         .ignoresSafeArea()
         
