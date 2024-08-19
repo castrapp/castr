@@ -158,14 +158,14 @@ struct SystemAudioCaptureCard: View {
                 isHovered = hovering
 //            }
         }
-        .onContinuousHover { phase in
-            switch phase {
-            case .active:
-                NSCursor.pointingHand.push()
-            case .ended:
-                NSCursor.pop()
-            }
-        }
+//        .onContinuousHover { phase in
+//            switch phase {
+//            case .active:
+//                NSCursor.pointingHand.push()
+//            case .ended:
+//                NSCursor.pop()
+//            }
+//        }
     }
     
 }

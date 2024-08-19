@@ -19,52 +19,52 @@ struct ScreenCaptureConfiguration: View {
     
     
     var body: some View {
-        
-        HStack {
-            Text("Name")
-
-            Spacer()
-            
-            TextField("Source Name", text: $model.name)
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .fixedSize(horizontal: true, vertical: true)
-            .disabled(true)
-            .onAppear {
+//        
+//        HStack {
+//            Text("Name")
+//
+//            Spacer()
+//            
+//            TextField("Source Name", text: $model.name)
+//            .textFieldStyle(RoundedBorderTextFieldStyle())
+//            .fixedSize(horizontal: true, vertical: true)
+//            .disabled(true)
+//            .onAppear {
                 
-            }
+//            }
 //            .focused($isTextFieldFocused)
 //            .onAppear {
 //                DispatchQueue.main.async {
 //                    isTextFieldFocused = false
 //                }
 //            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
+//        }
+//        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+//        .padding(.horizontal, 10)
+//        .padding(.vertical, 6)
 //        .border(Color.red, width: 1)
         
-        Spacer().panelSubSeparatorStyle()
+//        Spacer().panelSubSeparatorStyle()
         
-        HStack {
-            Text("Display")
-
-            Spacer()
-            
-            Picker("Display", selection: $model.selectedDisplay) {
-                ForEach(model.availableDisplays, id: \.self) { display in
-                    Text(display.displayName)
-                        .tag(SCDisplay?.some(display))
-                }
-            }
-            .labelsHidden()
-            .fixedSize(horizontal: true, vertical: true)
-        }
-        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-        .padding(.horizontal, 10)
-        .padding(.vertical, 6)
-        
-        Spacer().panelSubSeparatorStyle()
+//        HStack {
+//            Text("Display")
+//
+//            Spacer()
+//            
+//            Picker("Display", selection: $model.selectedDisplay) {
+//                ForEach(model.availableDisplays, id: \.self) { display in
+//                    Text(display.displayName)
+//                        .tag(SCDisplay?.some(display))
+//                }
+//            }
+//            .labelsHidden()
+//            .fixedSize(horizontal: true, vertical: true)
+//        }
+//        .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+//        .padding(.horizontal, 10)
+//        .padding(.vertical, 6)
+//        
+//        Spacer().panelSubSeparatorStyle()
         
         VStack(alignment: .leading, spacing: 0) {
             Text("Pick and choose which applications and windows you would like to display.")
@@ -134,17 +134,18 @@ struct ScreenCaptureCard: View {
         Button(action: onPress) {
             HStack(spacing: 10) {
                
-                if let appIcon = NSImage(named: "NSApplicationIcon") {
-                        Image(nsImage: appIcon)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(maxWidth: 30, maxHeight: 30)
-                        .padding(.leading, 5)
-                }
+//                if let appIcon = NSImage(named: "NSApplicationIcon") {
+//                        Image(nsImage: appIcon)
+//                        .resizable()
+//                        .aspectRatio(contentMode: .fit)
+//                        .frame(maxWidth: 30, maxHeight: 30)
+//                        .padding(.leading, 5)
+//                }
                 
                 VStack(alignment: .leading, spacing: 0) {
                     Text(title)
                     .fixedSize()
+                    .padding(.leading, 10)
                     if let subtitle = subtitle {
                         Text(subtitle)
                         .font(.subheadline)
@@ -153,6 +154,7 @@ struct ScreenCaptureCard: View {
                     }
                 }
                 .padding(.vertical, 4)
+
                 
                 Spacer()
                 
@@ -190,14 +192,14 @@ struct ScreenCaptureCard: View {
                 isHovered = hovering
 //            }
         }
-        .onContinuousHover { phase in
-            switch phase {
-            case .active:
-                NSCursor.pointingHand.push()
-            case .ended:
-                NSCursor.pop()
-            }
-        }
+//        .onContinuousHover { phase in
+//            switch phase {
+//            case .active:
+//                NSCursor.pointingHand.push()
+//            case .ended:
+//                NSCursor.pop()
+//            }
+//        }
     }
     
 }

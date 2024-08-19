@@ -56,22 +56,22 @@ struct Toolbar: View {
                 
                 /// `Center`
                 HStack(spacing: 0) {
-                    SidebarButton(
-                        imageName: "chevron.left",
-                        onPress: {
-                            print("button is pressed")
-                        }
-                    )
-                    .padding(.leading, 10)
-                    .padding(.trailing, 6)
+//                    SidebarButton(
+//                        imageName: "chevron.left",
+//                        onPress: {
+//                            print("button is pressed")
+//                        }
+//                    )
+//                    .padding(.leading, 10)
+//                    .padding(.trailing, 6)
                     
-                    SidebarButton(
-                        imageName: "chevron.right",
-                        onPress: {
-                            print("button is pressed")
-                        }
-                    )
-                    .padding(.trailing, 10)
+//                    SidebarButton(
+//                        imageName: "chevron.right",
+//                        onPress: {
+//                            print("button is pressed")
+//                        }
+//                    )
+//                    .padding(.trailing, 10)
                     
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -207,13 +207,13 @@ struct SidebarButton: View {
                 isHovered = hovering
             }
         }
-        .onContinuousHover { phase in
-            switch phase {
-            case .active:
-                NSCursor.pointingHand.push()
-            case .ended:
-                NSCursor.pop()
-            }
-        }
+//        .onContinuousHover { phase in
+//            switch phase {
+//            case .active:
+//                NSCursor.pointingHand.push()
+//            case .ended:
+//                NSCursor.pop()
+//            }
+//        }
     }
 }

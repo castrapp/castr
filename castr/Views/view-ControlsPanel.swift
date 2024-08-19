@@ -5,17 +5,23 @@
 //  Created by Harrison Hall on 8/4/24.
 //
 
-import Foundation
 import SwiftUI
 import AVFoundation
+import Cocoa
+import CoreMediaIO
+import SystemExtensions
+import ScreenCaptureKit
+import OSLog
+import Combine
 
 struct ControlsPanel: View {
     
     @State var isHovered = false
-
+    @ObservedObject var global = GlobalState.shared
      @State private var assetWriter: AVAssetWriter?
      @State private var assetWriterInput: AVAssetWriterInput?
      @State private var isRecording = false
+    
     
     var body: some View {
         CustomGroupBox {
@@ -37,43 +43,23 @@ struct ControlsPanel: View {
             .onHover { hovering in
                 isHovered = hovering
             }
-            .onContinuousHover { phase in
-                switch phase {
-                case .active:
-                    NSCursor.openHand.push()
-                case .ended:
-                    NSCursor.pop()
-                }
-            }
-            
+
             Spacer().panelMainSeparatorStyle()
             
             HStack {
-                CustomControlBox(
-                    title: "start recording",
-                    subtitle: "world",
-                    isSelected: false,
-                    onPress: {
-                        print("starting recording")
-                        showSavePanel()
-                    }
-                ) {
-                    Text("Hello")
-                }
+
                 
-                CustomControlBox(
-                    title: "stop recording",
-                    subtitle: "world",
-                    isSelected: false,
-                    onPress: {
-                        // When you're done:
-                        stopRecording()
-                        
-                    }
-                ) {
-                    Text("Hello")
-                }
-                Spacer()
+//                Button("Stream to Virtual Camera") {
+//                    CameraViewModel.shared.start()
+//                    GlobalState.shared.streamToVirtualCamera = true
+//                }
+//                .multilineTextAlignment(.center)
+//                .lineLimit(nil)
+//                .fixedSize(horizontal: false, vertical: true)
+//                .disabled(global.selectedSourceId.isEmpty)
+
+                
+               
             }
            
 //            .frame(maxWidth: 100, maxHeight: 100, alignment: .leading)
@@ -84,70 +70,76 @@ struct ControlsPanel: View {
         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/, maxHeight: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
     }
     
-    func showSavePanel() {
-            let savePanel = NSSavePanel()
-            savePanel.allowedContentTypes = [.mpeg4Movie]
-            savePanel.canCreateDirectories = true
-            savePanel.nameFieldStringValue = "output.mp4"
-            
-            savePanel.begin { response in
-                if response == .OK, let url = savePanel.url {
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        self.startConverter(outputURL: url)
-                    }
-                }
+    func getDevice() {
+      
+        // 1. Find the device
+        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.externalUnknown], mediaType: .video,position: .unspecified)
+        guard let targetDevice = discoverySession.devices.first(where: { $0.localizedName == "Castr Virtual Camera" }) else { return }
+
+        
+        
+        // 2. Find the device's CMIODeviceID from the CMIO Framework
+        var targetCMIODeviceID: CMIODeviceID?
+        var dataSize: UInt32 = 0
+        var devices = [CMIOObjectID]()
+        var dataUsed: UInt32 = 0
+        
+        var opa = CMIOObjectPropertyAddress(CMIOObjectPropertySelector(kCMIOHardwarePropertyDevices), .global, .main)
+        CMIOObjectGetPropertyDataSize(CMIOObjectPropertySelector(kCMIOObjectSystemObject), &opa, 0, nil, &dataSize);
+        let nDevices = Int(dataSize) / MemoryLayout<CMIOObjectID>.size
+        devices = [CMIOObjectID](repeating: 0, count: Int(nDevices))
+        CMIOObjectGetPropertyData(CMIOObjectPropertySelector(kCMIOObjectSystemObject), &opa, 0, nil, dataSize, &dataUsed, &devices);
+        for deviceObjectID in devices {
+            opa.mSelector = CMIOObjectPropertySelector(kCMIODevicePropertyDeviceUID)
+            CMIOObjectGetPropertyDataSize(deviceObjectID, &opa, 0, nil, &dataSize)
+            var name: CFString = "" as NSString
+            CMIOObjectGetPropertyData(deviceObjectID, &opa, 0, nil, dataSize, &dataUsed, &name);
+            if String(name) == targetDevice.uniqueID {
+                targetCMIODeviceID = deviceObjectID
             }
         }
-    
-    func startConverter(outputURL: URL) {
-        print("attempting to start converter")
-        guard !isRecording else { return }
         
-        print("starting converter")
-        do {
-            assetWriter = try AVAssetWriter(outputURL: outputURL, fileType: .mov)
-            
-            let videoSettings: [String: Any] = [
-                AVVideoCodecKey: AVVideoCodecType.h264,
-                AVVideoWidthKey: 868,
-                AVVideoHeightKey: 561
-            ]
-            
-            assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
-            assetWriterInput?.expectsMediaDataInRealTime = true
-            
-            if let assetWriter = assetWriter, let assetWriterInput = assetWriterInput {
-                assetWriter.add(assetWriterInput)
-                assetWriter.startWriting()
-                assetWriter.startSession(atSourceTime: CMTime.zero)
-                
-                isRecording = true
-                
-                LayerToSampleBufferConverter.shared.start { sampleBuffer in
-                    if assetWriterInput.isReadyForMoreMediaData {
-                        print("sample buffer is: ", sampleBuffer)
-                        assetWriterInput.append(sampleBuffer)
-                    }
-                }
-            }
-        } catch {
-            print("Error setting up asset writer: \(error)")
+        
+        
+        // 3. Get the input streams using the CMIO Device's CMIODeviceID
+        guard let targetCMIODeviceID = targetCMIODeviceID else { return }
+        var streamIDs: [CMIOStreamID]
+        var dataSize2: UInt32 = 0
+        var dataUsed2: UInt32 = 0
+        var opa2 = CMIOObjectPropertyAddress(CMIOObjectPropertySelector(kCMIODevicePropertyStreams), .global, .main)
+        CMIOObjectGetPropertyDataSize(targetCMIODeviceID, &opa2, 0, nil, &dataSize2);
+        let numberStreams = Int(dataSize2) / MemoryLayout<CMIOStreamID>.size
+        var streamIds = [CMIOStreamID](repeating: 0, count: numberStreams)
+        CMIOObjectGetPropertyData(targetCMIODeviceID, &opa2, 0, nil, dataSize2, &dataUsed2, &streamIds)
+        streamIDs = streamIds
+        
+        
+        
+        // 4. Find and connect to the Sink Stream's Queue
+        if streamIds.count == 2 {
+            print("Sink Stream found")
+//            sinkStream = streamIds[1]
+//            initSink(deviceId: deviceObjectId, sinkStream: streamIds[1])
         }
+        
     }
     
-    func stopRecording() {
-        guard isRecording else { return }
-        
-        LayerToSampleBufferConverter.shared.stop()
-        
-        assetWriterInput?.markAsFinished()
-        assetWriter?.finishWriting {
-            print("Finished writing video to: \(self.assetWriter?.outputURL.path ?? "unknown")")
-            self.assetWriter = nil
-            self.assetWriterInput = nil
-            self.isRecording = false
-        }
+    
+    
+    func getInputStreams(deviceId: CMIODeviceID) -> [CMIOStreamID] {
+        var dataSize: UInt32 = 0
+        var dataUsed: UInt32 = 0
+        var opa = CMIOObjectPropertyAddress(CMIOObjectPropertySelector(kCMIODevicePropertyStreams), .global, .main)
+        CMIOObjectGetPropertyDataSize(deviceId, &opa, 0, nil, &dataSize);
+        let numberStreams = Int(dataSize) / MemoryLayout<CMIOStreamID>.size
+        var streamIds = [CMIOStreamID](repeating: 0, count: numberStreams)
+        CMIOObjectGetPropertyData(deviceId, &opa, 0, nil, dataSize, &dataUsed, &streamIds)
+        return streamIds
     }
+
+    
+
+
 }
 
 

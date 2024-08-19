@@ -23,23 +23,23 @@ struct SourcesPanel: View {
             .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
 //            .border(Color.red, width: 1)
             .cornerRadius(5)
-            .overlay(
-                RoundedRectangle(cornerRadius: 5)
-//                    .stroke(Color.red, lineWidth: 1)
-                    .fill(isHovered ? Color(nsColor: .quinaryLabel) : Color.clear)
-            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 5)
+////                    .stroke(Color.red, lineWidth: 1)
+//                    .fill(isHovered ? Color(nsColor: .quinaryLabel) : Color.clear)
+//            )
             .padding(5)
             .onHover { hovering in
                 isHovered = hovering
             }
-            .onContinuousHover { phase in
-                switch phase {
-                case .active:
-                    NSCursor.openHand.push()
-                case .ended:
-                    NSCursor.pop()
-                }
-            }
+//            .onContinuousHover { phase in
+//                switch phase {
+//                case .active:
+//                    NSCursor.openHand.push()
+//                case .ended:
+//                    NSCursor.pop()
+//                }
+//            }
             
             Spacer().panelMainSeparatorStyle()
             
@@ -81,29 +81,34 @@ struct SourcesPanel: View {
                 .popover(isPresented: $showPopover, attachmentAnchor: .point(.bottom), arrowEdge: .bottom) {
                     VStack{
                         Button("Screen Capture Source") {
-                            globalState.addSource(sourceType: .screenCapture, name: "Screen Capture Source")
+                            print("the sources count is: ", globalState.sources.count)
+                            if(globalState.sources.count == 0) {
+                                globalState.addSource(sourceType: .screenCapture, name: "Screen Capture Source")
+                            }
+                           
                             print("Adding screen capture")
                         }
-                        Button("Window Capture Source") {
-                            globalState.addSource(sourceType: .windowCapture, name: "Window Capture Source")
-                            print("adding window capture")
-                        }
-                        Button("Video Source") {
-                            globalState.addSource(sourceType: .video, name: "Video Source")
-                            print("adding video capture")
-                        }
-                        Button("Image Source") {
-                            globalState.addSource(sourceType: .image, name: "Image Source")
-                            print("adding image source")
-                        }
-                        Button("Color Source") {
-                            globalState.addSource(sourceType: .color, name: "Color Source")
-                            print("adding color source")
-                        }
-                        Button("Text Source") {
-                            globalState.addSource(sourceType: .text, name: "Text Source")
-                            print("adding text source")
-                        }
+                        .padding(10)
+//                        Button("Window Capture Source") {
+//                            globalState.addSource(sourceType: .windowCapture, name: "Window Capture Source")
+//                            print("adding window capture")
+//                        }
+//                        Button("Video Source") {
+//                            globalState.addSource(sourceType: .video, name: "Video Source")
+//                            print("adding video capture")
+//                        }
+//                        Button("Image Source") {
+//                            globalState.addSource(sourceType: .image, name: "Image Source")
+//                            print("adding image source")
+//                        }
+//                        Button("Color Source") {
+//                            globalState.addSource(sourceType: .color, name: "Color Source")
+//                            print("adding color source")
+//                        }
+//                        Button("Text Source") {
+//                            globalState.addSource(sourceType: .text, name: "Text Source")
+//                            print("adding text source")
+//                        }
                     }
                 }
                 
@@ -114,28 +119,29 @@ struct SourcesPanel: View {
                     imageName: "minus",
                     onPress: {
                         print("deleting a source")
+                        globalState.deleteSelectedSource()
                     }
                 )
                 .padding(.horizontal, 4)
                 
                 Spacer()
                 
-                Menu("Options") {
-                    Button("Add Source") {
-                        print("option 1 has been pressed")
-                    }
-                    Button("Delete Source") {
-                        print("option 2 has been pressed")
-                    }
-                    Button("Duplicate Source") {
-                        print("option 3 has been pressed")
-                    }
-                    Button("Toggle Source On/Off") {
-                        print("option 4 has been pressed")
-                    }
-                }
-                .fixedSize(horizontal: true, vertical: true)
-                .padding(.trailing, 5)
+//                Menu("Options") {
+//                    Button("Add Source") {
+//                        print("option 1 has been pressed")
+//                    }
+//                    Button("Delete Source") {
+//                        print("option 2 has been pressed")
+//                    }
+//                    Button("Duplicate Source") {
+//                        print("option 3 has been pressed")
+//                    }
+//                    Button("Toggle Source On/Off") {
+//                        print("option 4 has been pressed")
+//                    }
+//                }
+//                .fixedSize(horizontal: true, vertical: true)
+//                .padding(.trailing, 5)
                 
             }
             .frame(maxWidth: .infinity, maxHeight: 32, alignment: .leading)
@@ -201,13 +207,13 @@ struct SourceCard: View {
                 isHovered = hovering
 //            }
         }
-        .onContinuousHover { phase in
-            switch phase {
-            case .active:
-                NSCursor.pointingHand.push()
-            case .ended:
-                NSCursor.pop()
-            }
-        }
+//        .onContinuousHover { phase in
+//            switch phase {
+//            case .active:
+//                NSCursor.pointingHand.push()
+//            case .ended:
+//                NSCursor.pop()
+//            }
+//        }
     }
 }

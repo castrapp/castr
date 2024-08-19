@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2A3AFDE32C688D100046718B /* Converter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDE22C688D100046718B /* Converter.swift */; };
 		2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDE82C69CEE60046718B /* MouseListener.swift */; };
 		2A3AFDEC2C69D0730046718B /* view-MouseEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDEB2C69D0730046718B /* view-MouseEvent.swift */; };
 		2A54A2FD2C5ECD2900D657BC /* castr.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A2FC2C5ECD2900D657BC /* castr.swift */; };
@@ -43,9 +42,17 @@
 		2A8D2A252C674B3300E1B5EF /* SystemExtensionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */; };
 		2A8D2A432C687CD600E1B5EF /* view-Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A422C687CD600E1B5EF /* view-Settings.swift */; };
 		2A8D2A452C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A442C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift */; };
-		2A8D2A4D2C68828B00E1B5EF /* virtualcameraProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A4C2C68828B00E1B5EF /* virtualcameraProvider.swift */; };
 		2A8D2A4F2C68828B00E1B5EF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A4E2C68828B00E1B5EF /* main.swift */; };
 		2A8D2A542C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension in Embed System Extensions */ = {isa = PBXBuildFile; fileRef = 2A8D2A4A2C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		2A9122BC2C702508005194AC /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122BA2C7022D0005194AC /* CameraViewModel.swift */; };
+		2A9122BF2C702D46005194AC /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122B82C7021F8005194AC /* Configuration.swift */; };
+		2A9122C12C7033DB005194AC /* VirtualCameraConnecterDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122C02C7033DB005194AC /* VirtualCameraConnecterDraft.swift */; };
+		2A9122C32C703DB2005194AC /* virtualcamerahelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122C22C703DB2005194AC /* virtualcamerahelper.swift */; };
+		2A9122C42C703FA1005194AC /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122B82C7021F8005194AC /* Configuration.swift */; };
+		2A9122CA2C712A9A005194AC /* Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122C92C712A9A005194AC /* Provider.swift */; };
+		2A9122CC2C712AA8005194AC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122CB2C712AA8005194AC /* Device.swift */; };
+		2A9122CE2C712AB5005194AC /* Stream-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122CD2C712AB5005194AC /* Stream-Source.swift */; };
+		2A9122D32C712B52005194AC /* Stream-Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122D22C712B52005194AC /* Stream-Sink.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,7 +80,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2A3AFDE22C688D100046718B /* Converter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Converter.swift; sourceTree = "<group>"; };
 		2A3AFDE82C69CEE60046718B /* MouseListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseListener.swift; sourceTree = "<group>"; };
 		2A3AFDEB2C69D0730046718B /* view-MouseEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-MouseEvent.swift"; sourceTree = "<group>"; };
 		2A54A2F92C5ECD2900D657BC /* castr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = castr.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,10 +119,17 @@
 		2A8D2A422C687CD600E1B5EF /* view-Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Settings.swift"; sourceTree = "<group>"; };
 		2A8D2A442C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Settings-VirtualCamera.swift"; sourceTree = "<group>"; };
 		2A8D2A4A2C68828B00E1B5EF /* harrisonhall.castr.virtualcamera.systemextension */ = {isa = PBXFileReference; explicitFileType = "wrapper.system-extension"; includeInIndex = 0; path = harrisonhall.castr.virtualcamera.systemextension; sourceTree = BUILT_PRODUCTS_DIR; };
-		2A8D2A4C2C68828B00E1B5EF /* virtualcameraProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = virtualcameraProvider.swift; sourceTree = "<group>"; };
 		2A8D2A4E2C68828B00E1B5EF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		2A8D2A502C68828B00E1B5EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2A8D2A512C68828B00E1B5EF /* virtualcamera.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = virtualcamera.entitlements; sourceTree = "<group>"; };
+		2A9122B82C7021F8005194AC /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
+		2A9122BA2C7022D0005194AC /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
+		2A9122C02C7033DB005194AC /* VirtualCameraConnecterDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualCameraConnecterDraft.swift; sourceTree = "<group>"; };
+		2A9122C22C703DB2005194AC /* virtualcamerahelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = virtualcamerahelper.swift; sourceTree = "<group>"; };
+		2A9122C92C712A9A005194AC /* Provider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Provider.swift; sourceTree = "<group>"; };
+		2A9122CB2C712AA8005194AC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		2A9122CD2C712AB5005194AC /* Stream-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream-Source.swift"; sourceTree = "<group>"; };
+		2A9122D22C712B52005194AC /* Stream-Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream-Sink.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -265,8 +278,10 @@
 				2A54A3452C60611B00D657BC /* ScreenRecorder.swift */,
 				2A54A3472C60619B00D657BC /* CaptureEngine.swift */,
 				2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */,
-				2A3AFDE22C688D100046718B /* Converter.swift */,
 				2A3AFDE82C69CEE60046718B /* MouseListener.swift */,
+				2A9122BA2C7022D0005194AC /* CameraViewModel.swift */,
+				2A9122C02C7033DB005194AC /* VirtualCameraConnecterDraft.swift */,
+				2A9122C22C703DB2005194AC /* virtualcamerahelper.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -283,12 +298,40 @@
 		2A8D2A4B2C68828B00E1B5EF /* virtualcamera */ = {
 			isa = PBXGroup;
 			children = (
-				2A8D2A4C2C68828B00E1B5EF /* virtualcameraProvider.swift */,
 				2A8D2A4E2C68828B00E1B5EF /* main.swift */,
+				2A9122B82C7021F8005194AC /* Configuration.swift */,
+				2A9122CF2C712B1A005194AC /* Provider */,
+				2A9122D02C712B26005194AC /* Device */,
+				2A9122D12C712B45005194AC /* Stream */,
 				2A8D2A502C68828B00E1B5EF /* Info.plist */,
 				2A8D2A512C68828B00E1B5EF /* virtualcamera.entitlements */,
 			);
 			path = virtualcamera;
+			sourceTree = "<group>";
+		};
+		2A9122CF2C712B1A005194AC /* Provider */ = {
+			isa = PBXGroup;
+			children = (
+				2A9122C92C712A9A005194AC /* Provider.swift */,
+			);
+			path = Provider;
+			sourceTree = "<group>";
+		};
+		2A9122D02C712B26005194AC /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				2A9122CB2C712AA8005194AC /* Device.swift */,
+			);
+			path = Device;
+			sourceTree = "<group>";
+		};
+		2A9122D12C712B45005194AC /* Stream */ = {
+			isa = PBXGroup;
+			children = (
+				2A9122CD2C712AB5005194AC /* Stream-Source.swift */,
+				2A9122D22C712B52005194AC /* Stream-Sink.swift */,
+			);
+			path = Stream;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -393,7 +436,6 @@
 			files = (
 				2A54A2FD2C5ECD2900D657BC /* castr.swift in Sources */,
 				2A54A3312C5FF8D700D657BC /* view-SystemAudioCaptureConfiguration.swift in Sources */,
-				2A3AFDE32C688D100046718B /* Converter.swift in Sources */,
 				2A54A3172C5F096C00D657BC /* ContentView.swift in Sources */,
 				2A8D2A452C687DAA00E1B5EF /* view-Settings-VirtualCamera.swift in Sources */,
 				2A3AFDEC2C69D0730046718B /* view-MouseEvent.swift in Sources */,
@@ -402,12 +444,15 @@
 				2A8D2A252C674B3300E1B5EF /* SystemExtensionManager.swift in Sources */,
 				2A8D2A1E2C671DAD00E1B5EF /* view-ImageConfiguration.swift in Sources */,
 				2A8D2A202C671DBC00E1B5EF /* view-ColorConfiguration.swift in Sources */,
+				2A9122BC2C702508005194AC /* CameraViewModel.swift in Sources */,
 				2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */,
 				2A8D2A432C687CD600E1B5EF /* view-Settings.swift in Sources */,
 				2A54A3222C5F37D300D657BC /* style-Text.swift in Sources */,
 				2A54A31F2C5F367700D657BC /* view-SourceConfigurationPanel.swift in Sources */,
+				2A9122C32C703DB2005194AC /* virtualcamerahelper.swift in Sources */,
 				2A54A33B2C603E2200D657BC /* enum-Source.swift in Sources */,
 				2A54A32F2C5FF78900D657BC /* view-WindowCaptureConfiguration.swift in Sources */,
+				2A9122BF2C702D46005194AC /* Configuration.swift in Sources */,
 				2A54A3262C5F3F7600D657BC /* view-SourcesPanel.swift in Sources */,
 				2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */,
 				2A54A3122C5EFDB800D657BC /* view-Panel.swift in Sources */,
@@ -418,6 +463,7 @@
 				2A54A3342C60239D00D657BC /* state-Scenes.swift in Sources */,
 				2A54A33F2C60502800D657BC /* manager-Preview.swift in Sources */,
 				2A54A3362C60251C00D657BC /* model-Scene.swift in Sources */,
+				2A9122C12C7033DB005194AC /* VirtualCameraConnecterDraft.swift in Sources */,
 				2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */,
 				2A54A31D2C5F1A6400D657BC /* view-ScenesPanel.swift in Sources */,
 				2A54A3382C60395500D657BC /* state-Sources.swift in Sources */,
@@ -432,8 +478,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A9122CA2C712A9A005194AC /* Provider.swift in Sources */,
 				2A8D2A4F2C68828B00E1B5EF /* main.swift in Sources */,
-				2A8D2A4D2C68828B00E1B5EF /* virtualcameraProvider.swift in Sources */,
+				2A9122D32C712B52005194AC /* Stream-Sink.swift in Sources */,
+				2A9122CE2C712AB5005194AC /* Stream-Source.swift in Sources */,
+				2A9122C42C703FA1005194AC /* Configuration.swift in Sources */,
+				2A9122CC2C712AA8005194AC /* Device.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,6 +622,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = castr/castr.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -582,6 +633,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = castr/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Castr;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to capture video for streaming.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -602,6 +655,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = castr/castr.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -612,6 +666,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = castr/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Castr;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to capture video for streaming.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

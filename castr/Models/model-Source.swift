@@ -67,6 +67,7 @@ class SourceModel: Identifiable, ObservableObject {
                     await stop()
                 }
                 cancellables.forEach { $0.cancel() }
+                print("DE-INITIALIZING SCREEN CAPTURE")
             }
             
             private func setupObservers() {
@@ -112,7 +113,7 @@ class SourceModel: Identifiable, ObservableObject {
             //
                 
                 if(newSourceId == id) {
-//                    Task { await startMonitoringAvailableContent() }
+                    Task { await startMonitoringAvailableContent() }
                 } else {
                     stopMonitoringAvailableContent()
                 }
@@ -142,6 +143,7 @@ class SourceModel: Identifiable, ObservableObject {
                     
                     // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
                     Previewer.shared.contentLayer.addSublayer(layer)
+                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
                     
                 print("SCREEN RECORDER IS: ", screenRecorder)
                     await screenRecorder?.start()
@@ -169,9 +171,9 @@ class SourceModel: Identifiable, ObservableObject {
             
             
             func startMonitoringAvailableContent() async {
-                print("starting to monitor available content")
+//                print("starting to monitor available content")
                 await self.refreshAvailableContent()
-                contentRefreshTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect().sink { [weak self] _ in
+                contentRefreshTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect().sink { [weak self] _ in
                     guard let self = self else { return }
                     Task {
                         await self.refreshAvailableContent()
@@ -180,7 +182,7 @@ class SourceModel: Identifiable, ObservableObject {
             }
             
             func stopMonitoringAvailableContent() {
-                print("stopping monitoring available content")
+//                print("stopping monitoring available content")
                 contentRefreshTimer?.cancel()
                 contentRefreshTimer = nil
             }
@@ -191,7 +193,7 @@ class SourceModel: Identifiable, ObservableObject {
                     let availableContent = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
                     
                     await MainActor.run {
-                        print("monitoring available content")
+//                        print("monitoring available content")
                         availableDisplays = availableContent.displays
                         availableWindows = filterWindows(availableContent.windows)
                         availableApps = filterApplications(availableContent.applications)

@@ -23,23 +23,23 @@ struct SourceConfigurationPanel: View {
             .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
 //            .border(Color.red, width: 1)
             .cornerRadius(5)
-            .overlay(
-                RoundedRectangle(cornerRadius: 5)
-//                    .stroke(Color.red, lineWidth: 1)
-                    .fill(isHovered ? Color(nsColor: .quinaryLabel) : Color.clear)
-            )
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 5)
+////                    .stroke(Color.red, lineWidth: 1)
+//                    .fill(isHovered ? Color(nsColor: .quinaryLabel) : Color.clear)
+//            )
             .padding(5)
             .onHover { hovering in
                 isHovered = hovering
             }
-            .onContinuousHover { phase in
-                switch phase {
-                case .active:
-                    NSCursor.openHand.push()
-                case .ended:
-                    NSCursor.pop()
-                }
-            }
+//            .onContinuousHover { phase in
+//                switch phase {
+//                case .active:
+//                    NSCursor.openHand.push()
+//                case .ended:
+//                    NSCursor.pop()
+//                }
+//            }
             
             Spacer().panelMainSeparatorStyle()
             

@@ -1,9 +1,4 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
 
-Abstract:
-An object that captures a stream of captured sample buffers containing screen and audio content.
-*/
 import Foundation
 import AVFAudio
 import ScreenCaptureKit
@@ -26,7 +21,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     
     private let logger = Logger()
 
-    private(set) var stream: SCStream?
+    var stream: SCStream?
     private var streamOutput: CaptureEngineStreamOutput?
     private let videoSampleBufferQueue = DispatchQueue(label: "com.example.apple-samplecode.VideoSampleBufferQueue")
     
@@ -56,6 +51,7 @@ class CaptureEngine: NSObject, @unchecked Sendable {
     }
     
     func stopCapture() async {
+        print("The stream was stopped at the time of: ", Date().timeIntervalSince1970)
         do {
             try await stream?.stopCapture()
             continuation?.finish()
@@ -80,33 +76,111 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
     
     var pcmBufferHandler: ((AVAudioPCMBuffer) -> Void)?
     var capturedFrameHandler: ((CapturedFrame) -> Void)?
+    var buffer: CMSampleBuffer?
+    var timer: Timer?
     
     // Store the  startCapture continuation, so you can cancel it if an error occurs.
     private var continuation: AsyncThrowingStream<CapturedFrame, Error>.Continuation?
     
     init(continuation: AsyncThrowingStream<CapturedFrame, Error>.Continuation?) {
         self.continuation = continuation
+        super.init()
+//        enqueue()
     }
+    
+    deinit {
+        timer?.invalidate()
+    }
+    
+    func enqueue () {
+          timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+              // TODO: Implement a send function right here:
+              if(GlobalState.shared.streamToVirtualCamera) {
+                  
+                  guard
+                    let self = self,
+                    let sinkQueue = CameraViewModel.shared.sinkQueue,
+                    let sampleBuffer = buffer
+                  else { return }
+                  
+                  if let stripedSampleBuffer = stripMetadata(from: sampleBuffer) {
+                      
+                      print("Stripped sample buffer, now sending it")
+                      let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(stripedSampleBuffer).toOpaque())
+                      let result = CMSimpleQueueEnqueue(sinkQueue, element: pointerRef)
+                      
+                  } else {
+                      
+                      let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(sampleBuffer).toOpaque())
+                      let result = CMSimpleQueueEnqueue(sinkQueue, element: pointerRef)
+                      
+                      print("Failed to strip sample buffer, but still sending it")
+                  }
+                  buffer = nil
+              }
+              print("DISTRIBUTED FRAMES TO ALL OUTPUT")
+          }
+      }
     
     /// - Tag: DidOutputSampleBuffer
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of outputType: SCStreamOutputType) {
         
+        print("the sample buffer is: ", sampleBuffer)
+        print("are delayed frames on?: ", GlobalState.shared.delayFrames)
+        if(GlobalState.shared.delayFrames) { return }
+        
+        print("New frame at: ", Date().timeIntervalSince1970)
         // Return early if the sample buffer is invalid.
         guard sampleBuffer.isValid else { return }
         
-        // Determine which type of data the sample buffer contains.
-        switch outputType {
-        case .screen:
-            // Create a CapturedFrame structure for a video sample buffer.
-            guard let frame = createFrame(for: sampleBuffer) else { return }
-            capturedFrameHandler?(frame)
-        @unknown default:
-            fatalError("Encountered unknown stream output type: \(outputType)")
+//        buffer = sampleBuffer
+        
+        
+        
+        // TODO: Implement a send function right here:
+        if(GlobalState.shared.streamToVirtualCamera) {
+            
+            guard
+              let sinkQueue = CameraViewModel.shared.sinkQueue
+            else { return }
+            
+            if let stripedSampleBuffer = stripMetadata(from: sampleBuffer) {
+                
+                print("Stripped sample buffer, now sending it")
+                let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(stripedSampleBuffer).toOpaque())
+                let result = CMSimpleQueueEnqueue(sinkQueue, element: pointerRef)
+                
+            } else {
+                
+                let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(sampleBuffer).toOpaque())
+                let result = CMSimpleQueueEnqueue(sinkQueue, element: pointerRef)
+                
+                print("Failed to strip sample buffer, but still sending it")
+            }
+//            buffer = nil
         }
+
+        
+        
+        
+        
+        
+        // Create a CapturedFrame structure for a video sample buffer.
+        guard let frame = createFrame(for: sampleBuffer) else { return }
+        capturedFrameHandler?(frame)
+        
+       
+        
     }
     
     /// Create a `CapturedFrame` for the video sample buffer.
     private func createFrame(for sampleBuffer: CMSampleBuffer) -> CapturedFrame? {
+        
+        // Get the pixel buffer that contains the image data.
+        guard let pixelBuffer = sampleBuffer.imageBuffer else {
+            print("NO IMAGE BUFFER IS PRESENT")
+            return nil
+        }
         
         // Retrieve the array of metadata attachments from the sample buffer.
         guard let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer,
@@ -118,8 +192,7 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
               let status = SCFrameStatus(rawValue: statusRawValue),
               status == .complete else { return nil }
         
-        // Get the pixel buffer that contains the image data.
-        guard let pixelBuffer = sampleBuffer.imageBuffer else { return nil }
+       
         
         // Get the backing IOSurface.
         guard let surfaceRef = CVPixelBufferGetIOSurface(pixelBuffer)?.takeUnretainedValue() else { return nil }
@@ -136,12 +209,53 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
                                   contentRect: contentRect,
                                   contentScale: contentScale,
                                   scaleFactor: scaleFactor)
+        
         return frame
+    }
+    
+    
+    
+    func stripMetadata(from sampleBuffer: CMSampleBuffer) -> CMSampleBuffer? {
+        
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            print("Failed to get image buffer from sample buffer: ", sampleBuffer)
+            print("The failed sample buffers image buffer is: ", sampleBuffer.imageBuffer)
+            return nil
+        }
+        
+        guard let formatDescription = CMSampleBufferGetFormatDescription(sampleBuffer) else {
+            print("Failed to get Format Description from sample buffer")
+            return nil
+        }
+        
+        var timingInfo = CMSampleTimingInfo()
+        CMSampleBufferGetSampleTimingInfo(sampleBuffer, at: 0, timingInfoOut: &timingInfo)
+        
+        var newSampleBuffer: CMSampleBuffer?
+        let status = CMSampleBufferCreateForImageBuffer(
+            allocator: kCFAllocatorDefault,
+            imageBuffer: imageBuffer,
+            dataReady: true,
+            makeDataReadyCallback: nil,
+            refcon: nil,
+            formatDescription: formatDescription,
+            sampleTiming: &timingInfo,
+            sampleBufferOut: &newSampleBuffer
+        )
+        
+        if status != noErr {
+            print("Failed to create new sample buffer: \(status)")
+            return nil
+        }
+        
+        
+        return newSampleBuffer
     }
     
    
     
     func stream(_ stream: SCStream, didStopWithError error: Error) {
+        print("The stream was stopped with an ERROR at the time of: ", Date().timeIntervalSince1970)
         continuation?.finish(throwing: error)
     }
 }

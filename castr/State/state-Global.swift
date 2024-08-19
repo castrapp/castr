@@ -14,6 +14,8 @@ class GlobalState: ObservableObject {
     private init() {}
     
     
+    @Published var delayFrames = false
+    
     
     
     /// `Layout Properties`
@@ -40,4 +42,8 @@ class GlobalState: ObservableObject {
     /// `Sources Properties`
     @Published var sources:[SourceModel] = []
     @Published var selectedSourceId: String = ""
+    
+    
+    
+    @Published var streamToVirtualCamera: Bool = false
 }

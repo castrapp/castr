@@ -51,7 +51,9 @@ struct ScenesPanel: View {
                     size: 12,
                     imageName: "plus",
                     onPress: {
-                        globalState.addScene(name: "")
+                        if(globalState.scenes.count == 0) {
+                            globalState.addScene(name: "")
+                        }
                         print("adding a scene")
                     }
                 )
@@ -72,22 +74,22 @@ struct ScenesPanel: View {
                 
                 Spacer()
                 
-                Menu("Options") {
-                    Button("Add Scene") {
-                        print("option 1 has been pressed")
-                    }
-                    Button("Delete Scene") {
-                        print("option 2 has been pressed")
-                    }
-                    Button("Duplicate Scene") {
-                        print("option 3 has been pressed")
-                    }
-                    Button("Set as Active Scene") {
-                        print("option 4 has been pressed")
-                    }
-                }
-                .fixedSize(horizontal: true, vertical: true)
-                .padding(.trailing, 5)
+//                Menu("Options") {
+//                    Button("Add Scene") {
+//                        print("option 1 has been pressed")
+//                    }
+//                    Button("Delete Scene") {
+//                        print("option 2 has been pressed")
+//                    }
+//                    Button("Duplicate Scene") {
+//                        print("option 3 has been pressed")
+//                    }
+//                    Button("Set as Active Scene") {
+//                        print("option 4 has been pressed")
+//                    }
+//                }
+//                .fixedSize(horizontal: true, vertical: true)
+//                .padding(.trailing, 5)
                 
             }
             .frame(maxWidth: .infinity, maxHeight: 32, alignment: .leading)
@@ -156,14 +158,14 @@ struct SceneCard: View {
                 isHovered = hovering
 //            }
         }
-        .onContinuousHover { phase in
-            switch phase {
-            case .active:
-                NSCursor.pointingHand.push()
-            case .ended:
-                NSCursor.pop()
-            }
-        }
+//        .onContinuousHover { phase in
+//            switch phase {
+//            case .active:
+//                NSCursor.pointingHand.push()
+//            case .ended:
+//                NSCursor.pop()
+//            }
+//        }
     }
 }
 

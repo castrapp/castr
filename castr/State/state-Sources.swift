@@ -26,6 +26,37 @@ extension GlobalState {
         }
     }
     
+    func deleteSelectedSource() {
+        print("sources array before deleting: ", sources)
+        guard !selectedSourceId.isEmpty else { return }
+        
+        // Find the index of the source to be deleted
+        guard let indexToDelete = sources.firstIndex(where: { $0.id == selectedSourceId }) else { return }
+        
+        // Get the source to be deleted
+        let sourceToDelete = sources[indexToDelete]
+        
+        // Remove the source from the sources array
+        sources.remove(at: indexToDelete)
+        
+        // Remove the source ID from all scenes that contain it
+        for i in 0..<scenes.count {
+            scenes[i].sources.removeAll { $0 == selectedSourceId }
+        }
+        
+        // Stop the source if it's a ScreenCaptureSourceModel
+        if let screenCaptureSource = sourceToDelete as? ScreenCaptureSourceModel {
+            Task { @MainActor in
+                await screenCaptureSource.stop()
+            }
+        }
+        
+        // Clear the selected source ID
+        selectedSourceId = ""
+        
+        print("sources array after deleting: ", sources)
+    }
+    
 
     func addScreenCaptureSource(name: String) {
         // TODO: Create the new Source Model

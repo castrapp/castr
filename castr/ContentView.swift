@@ -11,6 +11,7 @@ import SwiftUI
 struct ContentView: View {
     
     @StateObject var layout = GlobalState.shared
+    @ObservedObject var global = GlobalState.shared
     
     var body: some View {
         HStack(spacing: 0) {
@@ -19,13 +20,14 @@ struct ContentView: View {
             HStack {
                 VStack {
                     
-                    Spacer().toolbarPanelLineStyle()
+//                    Spacer().toolbarPanelLineStyle()
                     
                     ScenesPanel()
                     
                     SourcesPanel()
                     
-                    ControlsPanel()
+                    Toggle("Toggle Switch", isOn: $global.delayFrames)
+//                    ControlsPanel()
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity,  alignment: .top)
                 
@@ -42,9 +44,9 @@ struct ContentView: View {
             /// `Main Panel`
             VStack(spacing: 0) {
                 
-                Spacer().frame(maxWidth: .infinity, maxHeight: 52).background(.windowBackground.opacity(0.85))
-                
-                Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
+//                Spacer().frame(maxWidth: .infinity, maxHeight: 52).background(.windowBackground.opacity(0.85))
+//                
+//                Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
                 
                 Spacer()
                 
@@ -52,31 +54,31 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
+//                Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
                 
-                HStack(spacing: 20) {
-                    Text("Virtual Camera Name")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.leading, 10)
-                    
-                    Text("Status")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    
-                    Spacer()
-                    
-                    Text("30 / 30 FPS")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    
-                    Text("1920 x 1080")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding(.trailing, 10)
-                    
-                }
-                .frame(maxWidth: .infinity, maxHeight: 30).background(.windowBackground.opacity(0.85))
+//                HStack(spacing: 20) {
+//                    Text("Virtual Camera Name")
+//                    .font(.subheadline)
+//                    .foregroundColor(.secondary)
+//                    .padding(.leading, 10)
+//                    
+//                    Text("Status")
+//                    .font(.subheadline)
+//                    .foregroundColor(.secondary)
+//                    
+//                    Spacer()
+//                    
+//                    Text("30 / 30 FPS")
+//                    .font(.subheadline)
+//                    .foregroundColor(.secondary)
+//                    
+//                    Text("1920 x 1080")
+//                    .font(.subheadline)
+//                    .foregroundColor(.secondary)
+//                    .padding(.trailing, 10)
+//                    
+//                }
+//                .frame(maxWidth: .infinity, maxHeight: 30).background(.windowBackground.opacity(0.85))
                 
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -93,7 +95,7 @@ struct ContentView: View {
                 Spacer().verticalBlackStyle()
                 
                 VStack {
-                    Spacer().toolbarPanelLineStyle()
+//                    Spacer().toolbarPanelLineStyle()
                     
                     SourceConfigurationPanel()
                     
@@ -108,11 +110,11 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
 //        .border(Color.red, width: 1)
-        .overlay(alignment: .top) {
-            Toolbar()
-        
-        }
-        .ignoresSafeArea()
+//        .overlay(alignment: .top) {
+//            Toolbar()
+//        
+//        }
+//        .ignoresSafeArea()
         
     }
 }

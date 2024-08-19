@@ -15,26 +15,26 @@ struct SettingsPanel: View {
     var body: some View {
         HStack {
             
-            ScrollView {
-                
-            }
-            .frame(maxWidth: 200, maxHeight: .infinity)
-            .border(Color.red, width: 1)
-            
-            
-            Spacer()
-            .frame(maxWidth: 1, maxHeight: .infinity)
-            .background(Color.black)
-            
-            
-            VStack {
-                VirtualCameraSettings()
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .border(Color.red, width: 1)
-            
+//            ScrollView {
+//                
+//            }
+//            .frame(maxWidth: 200, maxHeight: .infinity)
+//            .border(Color.red, width: 1)
+//            
+//            
+//            Spacer()
+//            .frame(maxWidth: 1, maxHeight: .infinity)
+//            .background(Color.black)
+//            
+//            
+//            VStack {
+//                VirtualCameraSettings()
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: .infinity)
+//            .border(Color.red, width: 1)
+//            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .border(Color.red, width: 1)
+//        .border(Color.red, width: 1)
     }
 }

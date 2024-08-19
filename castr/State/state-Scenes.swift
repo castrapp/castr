@@ -45,6 +45,8 @@ extension GlobalState {
             // If no scenes left, clear the selection
             selectedSceneId = ""
         }
+        
+        sources.removeAll()
     }
     
     func addSourceIdToScene(sourceId: String) {

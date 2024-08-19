@@ -1,9 +1,4 @@
-/*
-See the LICENSE.txt file for this sample’s licensing information.
 
-Abstract:
-A model object that provides the interface to capture screen content and system audio.
-*/
 import Foundation
 import ScreenCaptureKit
 import Combine
@@ -120,26 +115,31 @@ class ScreenRecorder: NSObject, ObservableObject {
         streamConfig.excludesCurrentProcessAudio = true
         
         // Configure the display content width and height.
-        if captureType == .display {
-            streamConfig.width = selectedDisplay.width * scaleFactor
-            streamConfig.height = selectedDisplay.height * scaleFactor
-        }
+//        if captureType == .display {
+//            streamConfig.width = selectedDisplay.width * scaleFactor
+//            streamConfig.height = selectedDisplay.height * scaleFactor
+//        }
         
         // Configure the window content width and height.
-        if captureType == .window, let window = selectedWindow {
-            streamConfig.width = Int(window.frame.width) * 2
-            streamConfig.height = Int(window.frame.height) * 2
-        }
+//        if captureType == .window, let window = selectedWindow {
+//            streamConfig.width = Int(window.frame.width) * 2
+//            streamConfig.height = Int(window.frame.height) * 2
+//        }
         
-        if selectedWindow != nil {
-            streamConfig.scalesToFit = true
-            streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
-            streamConfig.backgroundColor = .clear
-            streamConfig.shouldBeOpaque = true
-        }
+//        if selectedWindow != nil {
+//            streamConfig.scalesToFit = true
+//            streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
+//            streamConfig.backgroundColor = .clear
+//            streamConfig.shouldBeOpaque = true
+//        }
         
-        // Set the capture interval at 60 fps.
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 60)
+        streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
+        
+        // Configure the display content width and height.
+        streamConfig.width = 1728
+        streamConfig.height = 1118
+        
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
         
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.
@@ -167,21 +167,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     
     
     /// `Functions`
-
-//    func monitorAvailableContent() async {
-//        guard !isSetup else { return }
-//        // Refresh the lists of capturable content.
-//        await self.refreshAvailableContent()
-//        Timer.publish(every: 3, on: .main, in: .common).autoconnect().sink { [weak self] _ in
-//            guard let self = self else { return }
-//            Task {
-//                await self.refreshAvailableContent()
-//            }
-//        }
-////        .store(in: &subscriptions)
-//    }
     
-    /// Starts capturing screen content.
     func start() async {
         // Exit early if already running.
         guard !isRunning else { return }
@@ -200,6 +186,7 @@ class ScreenRecorder: NSObject, ObservableObject {
             // Start the stream and await new video frames.
             for try await frame in captureEngine.startCapture(configuration: config, filter: filter) {
                 capturePreview.contents = frame.surface
+//                print("rendering new frame")
                 if contentSize != frame.size {
                     // Update the content size if it changed.
                     contentSize = frame.size
