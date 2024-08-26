@@ -85,6 +85,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
 
 
+
+
+
+
+
+
+
 import AVFoundation
 
 class ScreenRecordingPermissionHelper {
