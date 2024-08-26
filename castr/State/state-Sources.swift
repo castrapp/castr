@@ -24,6 +24,8 @@ extension GlobalState {
         case .color:            addColorSource(name: sourceName)
         case .text:             addTextSource(name: sourceName)
         }
+        
+        updateCurrentSources()
     }
     
     func deleteSelectedSource() {
@@ -36,6 +38,13 @@ extension GlobalState {
         // Get the source to be deleted
         let sourceToDelete = sources[indexToDelete]
         
+        // Stop the source if it's a ScreenCaptureSourceModel
+        if let screenCaptureSource = sourceToDelete as? ScreenCaptureSourceModel {
+            Task { @MainActor in
+                await screenCaptureSource.stop()
+            }
+        }
+        
         // Remove the source from the sources array
         sources.remove(at: indexToDelete)
         
@@ -44,17 +53,12 @@ extension GlobalState {
             scenes[i].sources.removeAll { $0 == selectedSourceId }
         }
         
-        // Stop the source if it's a ScreenCaptureSourceModel
-        if let screenCaptureSource = sourceToDelete as? ScreenCaptureSourceModel {
-            Task { @MainActor in
-                await screenCaptureSource.stop()
-            }
-        }
-        
         // Clear the selected source ID
         selectedSourceId = ""
         
         print("sources array after deleting: ", sources)
+        
+        updateCurrentSources()
     }
     
 
@@ -195,5 +199,29 @@ extension GlobalState {
         Task { @MainActor in
             await textSource.start()
         }
+    }
+    
+    
+    func updateCurrentSources() {
+        // Find the current scene
+        guard let currentScene = scenes.first(where: { $0.id == selectedSceneId }) else {
+            print("Error: No scene found with the selected scene ID")
+            return
+        }
+        
+        // Create a temporary array to hold the current sources
+        var tempSources: [SourceModel] = []
+        
+        // Iterate through the source IDs in the current scene
+        for sourceId in currentScene.sources {
+            // Find the corresponding source in the sources array
+            if let source = sources.first(where: { $0.id == sourceId }) {
+                // Add the source to the temporary array
+                tempSources.append(source)
+            }
+        }
+        
+        // Update the currentSources array
+        currentSources = tempSources
     }
 }

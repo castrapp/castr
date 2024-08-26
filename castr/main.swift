@@ -35,7 +35,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             print("Failed to get the container URL for the app group.")
         }
         
-    
+        
+        
+        
+        
+        if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifer) {
+            // Save a string value
+            sharedDefaults.set("3456", forKey: "width")
+            sharedDefaults.set("2234", forKey: "height")
+            sharedDefaults.set("30", forKey: "framerate")
+        }
+        
+        if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: settingsDefaultsIdentifer) {
+            print("Shared container URL: \(containerURL.path)")
+        } else {
+            print("Failed to get the container URL for the app group.")
+        }
 
     }
 
@@ -163,6 +178,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let settingsItem = NSMenuItem(title: "Settings", action: #selector(openSettings), keyEquivalent: ",")
         appMenuItem.submenu?.addItem(settingsItem)
+        
+        // Add a separator
+        appMenuItem.submenu?.addItem(NSMenuItem.separator())
+        
+        // Add the Quit menu item
+        let quitItem = NSMenuItem(title: "Quit Castr", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appMenuItem.submenu?.addItem(quitItem)
         
         NSApplication.shared.mainMenu = mainMenu
     }

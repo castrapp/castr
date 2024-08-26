@@ -7,6 +7,7 @@
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>$(TeamIdentifierPrefix)harrisonhall.castr</string>
+		<string>$(TeamIdentifierPrefix)harrisonhall.castr.settings</string>
 	</array>
 	<key>com.apple.security.device.camera</key>
 	<true/>

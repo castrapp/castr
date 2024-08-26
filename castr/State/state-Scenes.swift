@@ -48,6 +48,7 @@ extension GlobalState {
         }
         
         sources.removeAll()
+//        currentSources.removeAll()
     }
     
     func addSourceIdToScene(sourceId: String) {

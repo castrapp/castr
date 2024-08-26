@@ -18,6 +18,8 @@ class SourceModel: Identifiable, ObservableObject {
     @Published var name: String
     @Published var isHidden: Bool
     @Published var scenes: [String]
+    var layer: CAMetalLayer = CAMetalLayer()
+    var mtlTexture: MTLTexture?
     
     init(type: SourceType, name: String) {
         self.id = UUID().uuidString
@@ -32,7 +34,7 @@ class SourceModel: Identifiable, ObservableObject {
         
         class ScreenCaptureSourceModel: SourceModel {
             
-            var layer: CAMetalLayer = CAMetalLayer()
+    
             
             // TODO: Create available displays variable
             // TODO: Create available apps variable
@@ -60,7 +62,7 @@ class SourceModel: Identifiable, ObservableObject {
             
             private var contentRefreshTimer: AnyCancellable?
             private var cancellables: Set<AnyCancellable> = []
-            private var screenRecorder: ScreenRecorder2?
+            private var screenRecorder: ScreenRecorder3?
             
             init(name: String) {
                 self.excludedApps = []
@@ -129,25 +131,29 @@ class SourceModel: Identifiable, ObservableObject {
             
             @MainActor
             func start() async {
-                    layer.bounds = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
-                    layer.frame = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
-                    layer.pixelFormat = .bgra8Unorm
-                    layer.framebufferOnly = true
-                layer.drawableSize = CGSize(width: layer.frame.width, height: layer.frame.height)
-                Previewer.shared.contentLayer.addSublayer(layer)
+//                    layer.bounds = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
+//                    layer.frame = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
+//                    layer.pixelFormat = .bgra8Unorm
+//                    layer.framebufferOnly = true
+//                    layer.drawableSize = CGSize(width: layer.frame.width, height: layer.frame.height)
+                
+    
+                
                     // TODO: Refresh the available content once
                     await self.refreshAvailableContent()
                     
                     guard let display = selectedDisplay, screenRecorder == nil else { return }
                     
-                    // TODO: Create the ScreenRecorder and pass in the CALayer
-                    screenRecorder = ScreenRecorder2(
+                    
+                    // TODO: Refactor this such that we only pass in 3 things: the layer, the excluded apps, and the selected display.
+                    screenRecorder = ScreenRecorder3(
                         capturePreview: layer,
                         availableDisplays: availableDisplays,
                         availableApps: availableApps,
                         availableWindows: availableWindows,
                         excludedApps: excludedApps,
-                        selectedDisplay: display
+                        selectedDisplay: display,
+                        model: self
                     )
                     
                     // TODO: Set the CALayer to be take up the full width and height of its superlayer by default
@@ -155,10 +161,10 @@ class SourceModel: Identifiable, ObservableObject {
 //                    layer.contentsGravity = .resizeAspect
                     
                     // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
-//                    Previewer.shared.contentLayer.addSublayer(layer)
+                    Previewer.shared.contentLayer.addSublayer(layer)
 //                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
                     
-                print("SCREEN RECORDER IS: ", screenRecorder)
+                    print("SCREEN RECORDER IS: ", screenRecorder)
                     await screenRecorder?.start()
                     
             }
@@ -171,6 +177,8 @@ class SourceModel: Identifiable, ObservableObject {
                 
                 // TODO: Reset the CALayer
                 layer.contents = nil
+                
+                layer = CAMetalLayer()
                 
                 // TODO: Stop monitoring the available content
                 stopMonitoringAvailableContent()
@@ -238,7 +246,7 @@ class SourceModel: Identifiable, ObservableObject {
 
         class WindowCaptureSourceModel: SourceModel {
             
-            var layer: CAMetalLayer = CAMetalLayer()
+//            var layer: CAMetalLayer = CAMetalLayer()
             
             // TODO: Create available displays variable
             // TODO: Create available apps variable
@@ -428,7 +436,7 @@ class SourceModel: Identifiable, ObservableObject {
 
 
         class ImageSourceModel: SourceModel {
-            var layer: CALayer = CALayer()
+//            var layer: CALayer = CALayer()
             
             @Published var image: NSImage? {
                 didSet {
@@ -516,7 +524,7 @@ class SourceModel: Identifiable, ObservableObject {
                 
                 // TODO: Reset the CALayer
                 layer.contents = nil
-                layer = CALayer()
+//                layer = CALayer()
             }
          
         }
@@ -525,7 +533,7 @@ class SourceModel: Identifiable, ObservableObject {
 
 
         class ColorSourceModel: SourceModel {
-            var layer: CALayer = CALayer()
+//            var layer: CALayer = CALayer()
             
             @Published var color: Color = .white {
                 didSet {
@@ -599,7 +607,7 @@ class SourceModel: Identifiable, ObservableObject {
                 
                 // TODO: Reset the CALayer
                 layer.contents = nil
-                layer = CALayer()
+//                layer = CALayer()
             }
         }
 
@@ -608,13 +616,13 @@ class SourceModel: Identifiable, ObservableObject {
 
 
         class TextSourceModel: SourceModel {
-            var layer: CATextLayer = CATextLayer()
+//            var layer: CATextLayer = CATextLayer()
             
             @Published var text: String = "" {
                 didSet {
                     Task { @MainActor in
                         print("text has changed too: ", text)
-                        layer.string = text
+//                        layer.string = text
                     }
                 }
             }
@@ -622,7 +630,7 @@ class SourceModel: Identifiable, ObservableObject {
                 didSet {
                     Task { @MainActor in
                         print("text has changed too: ", text)
-                        layer.fontSize = fontSize
+//                        layer.fontSize = fontSize
                     }
                 }
             }
@@ -630,7 +638,7 @@ class SourceModel: Identifiable, ObservableObject {
                 didSet {
                     Task { @MainActor in
                         print("color has changed")
-                        layer.foregroundColor = color.cgColor
+//                        layer.foregroundColor = color.cgColor
                     }
                 }
             }
@@ -678,9 +686,9 @@ class SourceModel: Identifiable, ObservableObject {
             @MainActor
             func start() async {
                 // TODO: Set the text of the CATextLayer
-                layer.string = text
-                layer.fontSize = fontSize // Adjust as needed
-                layer.foregroundColor = color.cgColor
+//                layer.string = text
+//                layer.fontSize = fontSize // Adjust as needed
+//                layer.foregroundColor = color.cgColor
                 
                 // TODO: Set the color of the CATextLayer
                 layer.backgroundColor = .clear
@@ -700,7 +708,7 @@ class SourceModel: Identifiable, ObservableObject {
                 
                 // TODO: Reset the CATextLayer
                 layer.contents = nil
-                layer = CATextLayer()
+//                layer = CATextLayer()
             }
         }
 
@@ -710,7 +718,7 @@ class SourceModel: Identifiable, ObservableObject {
 
 
         class VideoSourceModel: SourceModel {
-            var layer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer()
+//            var layer: AVCaptureVideoPreviewLayer = AVCaptureVideoPreviewLayer()
             private var captureSession: AVCaptureSession?
             
             @Published var availableCameras: [AVCaptureDevice] = []
@@ -782,8 +790,8 @@ class SourceModel: Identifiable, ObservableObject {
                     return
                 }
                 
-                layer = AVCaptureVideoPreviewLayer(session: captureSession!)
-                layer.videoGravity = .resizeAspect
+//                layer = AVCaptureVideoPreviewLayer(session: captureSession!)
+//                layer.videoGravity = .resizeAspect
                 layer.frame = Previewer.shared.contentLayer.bounds
                 
                 Previewer.shared.contentLayer.addSublayer(layer)

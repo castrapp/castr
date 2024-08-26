@@ -302,6 +302,8 @@ class CameraViewModel: ObservableObject  {
         }
     }
     
+    
+    
     @objc func propertyTimer() {
         if let sourceStream = sourceStream {
 //            print("source stream is: ", sourceStream)

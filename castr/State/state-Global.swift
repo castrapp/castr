@@ -33,6 +33,7 @@ class GlobalState: ObservableObject {
     @Published var selectedSceneId: String = "" {
         didSet {
             selectedSourceId = ""
+            updateCurrentSources()
         }
     }
     
@@ -40,7 +41,8 @@ class GlobalState: ObservableObject {
     
     
     /// `Sources Properties`
-    @Published var sources:[SourceModel] = []
+    @Published var sources:[SourceModel] = [] 
+    @Published var currentSources:[SourceModel] = []
     @Published var selectedSourceId: String = ""
     
     

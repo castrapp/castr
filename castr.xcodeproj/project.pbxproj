@@ -62,6 +62,9 @@
 		2AEEF31F2C7C1426008F4F13 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF31E2C7C1426008F4F13 /* Shared.swift */; };
 		2AEEF3202C7C15FB008F4F13 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF31E2C7C1426008F4F13 /* Shared.swift */; };
 		2AEEF3AB2C7C411E008F4F13 /* ScreenRecorder2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3AA2C7C411E008F4F13 /* ScreenRecorder2.swift */; };
+		2AEEF3AD2C7C4A05008F4F13 /* ScreenRecorder3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */; };
+		2AEEF3AF2C7C580B008F4F13 /* OutputService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3AE2C7C580B008F4F13 /* OutputService.swift */; };
+		2AEEF3B12C7C7463008F4F13 /* VideoWriterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3B02C7C7463008F4F13 /* VideoWriterService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -154,6 +157,9 @@
 		2ACAD4B52C7B324300B706D1 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		2AEEF31E2C7C1426008F4F13 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		2AEEF3AA2C7C411E008F4F13 /* ScreenRecorder2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder2.swift; sourceTree = "<group>"; };
+		2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder3.swift; sourceTree = "<group>"; };
+		2AEEF3AE2C7C580B008F4F13 /* OutputService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputService.swift; sourceTree = "<group>"; };
+		2AEEF3B02C7C7463008F4F13 /* VideoWriterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoWriterService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,8 +219,8 @@
 				2A54A30E2C5EF2CA00D657BC /* State */,
 				2ACAD4A42C7B0B5900B706D1 /* Modifiers */,
 				2ACAD4B22C7B2D6200B706D1 /* Services */,
-				2A54A3002C5ECD2B00D657BC /* Assets.xcassets */,
 				2A54A3052C5ECD2B00D657BC /* castr.entitlements */,
+				2A54A3002C5ECD2B00D657BC /* Assets.xcassets */,
 				2A54A3022C5ECD2B00D657BC /* Preview Content */,
 				2ACAD49B2C7B0A9E00B706D1 /* material-Transparent.swift */,
 			);
@@ -305,6 +311,7 @@
 			children = (
 				2A54A3452C60611B00D657BC /* ScreenRecorder.swift */,
 				2AEEF3AA2C7C411E008F4F13 /* ScreenRecorder2.swift */,
+				2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */,
 				2A54A3472C60619B00D657BC /* CaptureEngine.swift */,
 				2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */,
 				2A3AFDE82C69CEE60046718B /* MouseListener.swift */,
@@ -382,6 +389,8 @@
 			isa = PBXGroup;
 			children = (
 				2ACAD4B32C7B2D7700B706D1 /* MetalService.swift */,
+				2AEEF3AE2C7C580B008F4F13 /* OutputService.swift */,
+				2AEEF3B02C7C7463008F4F13 /* VideoWriterService.swift */,
 				2ACAD4B52C7B324300B706D1 /* Shaders.metal */,
 			);
 			path = Services;
@@ -506,6 +515,8 @@
 				2A8D2A202C671DBC00E1B5EF /* view-ColorConfiguration.swift in Sources */,
 				2A9122BC2C702508005194AC /* CameraViewModel.swift in Sources */,
 				2ACAD4B62C7B324300B706D1 /* Shaders.metal in Sources */,
+				2AEEF3B12C7C7463008F4F13 /* VideoWriterService.swift in Sources */,
+				2AEEF3AF2C7C580B008F4F13 /* OutputService.swift in Sources */,
 				2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */,
 				2A54A3222C5F37D300D657BC /* style-Text.swift in Sources */,
 				2ACAD4A82C7B0B8B00B706D1 /* style-ToolbarButton.swift in Sources */,
@@ -531,6 +542,7 @@
 				2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */,
 				2A54A3382C60395500D657BC /* state-Sources.swift in Sources */,
 				2A8D2A222C6733BD00E1B5EF /* view-TextConfiguration.swift in Sources */,
+				2AEEF3AD2C7C4A05008F4F13 /* ScreenRecorder3.swift in Sources */,
 				2A54A3482C60619B00D657BC /* CaptureEngine.swift in Sources */,
 				2A54A3242C5F38E600D657BC /* style-Spacer.swift in Sources */,
 			);

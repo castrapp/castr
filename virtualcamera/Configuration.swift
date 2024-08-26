@@ -18,12 +18,12 @@ let kWhiteStripeHeight: Int = 10
 
 let kFrameRate: Int = 30
 let cameraName = "Castr Virtual Camera"
-//let fixedCamWidth: Int32 = 3456
-//let fixedCamHeight: Int32 = 2234
-let fixedCamWidth: Int32 = 1728
-let fixedCamHeight: Int32 = 1118
-//let pixelFormat: OSType = kCVPixelFormatType_32BGRA
-let pixelFormat: OSType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
+let fixedCamWidth: Int32 = 3456
+let fixedCamHeight: Int32 = 2234
+//let fixedCamWidth: Int32 = 1728
+//let fixedCamHeight: Int32 = 1118
+let pixelFormat: OSType = kCVPixelFormatType_32BGRA
+//let pixelFormat: OSType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange
 
 // Color space and other properties
 let colorPrimaries = kCVImageBufferColorPrimaries_ITU_R_709_2

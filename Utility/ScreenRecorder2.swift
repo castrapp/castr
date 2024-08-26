@@ -17,7 +17,7 @@ class ScreenRecorder2: NSObject, ObservableObject {
     var selectedDisplay: SCDisplay { didSet { updateStream() } }
     var selectedWindow: SCWindow? { didSet { updateStream() } }
     private var stream: SCStream?
-    private var streamOutput: CaptureEngineStreamOutput2 = CaptureEngineStreamOutput2()
+    private var streamOutput: CaptureEngineStreamOutput2
     private let videoSampleBufferQueue = DispatchQueue(label: "harrisonhall.castr.stream.\(UUID().uuidString)")
 
     init(
@@ -36,6 +36,7 @@ class ScreenRecorder2: NSObject, ObservableObject {
         self.excludedApps = excludedApps
         self.selectedDisplay = selectedDisplay
         self.selectedWindow = selectedWindow
+        self.streamOutput = CaptureEngineStreamOutput2(layer: capturePreview)
     }
     
     private let logger = Logger()
@@ -109,7 +110,9 @@ class ScreenRecorder2: NSObject, ObservableObject {
         self.selectedDisplay = display
     }
     func updateStream() {
-        
+        Task {
+            await update(configuration: streamConfiguration, filter: contentFilter)
+        }
     }
     
     
@@ -132,8 +135,24 @@ class ScreenRecorder2: NSObject, ObservableObject {
         }
     }
     
+    
     func stop() async {
-        
+        do {
+            try await stream?.stopCapture()
+        } catch {
+            logger.error("failed to stop capturing stream")
+        }
+       
+    }
+    
+    
+    private func update(configuration: SCStreamConfiguration, filter: SCContentFilter) async {
+        do {
+            try await stream?.updateConfiguration(configuration)
+            try await stream?.updateContentFilter(filter)
+        } catch {
+            logger.error("Failed to update the stream session: \(String(describing: error))")
+        }
     }
     
 
@@ -146,6 +165,12 @@ class ScreenRecorder2: NSObject, ObservableObject {
 
 class CaptureEngineStreamOutput2: NSObject, SCStreamOutput, SCStreamDelegate {
     
+    let layer: CAMetalLayer
+    
+    init(layer: CAMetalLayer) {
+        self.layer = layer
+    }
+    
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of outputType: SCStreamOutputType) {
         
         // Check for an image buffer and if its valid
@@ -154,6 +179,14 @@ class CaptureEngineStreamOutput2: NSObject, SCStreamOutput, SCStreamDelegate {
         else { return }
 //
         print("got the buffer: ", sampleBuffer)
+        
+        Task { @MainActor in
+            Previewer.shared.contentLayer.contents = imageBuffer
+        }
+        
+        
+//        Previewer.shared.contentLayer.backgroundColor = .white
+//        Previewer.shared.contentLayer.display()
 //
 //        // Get the backing IOSurface.
 //        guard let surfaceRef = CVPixelBufferGetIOSurface(imageBuffer)?.takeUnretainedValue() else { return }

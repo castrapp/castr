@@ -10,3 +10,6 @@ import Foundation
 
 let teamId = "67C4BBFCAC"
 let appGroupIdentifier = "\(teamId).harrisonhall.castr"
+
+
+let settingsDefaultsIdentifer = "\(teamId).harrisonhall.castr.settings"

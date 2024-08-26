@@ -514,7 +514,7 @@ struct Sources: View {
         }
         .frame(maxWidth: 26, maxHeight: .infinity)
         ._panelButton {
-            GlobalState.shared.deleteSelectedScene()
+            GlobalState.shared.deleteSelectedSource()
         }
         .padding(4)
     }
@@ -534,7 +534,8 @@ struct Sources: View {
 /// `Controls`
 
 struct Controls: View {
-    @ObservedObject var contentModel = ContentModel.shared
+    @ObservedObject var output = OutputService.shared
+    
     var body: some View {
         
         VStack(spacing: 0) {
@@ -547,11 +548,11 @@ struct Controls: View {
             Divider()._panelDivider()
             
             HStack {
-                Text(contentModel.isVirtualCameraEnabled ? "Stop Virtual Camera" : "Start Virtual Camera")
+                Text(output.isStreamingToVirtualCamera ? "Stop Virtual Camera" : "Start Virtual Camera")
                 
                 Spacer()
                 
-                Toggle("", isOn: $contentModel.isVirtualCameraEnabled)
+                Toggle("", isOn: $output.isStreamingToVirtualCamera)
                     .labelsHidden()
                     .toggleStyle(SwitchToggleStyle())
             }
@@ -562,11 +563,11 @@ struct Controls: View {
             Spacer().panelSubSeparatorStyle()
             
             HStack {
-                Text(contentModel.isRecordingEnabled ? "Stop Recording" : "Start Recording")
+                Text(output.isRecording ? "Stop Recording" : "Start Recording")
                 
                 Spacer()
                 
-                Toggle("", isOn: $contentModel.isRecordingEnabled)
+                Toggle("", isOn: $output.isRecording)
                     .labelsHidden()
                     .toggleStyle(SwitchToggleStyle())
             }

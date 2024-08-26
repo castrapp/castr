@@ -7,9 +7,9 @@ import Combine
 
 /// A structure that contains the video data to render.
 struct CapturedFrame {
-    static let invalid = CapturedFrame(surface: nil, contentRect: .zero, contentScale: 0, scaleFactor: 0)
+    static let invalid = CapturedFrame(imageBuffer: nil, contentRect: .zero, contentScale: 0, scaleFactor: 0)
 
-    let surface: IOSurface?
+    let imageBuffer: CVPixelBuffer?
     let contentRect: CGRect
     let contentScale: CGFloat
     let scaleFactor: CGFloat
@@ -97,23 +97,14 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
 
     /// - Tag: DidOutputSampleBuffer
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of outputType: SCStreamOutputType) {
-        
-//        guard let sinkQueue = CameraViewModel.shared.sinkQueue else { return }
-        
-//        let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(sampleBuffer).toOpaque())
-//        CMSimpleQueueEnqueue(sinkQueue, element: pointerRef)
-       
-        
+
         // Return early if the sample buffer is invalid.
         guard sampleBuffer.isValid else { return }
         
         // Create a CapturedFrame structure for a video sample buffer.
         guard let frame = createFrame(for: sampleBuffer) else { return }
         capturedFrameHandler?(frame)
-        
-        CameraViewModel.shared.fireTimer(sampleBuffer)
- 
-        
+
     }
     
     /// Create a `CapturedFrame` for the video sample buffer.
@@ -147,12 +138,12 @@ private class CaptureEngineStreamOutput: NSObject, SCStreamOutput, SCStreamDeleg
               let scaleFactor = attachments[.scaleFactor] as? CGFloat else { return nil }
 
         // Create a new frame with the relevant data.
-        let frame = CapturedFrame(surface: surface,
+        let frame = CapturedFrame(imageBuffer: pixelBuffer,
                                   contentRect: contentRect,
                                   contentScale: contentScale,
                                   scaleFactor: scaleFactor)
         
-        print("frame made at: ", Date().timeIntervalSince1970)
+//        print("frame made at: ", Date().timeIntervalSince1970)
         return frame
     }
     
