@@ -65,6 +65,7 @@
 		2AEEF3AD2C7C4A05008F4F13 /* ScreenRecorder3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */; };
 		2AEEF3AF2C7C580B008F4F13 /* OutputService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3AE2C7C580B008F4F13 /* OutputService.swift */; };
 		2AEEF3B12C7C7463008F4F13 /* VideoWriterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3B02C7C7463008F4F13 /* VideoWriterService.swift */; };
+		2AEEF3B32C7CA7A7008F4F13 /* utility-ImageUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AEEF3B22C7CA7A7008F4F13 /* utility-ImageUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,6 +161,7 @@
 		2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder3.swift; sourceTree = "<group>"; };
 		2AEEF3AE2C7C580B008F4F13 /* OutputService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputService.swift; sourceTree = "<group>"; };
 		2AEEF3B02C7C7463008F4F13 /* VideoWriterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoWriterService.swift; sourceTree = "<group>"; };
+		2AEEF3B22C7CA7A7008F4F13 /* utility-ImageUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "utility-ImageUtility.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -313,6 +315,7 @@
 				2AEEF3AA2C7C411E008F4F13 /* ScreenRecorder2.swift */,
 				2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */,
 				2A54A3472C60619B00D657BC /* CaptureEngine.swift */,
+				2AEEF3B22C7CA7A7008F4F13 /* utility-ImageUtility.swift */,
 				2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */,
 				2A3AFDE82C69CEE60046718B /* MouseListener.swift */,
 				2A9122BA2C7022D0005194AC /* CameraViewModel.swift */,
@@ -530,6 +533,7 @@
 				2ACAD49F2C7B0ADB00B706D1 /* view-PreferencesWindow.swift in Sources */,
 				2A54A32A2C5F428400D657BC /* view-Previewer.swift in Sources */,
 				2ACAD4B42C7B2D7700B706D1 /* MetalService.swift in Sources */,
+				2AEEF3B32C7CA7A7008F4F13 /* utility-ImageUtility.swift in Sources */,
 				2A54A32D2C5FF73100D657BC /* view-ScreenCaptureConfiguration.swift in Sources */,
 				2ACAD4AA2C7B0C1100B706D1 /* modelView-ContentModel.swift in Sources */,
 				2ACAD4AE2C7B118200B706D1 /* sheet-AddSource.swift in Sources */,

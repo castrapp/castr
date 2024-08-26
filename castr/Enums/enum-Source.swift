@@ -29,11 +29,11 @@ enum SourceType: String {
     var imageName: String {
         switch self {
             case .screenCapture: return "rectangle.inset.filled.badge.record"
-            case .windowCapture: return "rectangle.inset.filled.badge.record"
-            case .video: return "rectangle.inset.filled.badge.record"
-            case .image: return "rectangle.inset.filled.badge.record"
-            case .color: return "rectangle.inset.filled.badge.record"
-            case .text: return "rectangle.inset.filled.badge.record"
+            case .windowCapture: return "macwindow"
+            case .video: return "video"
+            case .image: return "photo"
+            case .color: return "paintbrush"
+            case .text: return "character.cursor.ibeam"
         }
     }
 }

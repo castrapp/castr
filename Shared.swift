@@ -12,4 +12,4 @@ let teamId = "67C4BBFCAC"
 let appGroupIdentifier = "\(teamId).harrisonhall.castr"
 
 
-let settingsDefaultsIdentifer = "\(teamId).harrisonhall.castr.settings"
+let settingsDefaultsIdentifier = "\(teamId).harrisonhall.castr.settings"

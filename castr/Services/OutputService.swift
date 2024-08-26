@@ -107,9 +107,10 @@ class OutputService: ObservableObject {
     
         // TODO: Implement Texture Compositing
     
-        // 1. Composite all texutre into 1, layer them all on top of each other
+        // 1. Somehow need ot iterate through all the sources and get their mtlTexture property
+        // and then composite all their texutres into 1, layer them all on top of each other
         // in the order they are in for the GlobalState.shared.currentSources, with the first
-        // one being the top most one
+        // one being the top most one.
         
         
         // 2. Convert the texture to CMSampleBuffer
@@ -118,7 +119,50 @@ class OutputService: ObservableObject {
         
         // 3. Send the texture off to wherever (ie. Recording, Virtual Camera)
 
+    private func createCompositeTexture(from sources: [SourceModel]) -> MTLTexture? {
+        guard let firstSource = sources.first,
+              let device = firstSource.mtlTexture?.device else { return nil }
         
+        // Create a texture descriptor for the composite texture
+        let descriptor = MTLTextureDescriptor.texture2DDescriptor(
+            pixelFormat: .bgra8Unorm,
+            width: firstSource.mtlTexture!.width,
+            height: firstSource.mtlTexture!.height,
+            mipmapped: false
+        )
+        
+        descriptor.usage = [.renderTarget, .shaderRead]
+        guard let compositeTexture = device.makeTexture(descriptor: descriptor) else { return nil }
+        
+        // Create a command buffer and a render pass descriptor
+        guard let commandQueue = device.makeCommandQueue(),
+              let commandBuffer = commandQueue.makeCommandBuffer() else { return nil }
+        
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        
+        renderPassDescriptor.colorAttachments[0].texture = compositeTexture
+        renderPassDescriptor.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0)
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return nil }
+        
+        // Render each texture onto the composite texture
+        for source in sources.reversed() {
+            guard let texture = source.mtlTexture else { continue }
+            
+            renderEncoder.setFragmentTexture(texture, index: 0)
+            // Setup appropriate vertex buffers, shaders, etc., here
+            // Render the texture
+            renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
+        }
+        
+        renderEncoder.endEncoding()
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
+        
+        return compositeTexture
+    }
         
     
 }

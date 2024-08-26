@@ -39,18 +39,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         
         
-        if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifer) {
+        if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) {
             // Save a string value
             sharedDefaults.set("3456", forKey: "width")
             sharedDefaults.set("2234", forKey: "height")
             sharedDefaults.set("30", forKey: "framerate")
         }
         
-        if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: settingsDefaultsIdentifer) {
+        if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: settingsDefaultsIdentifier) {
             print("Shared container URL: \(containerURL.path)")
         } else {
             print("Failed to get the container URL for the app group.")
         }
+        
 
     }
 

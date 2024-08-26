@@ -503,6 +503,20 @@ struct Sources: View {
                 showPopover = false
             }
             
+            Button("Color Source"){
+                print("adding color source")
+                content.showAddSourceSheet = true
+                content.newSourceSelection = .color
+                showPopover = false
+            }
+            
+            Button("Image Source"){
+                print("adding image source")
+                content.showAddSourceSheet = true
+                content.newSourceSelection = .image
+                showPopover = false
+            }
+            
         }
     }
     

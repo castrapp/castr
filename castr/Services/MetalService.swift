@@ -116,8 +116,8 @@ class MetalService: ObservableObject {
     func drawBufferToLayersTexture(imageBuffer: CVPixelBuffer, metalLayer: CAMetalLayer, width: Int, height: Int) {
     
         if isMetalServiceReady == false { return }
-        guard let drawable = metalLayer.nextDrawable() else { fatalError("Unable to get next drawable") }
-        guard let commandBuffer = commandQueue?.makeCommandBuffer() else { fatalError("Unable to create command buffer") }
+        
+    
         
         print("Metal Service: Received frame and metal layer")
         print("Metal Service: Attempting to create cvmetal texture")
@@ -143,12 +143,26 @@ class MetalService: ObservableObject {
         print("metal texture extracted")
         print("the textue ioSurface is: ", texture.iosurface)
         
+       
+        renderTextureToCAMetalLayerTexture(sourceTexture: texture, targetLayer: metalLayer)
+        
+//        mtlTextureToCMSampleBuffer(texture: texture)
+    }
+    
+    
+    func renderTextureToCAMetalLayerTexture(sourceTexture: MTLTexture, targetLayer: CAMetalLayer) {
+        
+        if isMetalServiceReady == false { return }
+        
+        guard let drawable = targetLayer.nextDrawable() else { fatalError("Unable to get next drawable") }
+        guard let commandBuffer = commandQueue?.makeCommandBuffer() else { fatalError("Unable to create command buffer") }
+        
         renderPassDescriptor!.colorAttachments[0].texture = drawable.texture
         
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor!) else { return }
         
         renderEncoder.setRenderPipelineState(pipelineState!)
-        renderEncoder.setFragmentTexture(texture, index: 0)
+        renderEncoder.setFragmentTexture(sourceTexture, index: 0)
         renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         renderEncoder.endEncoding()
         
@@ -156,9 +170,7 @@ class MetalService: ObservableObject {
         commandBuffer.commit()
         
         
-//        mtlTextureToCMSampleBuffer(texture: texture)
     }
-    
     
     
     

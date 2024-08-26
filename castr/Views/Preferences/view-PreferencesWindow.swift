@@ -15,6 +15,7 @@ struct PreferencesView: View {
     @State var text: String = ""
     @ObservedObject var settings = Settings.shared
     
+    
     var body: some View {
         HSplitView {
             
@@ -46,7 +47,7 @@ struct PreferencesView: View {
                 switch settings.selectedSetting {
                     case .permissions:      PermissionsView
                     case .virtualCamera:    VirtualCameraView
-                    case .recording:        RecordingView
+                    case .recording:        RecordingSettingsView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -299,21 +300,31 @@ struct PreferencesView: View {
         .fixedSize(horizontal: false, vertical: true)
     }
     
+
     
+   
+}
+
+
+
+struct RecordingSettingsView: View {
     
+    @ObservedObject var settings = Settings.shared
+    @State var outputDestination: String?
+    @State private var selectedFramerate = 30
+     
+     let framerates = [15, 30, 45, 60]
     
-    
-    
-    /// `Recording Settings`
-    var RecordingView: some View {
+    var body: some View {
         VStack(spacing: 0) {
             
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text("Recording Output")
                     Spacer()
-                    Text("Desktop")
+                    Text(outputDestination ?? "")
                     .foregroundStyle(.secondary)
+                    .onAppear { loadSavedOutputDestination() }
                 }
                 
                 Divider()
@@ -330,8 +341,17 @@ struct PreferencesView: View {
                 HStack {
                     Text("Output Framerate")
                     Spacer()
-                    Text("30 FPS")
-                    .foregroundStyle(.secondary)
+                    Picker("", selection: $selectedFramerate) {
+                        ForEach(framerates, id: \.self) { rate in
+                            Text("\(rate) FPS").tag(rate)
+                        }
+                    }
+              
+//                    .pickerStyle(MenuPickerStyle())
+                    .buttonStyle(.borderless)
+                    .fixedSize()
+         
+                
                 }
               
                 Divider()
@@ -360,6 +380,19 @@ struct PreferencesView: View {
                     Text("h264")
                     .foregroundStyle(.secondary)
                 }
+                
+                Divider()
+                
+                HStack {
+                    Spacer()
+                    Button("Set Default Output") {
+                        selectOutputDestination()
+                    }
+                    Button("Load saved") {
+                        loadSavedOutputDestination()
+                    }
+                }
+                
             }
             .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
             ._groupBox()
@@ -371,8 +404,50 @@ struct PreferencesView: View {
         .padding(.top, 2)
     }
     
-   
+    private func selectOutputDestination() {
+           let openPanel = NSOpenPanel()
+           openPanel.canChooseDirectories = true
+           openPanel.canCreateDirectories = true
+           openPanel.canChooseFiles = false
+           openPanel.prompt = "Select Output Folder"
+
+           if openPanel.runModal() == .OK {
+               if let url = openPanel.url {
+                   saveOutputDestination(url)
+                   outputDestination = url.lastPathComponent
+               }
+           }
+       }
+
+   private func saveOutputDestination(_ url: URL) {
+           do {
+               let bookmarkData = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+               
+               if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) {
+                   var recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings") as? [String: Any] ?? [:]
+                   recordingSettings["outputDestination"] = url.path
+                   recordingSettings["outputDestinationBookmark"] = bookmarkData
+                   sharedDefaults.set(recordingSettings, forKey: "recordingSettings")
+               }
+           } catch {
+               print("Failed to create bookmark: \(error)")
+           }
+       }
+
+   private func loadSavedOutputDestination() {
+       print("attempting to load saved output destination")
+       if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier),
+          let recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings"),
+          let savedPath = recordingSettings["outputDestination"] as? String {
+           outputDestination = savedPath
+       }
+    
+   }
+    
 }
+
+
+
 
 
 

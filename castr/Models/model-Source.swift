@@ -10,6 +10,7 @@ import SwiftUI
 import ScreenCaptureKit
 import Combine
 import AVFoundation
+import MetalKit
 
 class SourceModel: Identifiable, ObservableObject {
     
@@ -131,42 +132,28 @@ class SourceModel: Identifiable, ObservableObject {
             
             @MainActor
             func start() async {
-//                    layer.bounds = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
-//                    layer.frame = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
-//                    layer.pixelFormat = .bgra8Unorm
-//                    layer.framebufferOnly = true
-//                    layer.drawableSize = CGSize(width: layer.frame.width, height: layer.frame.height)
+
+                // TODO: Refresh the available content once
+                await self.refreshAvailableContent()
                 
-    
+                guard let display = selectedDisplay, screenRecorder == nil else { return }
                 
-                    // TODO: Refresh the available content once
-                    await self.refreshAvailableContent()
-                    
-                    guard let display = selectedDisplay, screenRecorder == nil else { return }
-                    
-                    
-                    // TODO: Refactor this such that we only pass in 3 things: the layer, the excluded apps, and the selected display.
-                    screenRecorder = ScreenRecorder3(
-                        capturePreview: layer,
-                        availableDisplays: availableDisplays,
-                        availableApps: availableApps,
-                        availableWindows: availableWindows,
-                        excludedApps: excludedApps,
-                        selectedDisplay: display,
-                        model: self
-                    )
-                    
-                    // TODO: Set the CALayer to be take up the full width and height of its superlayer by default
-//                    layer.frame = Previewer.shared.contentLayer.bounds
-//                    layer.contentsGravity = .resizeAspect
-                    
-                    // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
-                    Previewer.shared.contentLayer.addSublayer(layer)
-//                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
-                    
-                    print("SCREEN RECORDER IS: ", screenRecorder)
-                    await screenRecorder?.start()
-                    
+                
+                // TODO: Refactor this such that we only pass in 3 things: the layer, the excluded apps, and the selected display.
+                screenRecorder = ScreenRecorder3(
+                    capturePreview: layer,
+                    availableDisplays: availableDisplays,
+                    availableApps: availableApps,
+                    availableWindows: availableWindows,
+                    excludedApps: excludedApps,
+                    selectedDisplay: display,
+                    model: self
+                )
+                
+                // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
+                Previewer.shared.contentLayer.addSublayer(layer)
+                
+                await screenRecorder?.start()
             }
             
             @MainActor
@@ -436,7 +423,54 @@ class SourceModel: Identifiable, ObservableObject {
 
 
         class ImageSourceModel: SourceModel {
-//            var layer: CALayer = CALayer()
+
+            @Published var imageURL: URL? {
+                didSet {
+                    guard let url = imageURL else { return }
+                   
+                    print("GOT A NEW IMAGE URL", imageURL )
+                    do {
+                        let newTexture = try loadTextureUsingMetalKit(url: url)
+                        print("new Texture is: ", newTexture)
+                    } catch {
+                        fatalError("Metal loader failed: \(error)")
+                    }
+                    
+                }
+            }
+            
+            override var mtlTexture: MTLTexture? {
+                didSet {
+                    guard let texture = mtlTexture else { return }
+                    print("METAL TEXTURE HAS CHANGED: ", mtlTexture)
+                    
+                    let scalingfactor = Previewer.shared.contentLayer.frame.width / 3456
+                    print("The scaling factor is: ", scalingfactor)
+                    
+                    layer.device = MetalService.shared.device
+                    layer.pixelFormat = .bgra8Unorm
+                    layer.framebufferOnly = true
+//                    layer.frame = Previewer.shared.contentLayer.frame
+                    layer.frame = CGRect(
+                        origin: Previewer.shared.contentLayer.frame.origin,
+                        size: CGSize(
+                            width: CGFloat(texture.width) * scalingfactor,
+                            height: CGFloat(texture.height) * scalingfactor
+                        )
+                    )
+//                    layer.contentsGravity = .resizeAspect
+//                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+                    print("the previewers frame is: ", Previewer.shared.contentLayer.frame)
+                    print("the previews bounds are: ", Previewer.shared.contentLayer.bounds)
+                    
+                    
+                    layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 0, alpha: 1.0)
+                    layer.borderWidth = CGFloat(1)
+
+                    MetalService.shared.drawMetalTextureToLayer(texture: texture, metalLayer: layer)
+             
+                }
+            }
             
             @Published var image: NSImage? {
                 didSet {
@@ -453,6 +487,7 @@ class SourceModel: Identifiable, ObservableObject {
             
             init(name: String) {
                 super.init(type: .image, name: name)
+                layer.device = MetalService.shared.device
                 
                 setupObservers()
             }
@@ -490,29 +525,26 @@ class SourceModel: Identifiable, ObservableObject {
             
             @MainActor
             private func updateImage(_ newImage: NSImage) {
-                print("updating with new image")
-                layer.contents = newImage
-                layer.frame = Previewer.shared.contentLayer.bounds
-                layer.contentsGravity = .resizeAspect
+                print("updating with new image: ", newImage)
+            
             }
+            
+            
+            func loadTextureUsingMetalKit(url: URL) throws -> MTLTexture {
+                let loader = MTKTextureLoader(device: device)
+                
+                return try loader.newTexture(URL: url, options: nil)
+            }
+            
             
             @MainActor
              func start() async {
                  
                 // TODO: Create the image
+              
                  
+    
                  
-                // TODO: Set the image to the CALayer
-                if let image = image {
-                    layer.contents = image
-                }
-                
-                // TODO: Set the CALayer to be take up the full width and height of its superlayer by default
-                layer.frame = Previewer.shared.contentLayer.bounds
-                layer.contentsGravity = .resizeAspect
-                 
-                 layer.backgroundColor = .white
-                
                 // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
                 Previewer.shared.contentLayer.addSublayer(layer)
             }
@@ -524,8 +556,11 @@ class SourceModel: Identifiable, ObservableObject {
                 
                 // TODO: Reset the CALayer
                 layer.contents = nil
-//                layer = CALayer()
             }
+            
+         
+            
+            
          
         }
 

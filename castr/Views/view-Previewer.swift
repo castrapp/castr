@@ -16,6 +16,7 @@ struct Previewer: NSViewRepresentable {
     
     private init() {
         contentLayer.contentsGravity = .resizeAspect
+        contentLayer.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
     }
     
     func makeNSView(context: Context) -> CaptureVideoPreview {

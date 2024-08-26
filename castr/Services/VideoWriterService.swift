@@ -15,28 +15,48 @@ class VideoWriter {
     private var isSessionStarted = false
     private var outputURL: URL?
 
-    func setupDefaultSaveLocation() -> Bool {
-        let fileManager = FileManager.default
-        
-        // Get the path to the user's Desktop
-        guard let desktopURL = fileManager.urls(for: .desktopDirectory, in: .userDomainMask).first else {
-            print("Failed to setup save location: Unable to access Desktop directory")
-            return false
+    deinit {
+        if let url = outputURL {
+            url.stopAccessingSecurityScopedResource()
         }
-        
-        // Create a unique filename
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
-        let timestamp = dateFormatter.string(from: Date())
-        let filename = "output_\(timestamp).mp4"
-        
-        // Combine the desktop path with the filename
-        let saveURL = desktopURL.appendingPathComponent(filename)
-        
-        self.outputURL = saveURL
-        print("Save location setup successfully: \(saveURL.path)")
-        return true
     }
+    
+    func setupDefaultSaveLocation() -> Bool {
+          guard let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier),
+                let recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings"),
+                let savedPath = recordingSettings["outputDestination"] as? String,
+                let bookmarkData = recordingSettings["outputDestinationBookmark"] as? Data else {
+              print("Failed to setup save location: No saved output destination")
+              return false
+          }
+
+          var isStale = false
+          do {
+              let url = try URL(resolvingBookmarkData: bookmarkData, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale)
+              if url.startAccessingSecurityScopedResource() {
+                  let fileManager = FileManager.default
+                  
+                  // Create a unique filename
+                  let dateFormatter = DateFormatter()
+                  dateFormatter.dateFormat = "yyyyMMdd_HHmmss"
+                  let timestamp = dateFormatter.string(from: Date())
+                  let filename = "output_\(timestamp).mp4"
+                  
+                  // Combine the selected path with the filename
+                  let saveURL = url.appendingPathComponent(filename)
+                  
+                  self.outputURL = saveURL
+                  print("Save location setup successfully: \(saveURL.path)")
+                  return true
+              } else {
+                  print("Failed to access security-scoped resource")
+                  return false
+              }
+          } catch {
+              print("Failed to resolve bookmark: \(error)")
+              return false
+          }
+      }
 
     func setupAssetWriter(width: Int, height: Int) -> Bool {
         guard let outputURL = self.outputURL else {
