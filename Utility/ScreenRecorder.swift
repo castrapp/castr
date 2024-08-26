@@ -17,6 +17,7 @@ class ScreenRecorder: NSObject, ObservableObject {
         case window
     }
     
+    var capturePreview: CAMetalLayer
     var availableDisplays: [SCDisplay]
     var availableApps: [SCRunningApplication]
     var availableWindows: [SCWindow]
@@ -25,7 +26,7 @@ class ScreenRecorder: NSObject, ObservableObject {
     var selectedWindow: SCWindow? { didSet { updateEngine() } }
 
     init(
-        capturePreview: CALayer,
+        capturePreview: CAMetalLayer,
         availableDisplays: [SCDisplay],
         availableApps: [SCRunningApplication],
         availableWindows: [SCWindow],
@@ -59,7 +60,6 @@ class ScreenRecorder: NSObject, ObservableObject {
     private var scaleFactor: Int { Int(NSScreen.main?.backingScaleFactor ?? 2) }
     
     /// A view that renders the screen content.
-    var capturePreview: CALayer
        
 
 //    @Published  var availableDisplays: [SCDisplay]
@@ -114,10 +114,12 @@ class ScreenRecorder: NSObject, ObservableObject {
         streamConfig.capturesAudio = false
         streamConfig.excludesCurrentProcessAudio = true
         
+        streamConfig.width = selectedDisplay.width * scaleFactor
+        streamConfig.height = selectedDisplay.height * scaleFactor
+        
         // Configure the display content width and height.
 //        if captureType == .display {
-//            streamConfig.width = selectedDisplay.width * scaleFactor
-//            streamConfig.height = selectedDisplay.height * scaleFactor
+         
 //        }
         
         // Configure the window content width and height.
@@ -134,10 +136,6 @@ class ScreenRecorder: NSObject, ObservableObject {
 //        }
         
         streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
-        
-        // Configure the display content width and height.
-        streamConfig.width = 1728
-        streamConfig.height = 1118
         
         streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
         
@@ -163,6 +161,10 @@ class ScreenRecorder: NSObject, ObservableObject {
         print("updating window")
         self.selectedWindow = selectedWindow
     }
+    func updateSelectedDisplay(display: SCDisplay) {
+        print("updating display")
+        self.selectedDisplay = display
+    }
     
     
     
@@ -184,13 +186,18 @@ class ScreenRecorder: NSObject, ObservableObject {
             // Update the running state.
             isRunning = true
             // Start the stream and await new video frames.
-            for try await frame in captureEngine.startCapture(configuration: config, filter: filter) {
-                capturePreview.contents = frame.surface
-//                print("rendering new frame")
-                if contentSize != frame.size {
-                    // Update the content size if it changed.
-                    contentSize = frame.size
-                }
+            for try await buffer in captureEngine.startCapture(configuration: config, filter: filter) {
+                
+                print("got the buffer: ", buffer)
+//                capturePreview.contents = frame.surface
+////                print("rendering new frame")
+//                if contentSize != frame.size {
+//                    // Update the content size if it changed.
+//                    contentSize = frame.size
+//                }
+                
+                // TODO: Call MetalService.drawBufferToLayersTexture
+//                MetalService.shared.drawBufferToLayersTexture(imageBuffer: buffer.imageBuffer, metalLayer: capturePreview)
             }
         } catch {
             logger.error("\(error.localizedDescription)")

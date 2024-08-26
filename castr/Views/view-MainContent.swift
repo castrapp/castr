@@ -216,6 +216,32 @@ struct ContentView: View {
     /// `Right Sidebar`
     var rightSidebar: some View {
         VStack{
+            Button("Start extension") {
+                CameraViewModel.shared.start()
+                GlobalState.shared.streamToVirtualCamera = true
+            }
+            Button("Reinstall extension") {
+                SystemExtensionManager.shared.installExtension(extensionIdentifier: "harrisonhall.castr.virtualcamera") { success, error in
+                    if success {
+                        print("Castr Virtual Camera installed successfully")
+                    } else {
+                        if let error = error {
+                            print("Failed to install Castr Virtual Camera: \(error.localizedDescription)")
+                        } else {
+                            print("Failed to install Castr Virtual Camera")
+                        }
+                    }
+                }
+            }
+            Button("Post notification") {
+                let notificationName = Notification.Name("com.yourcompany.yourapp.UserDefaultsDidChange")
+
+                // Post a notification
+                DistributedNotificationCenter.default().post(name: notificationName, object: nil)
+            }
+            Button("Set Just Property") {
+                CameraViewModel.shared.setJustProperty2()
+            }
             Controls()
             SourceConfiguration()
         }

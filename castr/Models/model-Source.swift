@@ -32,7 +32,7 @@ class SourceModel: Identifiable, ObservableObject {
         
         class ScreenCaptureSourceModel: SourceModel {
             
-            var layer: CALayer = CALayer()
+            var layer: CAMetalLayer = CAMetalLayer()
             
             // TODO: Create available displays variable
             // TODO: Create available apps variable
@@ -40,10 +40,18 @@ class SourceModel: Identifiable, ObservableObject {
             @Published var availableDisplays = [SCDisplay]()
             @Published var availableApps = [SCRunningApplication]()
             @Published var availableWindows = [SCWindow]()
-            @Published var selectedDisplay: SCDisplay?
+            @Published var selectedDisplay: SCDisplay? {
+                didSet {
+                    guard let selectedDisplay = selectedDisplay else { return }
+                    print("updating selected display")
+                    Task { @MainActor in
+                        screenRecorder?.updateSelectedDisplay(display: selectedDisplay)
+                    }
+                }
+            }
             @Published var excludedApps: Set<String> {
                 didSet {
-                    print("new thing was added or removed")
+                    print("updating excluded apps")
                     Task { @MainActor in
                         screenRecorder?.updateExcludedApps(excludedApps: excludedApps)
                     }
@@ -52,7 +60,7 @@ class SourceModel: Identifiable, ObservableObject {
             
             private var contentRefreshTimer: AnyCancellable?
             private var cancellables: Set<AnyCancellable> = []
-            private var screenRecorder: ScreenRecorder?
+            private var screenRecorder: ScreenRecorder2?
             
             init(name: String) {
                 self.excludedApps = []
@@ -121,29 +129,34 @@ class SourceModel: Identifiable, ObservableObject {
             
             @MainActor
             func start() async {
-                
+                    layer.bounds = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
+                    layer.frame = CGRect(x: 0, y: 0, width: 3456/4, height: 2234/4)
+                    layer.pixelFormat = .bgra8Unorm
+                    layer.framebufferOnly = true
+                layer.drawableSize = CGSize(width: layer.frame.width, height: layer.frame.height)
+                Previewer.shared.contentLayer.addSublayer(layer)
                     // TODO: Refresh the available content once
                     await self.refreshAvailableContent()
                     
                     guard let display = selectedDisplay, screenRecorder == nil else { return }
                     
                     // TODO: Create the ScreenRecorder and pass in the CALayer
-                    screenRecorder = ScreenRecorder(
+                    screenRecorder = ScreenRecorder2(
                         capturePreview: layer,
                         availableDisplays: availableDisplays,
                         availableApps: availableApps,
                         availableWindows: availableWindows,
-                        selectedDisplay: display,
-                        excludedApps: excludedApps
+                        excludedApps: excludedApps,
+                        selectedDisplay: display
                     )
                     
                     // TODO: Set the CALayer to be take up the full width and height of its superlayer by default
-                    layer.frame = Previewer.shared.contentLayer.bounds
-                    layer.contentsGravity = .resizeAspect
+//                    layer.frame = Previewer.shared.contentLayer.bounds
+//                    layer.contentsGravity = .resizeAspect
                     
                     // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
-                    Previewer.shared.contentLayer.addSublayer(layer)
-                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+//                    Previewer.shared.contentLayer.addSublayer(layer)
+//                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
                     
                 print("SCREEN RECORDER IS: ", screenRecorder)
                     await screenRecorder?.start()
@@ -225,7 +238,7 @@ class SourceModel: Identifiable, ObservableObject {
 
         class WindowCaptureSourceModel: SourceModel {
             
-            var layer: CALayer = CALayer()
+            var layer: CAMetalLayer = CAMetalLayer()
             
             // TODO: Create available displays variable
             // TODO: Create available apps variable

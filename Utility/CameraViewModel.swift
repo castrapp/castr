@@ -100,6 +100,33 @@ class CameraViewModel: ObservableObject  {
             CMIOObjectSetPropertyData(streamId, &address, 0, nil, dataSize, &newName)
         }
     }
+    
+    func setJustProperty2() {
+        guard let streamId = sourceStream else { return }
+            
+        let newValue = "Hello world this is the castr applicaiton coming to you live. COmputers are cool. We must help others."
+        
+        print("Attempting to set just property")
+        
+        let selector = FourCharCode("just")
+        var address = CMIOObjectPropertyAddress(selector, .global, .main)
+        let exists = CMIOObjectHasProperty(streamId, &address)
+        if exists {
+            var settable: DarwinBoolean = false
+            CMIOObjectIsPropertySettable(streamId,&address,&settable)
+            if settable == false {
+                return
+            }
+            var dataSize: UInt32 = 0
+            CMIOObjectGetPropertyDataSize(streamId, &address, 0, nil, &dataSize)
+            var newName: CFString = newValue as NSString
+            CMIOObjectSetPropertyData(streamId, &address, 0, nil, dataSize, &newName)
+            
+            print("JUST PROPERTY SUPPOSEDLY SET")
+        }
+    }
+    
+
 
     func makeDevicesVisible(){
         var prop = CMIOObjectPropertyAddress(
@@ -252,31 +279,35 @@ class CameraViewModel: ObservableObject  {
         connectToCamera()
 //        timer?.invalidate()
 //        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
-        propTimer?.invalidate()
-        propTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(propertyTimer), userInfo: nil, repeats: true)
+//        propTimer?.invalidate()
+//        propTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(propertyTimer), userInfo: nil, repeats: true)
     }
 
     
     func enqueue(_ queue: CMSimpleQueue, _ sampleBuffer: CMSampleBuffer) {
+
+        print("queue count is: ", queue.count, " queue capacity is: ", queue.capacity)
         
-        let queueCount = CMSimpleQueueGetCount(queue)
-        let queueCapacity = CMSimpleQueueGetCapacity(queue)
-        
-        print("queue count is: ", queueCount, " queue capacity is: ", queueCapacity)
-        
-        guard queueCount < queueCapacity else {
+        guard queue.count < queue.capacity else {
             print("error enqueuing")
             return
         }
         let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(sampleBuffer).toOpaque())
-        let result = CMSimpleQueueEnqueue(queue, element: pointerRef)
-        print("enqueuing result is: ", result)
+//        let result = CMSimpleQueueEnqueue(queue, element: pointerRef)
+        do {
+            try queue.enqueue(pointerRef)
+            print("Successfully enqueued")
+        } catch {
+            print("Error enqueuing: \(error)")
+        }
     }
     
     @objc func propertyTimer() {
         if let sourceStream = sourceStream {
+//            print("source stream is: ", sourceStream)
             self.setJustProperty(streamId: sourceStream, newValue: "random")
             let just = self.getJustProperty(streamId: sourceStream)
+//            print("just is: ", just)
             if let just = just {
                 if just == "sc=1" {
                     needToStream = true
@@ -288,37 +319,28 @@ class CameraViewModel: ObservableObject  {
         }
     }
     
-    var oldSampleBuffer: CMSampleBuffer?
+
     
     func fireTimer(_ sampleBuffer: CMSampleBuffer) {
         print("firetimer recieved new frame at: ", Date().timeIntervalSince1970)
-        if needToStream {
-            
-            if (enqueued == false || readyToEnqueue == true) {
-                
-                if let queue = sinkQueue {
-                    
-                    enqueued = true
-                    readyToEnqueue = false
-                    
-                    // Striped
-                    if let stripedSampleBuffer = stripMetadata(from: sampleBuffer) {
-                        print("sample buffer stripped")
-//                        print("Striped Sample buffer is: ", stripedSampleBuffer)
-//                        print("Striped Sample buffer Format Description is: ", stripedSampleBuffer.formatDescription)
-//                        print("processed sample buffer is: ", str)
-                        enqueue(queue, stripedSampleBuffer)
-                    } else {
-                        print("could not strip sample buffer")
-                        guard let oldSampleBuffer = oldSampleBuffer else { return }
-                        print("new sample buffer is: ", sampleBuffer)
-                        print("old sample buffer is: ", oldSampleBuffer)
-                    }
-                    
-                    oldSampleBuffer = sampleBuffer
-                }
-            }
-        }
+        
+     
+        
+//        guard let sinkQueue = sinkQueue else { return }
+        
+//        // Striped
+//        if let stripedSampleBuffer = stripMetadata(from: sampleBuffer) {
+//            print("sample buffer stripped")
+//
+//            
+//           enqueue(sinkQueue, stripedSampleBuffer)
+//            
+//        } else {
+//            print("could not strip sample buffer")
+//            enqueue(sinkQueue, sampleBuffer)
+//            
+//        }
+
     }
     
     

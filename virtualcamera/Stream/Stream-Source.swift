@@ -41,10 +41,12 @@ class virtualcameraStreamSource: NSObject, CMIOExtensionStreamSource {
     }
     
     var availableProperties: Set<CMIOExtensionProperty> {
+        logger.warning("GETTING STREAM PROPERTIES")
         return [.streamActiveFormatIndex, .streamFrameDuration, CMIOExtensionPropertyCustomPropertyData_just]
     }
     
     func streamProperties(forProperties properties: Set<CMIOExtensionProperty>) throws -> CMIOExtensionStreamProperties {
+        logger.warning("GETTING STREAM PROPERTIES FROM FUNCTION: \(properties, privacy: .public)")
         let streamProperties = CMIOExtensionStreamProperties(dictionary: [:])
         if properties.contains(.streamActiveFormatIndex) {
             streamProperties.activeFormatIndex = 0
@@ -55,6 +57,7 @@ class virtualcameraStreamSource: NSObject, CMIOExtensionStreamSource {
         }
         if properties.contains(CMIOExtensionPropertyCustomPropertyData_just) {
             streamProperties.setPropertyState(CMIOExtensionPropertyState(value: self.just as NSString), forProperty: CMIOExtensionPropertyCustomPropertyData_just)
+           
 
         }
         return streamProperties
@@ -62,12 +65,19 @@ class virtualcameraStreamSource: NSObject, CMIOExtensionStreamSource {
     
     func setStreamProperties(_ streamProperties: CMIOExtensionStreamProperties) throws {
         
+        logger.warning("SETTING SOME STREAM PROPERTIES: \(streamProperties, privacy: .public)")
+        
         if let activeFormatIndex = streamProperties.activeFormatIndex {
             self.activeFormatIndex = activeFormatIndex
         }
         
         if let state = streamProperties.propertiesDictionary[CMIOExtensionPropertyCustomPropertyData_just] {
+            
             if let newValue = state.value as? String {
+                logger.warning("THE NEW VALUE IS: \(newValue, privacy: .public)")
+                
+                // TODO: implement various methods for updating the stream
+                
                 self.just = newValue
                 if let deviceSource = device.source as? virtualcameraDeviceSource {
                     self.just = deviceSource.myStreamingCounter()

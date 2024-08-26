@@ -10,12 +10,13 @@ import Foundation
 
 extension GlobalState {
     
-    func addScene(name: String) {
+    func addScene(name: String? = nil) {
         let newSceneId = UUID().uuidString
+        let sceneName = name ?? "Scene \(scenes.count + 1)"
         scenes.append(
             SceneModel(
                 id: newSceneId,
-                name: name.isEmpty ? "Scene \(scenes.count + 1)" : name,
+                name: sceneName,
                 isActive: false,
                 sources: []
             )

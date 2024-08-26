@@ -18,7 +18,7 @@ import Foundation
 
 class VirtualCameraAdapter: ObservableObject {
     
-    static let shared = VirtualCameraAdapter()
+//    static let shared = VirtualCameraAdapter()
     
     var sourceStream: CMIOStreamID?
     var sinkStream: CMIOStreamID?

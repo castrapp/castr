@@ -48,6 +48,9 @@ class virtualcameraStreamSink: NSObject, CMIOExtensionStreamSource {
 
     var client: CMIOExtensionClient?
     func streamProperties(forProperties properties: Set<CMIOExtensionProperty>) throws -> CMIOExtensionStreamProperties {
+        
+        logger.warning("GETTING STREAM PROPERTIES: \(properties, privacy: .public)")
+        
         let streamProperties = CMIOExtensionStreamProperties(dictionary: [:])
         if properties.contains(.streamActiveFormatIndex) {
             streamProperties.activeFormatIndex = 0
@@ -66,6 +69,8 @@ class virtualcameraStreamSink: NSObject, CMIOExtensionStreamSource {
     }
     
     func setStreamProperties(_ streamProperties: CMIOExtensionStreamProperties) throws {
+        
+        logger.warning("SETTING SOME STREAM PROPERTIES: \(streamProperties.propertiesDictionary, privacy: .public)")
         
         if let activeFormatIndex = streamProperties.activeFormatIndex {
             self.activeFormatIndex = activeFormatIndex

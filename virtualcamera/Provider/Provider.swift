@@ -31,10 +31,57 @@ class virtualcameraProviderSource: NSObject, CMIOExtensionProviderSource {
         } catch let error {
             fatalError("Failed to add device: \(error.localizedDescription)")
         }
+        
+        
+       
     }
     
     func connect(to client: CMIOExtensionClient) throws {
         logger.warning("PROVIDER IS CONNECTING TO CLIENT: \(client, privacy: .public)")
+        
+       
+        
+        
+        if let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
+            logger.warning("Shared container URL: \(containerURL.path, privacy: .public)")
+            logger.warning("Shared container URL: \(containerURL.path, privacy: .public)")
+            logger.warning("Shared container URL: \(containerURL.path, privacy: .public)")
+            logger.warning("Shared container URL: \(containerURL.path, privacy: .public)")
+        } else {
+            logger.warning("Failed to get the container URL for the app group.")
+            logger.warning("Failed to get the container URL for the app group.")
+            logger.warning("Failed to get the container URL for the app group.")
+            logger.warning("Failed to get the container URL for the app group.")
+        }
+        
+        if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+            logger.warning("GOT THE SHARED DEFUALTS")
+            logger.warning("GOT THE SHARED DEFUALTS")
+            logger.warning("GOT THE SHARED DEFUALTS")
+            logger.warning("GOT THE SHARED DEFUALTS")
+            
+            if let myString = sharedDefaults.string(forKey: "testKey") {
+                logger.warning("the read value is: \(myString, privacy: .public)")
+                logger.warning("the read value is: \(myString, privacy: .public)")
+                logger.warning("the read value is: \(myString, privacy: .public)")
+                logger.warning("the read value is: \(myString, privacy: .public)")
+            }
+            else {
+                logger.warning("COULD NOT READ VALUE")
+                logger.warning("COULD NOT READ VALUE")
+                logger.warning("COULD NOT READ VALUE")
+                logger.warning("COULD NOT READ VALUE")
+            }
+           
+        }
+        
+        else {
+            logger.warning("FAILED TO GET THE SHARED DEFAULTS")
+            logger.warning("FAILED TO GET THE SHARED DEFAULTS")
+            logger.warning("FAILED TO GET THE SHARED DEFAULTS")
+            logger.warning("FAILED TO GET THE SHARED DEFAULTS")
+        }
+        
     }
 
     func disconnect(from client: CMIOExtensionClient) {
