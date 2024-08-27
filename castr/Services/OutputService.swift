@@ -8,10 +8,22 @@
 import Foundation
 import Metal
 import CoreMedia
+import SwiftUI
+import MetalKit
 
 
 let defaultWidth = 3456
 let defaultHeight = 2234
+let canvasSize = CGSize(width: 3456, height: 2234)
+
+// Define LayerInfo struct
+struct LayerInfo {
+    var layerOrigin: float2
+    var layerSize: float2
+    var superlayerSize: float2
+}
+
+
 class OutputService: ObservableObject {
 
     static let shared = OutputService()
@@ -24,6 +36,21 @@ class OutputService: ObservableObject {
     var outputTimer: Timer?
     var videoWriter: VideoWriter?
     var buffer: CMSampleBuffer?
+    
+    // Actions to do once
+    var device: MTLDevice?
+    var commandQueue: MTLCommandQueue?
+    
+    
+    var pipelineState: MTLRenderPipelineState?
+    var mtlTextureCache: CVMetalTextureCache?
+    var renderPassDescriptor: MTLRenderPassDescriptor?
+    var runOnce = false
+    var layer = CAMetalLayer()
+    
+    init() {
+        setupMetal()
+    }
     
 
     private func handleOutputStateChange() {
@@ -67,41 +94,209 @@ class OutputService: ObservableObject {
             print("Writing started")
         }
     }
+    
+    func setupMetal() {
+        print("Output Services: Starting setup.")
+        
+        guard let device = MTLCreateSystemDefaultDevice(),
+              let library = device.makeDefaultLibrary() else {
+            fatalError("Could not create Metal device or library")
+        }
+        self.device = device
+        self.commandQueue = device.makeCommandQueue()
+        
+        let width = 3456
+        let height = 2234
+        layer.drawableSize = CGSize(width: width, height: height)
+        layer.pixelFormat = .bgra8Unorm
+        layer.framebufferOnly = true
+        layer.device = device
+        
+        setupPipelineState(device: device, library: library)
+        setupTextureCache(device: device)
+        setupRenderPassDescriptor()
+
+        print("Output Services: Metal setup successful.")
+    }
+
+    
+    private func setupPipelineState(device: MTLDevice, library: MTLLibrary) {
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = library.makeFunction(name: "vertexShader2")
+        pipelineDescriptor.fragmentFunction = library.makeFunction(name: "fragmentShader2")
+        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        
+        do {
+            pipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        } catch {
+            fatalError("Failed to create pipeline state: \(error)")
+        }
+        print("Output Services: Setup pipeline state successfully.")
+    }
+    
+    private func setupTextureCache(device: MTLDevice) {
+        CVMetalTextureCacheCreate(kCFAllocatorDefault, nil, device, nil, &mtlTextureCache)
+        
+        print("Output Services: Setup texture cache successfully.")
+    }
+    
+    private func setupRenderPassDescriptor() {
+        renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor?.colorAttachments[0].loadAction = .clear
+        renderPassDescriptor?.colorAttachments[0].clearColor = MTLClearColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        renderPassDescriptor?.colorAttachments[0].storeAction = .store
+        
+        print("Output Services: Setup render pass descriptor successfully.")
+    }
+    
+    private func checkMetalStatus() -> Bool {
+        guard let device = device else {
+            print("Output Services: Device is not configured.")
+            return false
+        }
+        guard let mtlTextureCache = mtlTextureCache else {
+            print("Output Services: Metal Texture Cache is not configured.")
+            return false
+        }
+        guard let commandBuffer = commandQueue?.makeCommandBuffer() else {
+            print("Output Services: Commmand Buffer is not configured.")
+            return false
+        }
+        guard let renderPassDescriptor = renderPassDescriptor else {
+            print("Output Services: Render Pass Descriptor is not configured.")
+            return false
+        }
+        guard let pipelineState = pipelineState else {
+            print("Output Services: Pipeline State is not Configured.")
+            return false
+        }
+        
+        return true
+        
+    }
 
     private func updateOutput() {
-        // Your logic to handle the output per frame
-        
-        
-//        print("Output Service: Current sources are: ", GlobalState.shared.currentSources)
-        
-        // TODO: If isRecording is enabled
+     
+        if checkMetalStatus() == false { return }
        
-            for source in GlobalState.shared.currentSources {
-                guard let texture = source.mtlTexture else { return }
-                let buffer = MetalService.mtlTextureToCMSampleBuffer(texture: texture)
-                
-                guard let buffer = buffer else { return }
-                
-                print("buffer created. Attempting to writing it out.")
-                if(isRecording) {
-                    videoWriter?.writeSampleBuffer(buffer)
-                }
-                
-                if(isStreamingToVirtualCamera) {
-                    let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(buffer).toOpaque())
-                    guard let sinkQueue = CameraViewModel.shared.sinkQueue else { return }
-                    do {
-                        try sinkQueue.enqueue(pointerRef)
-                        print("Successfully enqueued")
-                    } catch {
-                        print("Error enqueuing: \(error)")
-                    }
-                }
-                
-//                print("the sources metal texture is: ", source.mtlTexture)
-            }
-//            print("Recording")
+        /// `1. Get the drawable`
+        guard let drawable = layer.nextDrawable() else { fatalError("Unable to get next drawable") }
+        renderPassDescriptor!.colorAttachments[0].texture = drawable.texture
+    
+        
+        /// `2. Create commandBuffer and renderEncoder`
+        guard let commandBuffer = commandQueue?.makeCommandBuffer() else { fatalError("Unable to create command buffer") }
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor!) else { return }
+    
+        
+        
+        /// `2. Render the source texture, to the base texture`
+        for source in GlobalState.shared.currentSources {
+            guard let texture = source.mtlTexture else { continue }
+        
+            // Superlayer and sublayer properties
+            guard let superlayer = source.layer.superlayer else { fatalError("no super layer available") }
+            
+            var layerInfo = LayerInfo(
+                layerOrigin: float2(Float(source.layer.frame.origin.x), Float(source.layer.frame.origin.y)),
+                layerSize: float2(Float(source.layer.frame.size.width), Float(source.layer.frame.size.height)),
+                superlayerSize: float2(Float(superlayer.bounds.size.width), Float(superlayer.bounds.size.height))
+            )
+
+            // Pass the LayerInfo to the shader
+            renderEncoder.setVertexBytes(&layerInfo, length: MemoryLayout<LayerInfo>.size, index: 0)
+
+            // Pass the texture size
+            var drawableSize = float2(Float(drawable.texture.width), Float(drawable.texture.height))
+            renderEncoder.setVertexBytes(&drawableSize, length: MemoryLayout<float2>.size, index: 1)
+
+            // Set the pipeline state
+            renderEncoder.setRenderPipelineState(pipelineState!)
+
+            // Bind the texture for this draw call
+            renderEncoder.setFragmentTexture(texture, index: 0)
+
+            // Issue the draw call
+            renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         }
+        
+        // End encoding
+        renderEncoder.endEncoding()
+        
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+            
+            
+         
+           
+       
+
+
+            
+        
+        let buffer = MetalService.mtlTextureToCMSampleBuffer(texture: drawable.texture)
+        guard let buffer = buffer else { return }
+        
+        
+        
+        print("buffer created. Attempting to writing it out.")
+        if(isRecording) {
+            videoWriter?.writeSampleBuffer(buffer)
+        }
+        
+        if(isStreamingToVirtualCamera) {
+            let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(buffer).toOpaque())
+            guard let sinkQueue = CameraViewModel.shared.sinkQueue else { return }
+            do {
+                try sinkQueue.enqueue(pointerRef)
+                print("Successfully enqueued")
+            } catch {
+                print("Error enqueuing: \(error)")
+            }
+        }
+    
+        print("running")
+        
+        
+        
+    }
+    
+//    func drawMetalTextureToDrawable(texture: MTLTexture, drawable: CAMetalDrawable, layer: CAMetalLayer) {
+//        if checkMetalStatus() == false { return }
+//        
+//
+//        
+//
+//        var drawableSize = float2(Float(drawable.texture.width), Float(drawable.texture.height))
+//        
+//        // Superlayer and sublayer properties
+//        guard let superlayer = layer.superlayer else { return }
+//        
+//        var layerInfo = LayerInfo(
+//            layerOrigin: float2(Float(layer.frame.origin.x), Float(layer.frame.origin.y)),
+//            layerSize: float2(Float(layer.frame.size.width), Float(layer.frame.size.height)),
+//            superlayerSize: float2(Float(superlayer.bounds.size.width), Float(superlayer.bounds.size.height))
+//        )
+//
+//        // Pass the LayerInfo to the shader
+//        renderEncoder.setVertexBytes(&layerInfo, length: MemoryLayout<LayerInfo>.size, index: 0)
+//        
+//        // Pass the texture size as before
+//        renderEncoder.setVertexBytes(&drawableSize, length: MemoryLayout<float2>.size, index: 1)
+//        
+//        renderEncoder.setRenderPipelineState(pipelineState!)
+//        renderEncoder.setFragmentTexture(texture, index: 0)
+//        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+//        renderEncoder.endEncoding()
+//
+//        commandBuffer.present(drawable)
+//        commandBuffer.commit()
+//    }
+
+
+
+
+
     
     
     
@@ -119,50 +314,6 @@ class OutputService: ObservableObject {
         
         // 3. Send the texture off to wherever (ie. Recording, Virtual Camera)
 
-    private func createCompositeTexture(from sources: [SourceModel]) -> MTLTexture? {
-        guard let firstSource = sources.first,
-              let device = firstSource.mtlTexture?.device else { return nil }
-        
-        // Create a texture descriptor for the composite texture
-        let descriptor = MTLTextureDescriptor.texture2DDescriptor(
-            pixelFormat: .bgra8Unorm,
-            width: firstSource.mtlTexture!.width,
-            height: firstSource.mtlTexture!.height,
-            mipmapped: false
-        )
-        
-        descriptor.usage = [.renderTarget, .shaderRead]
-        guard let compositeTexture = device.makeTexture(descriptor: descriptor) else { return nil }
-        
-        // Create a command buffer and a render pass descriptor
-        guard let commandQueue = device.makeCommandQueue(),
-              let commandBuffer = commandQueue.makeCommandBuffer() else { return nil }
-        
-        let renderPassDescriptor = MTLRenderPassDescriptor()
-        
-        renderPassDescriptor.colorAttachments[0].texture = compositeTexture
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0)
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        
-        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else { return nil }
-        
-        // Render each texture onto the composite texture
-        for source in sources.reversed() {
-            guard let texture = source.mtlTexture else { continue }
-            
-            renderEncoder.setFragmentTexture(texture, index: 0)
-            // Setup appropriate vertex buffers, shaders, etc., here
-            // Render the texture
-            renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
-        }
-        
-        renderEncoder.endEncoding()
-        commandBuffer.commit()
-        commandBuffer.waitUntilCompleted()
-        
-        return compositeTexture
-    }
         
     
 }
