@@ -179,18 +179,18 @@ class OutputService: ObservableObject {
      
         if checkMetalStatus() == false { return }
        
-        /// `1. Get the drawable`
+        /// `1. Get the current drawable`
         guard let drawable = layer.nextDrawable() else { fatalError("Unable to get next drawable") }
         renderPassDescriptor!.colorAttachments[0].texture = drawable.texture
     
         
-        /// `2. Create commandBuffer and renderEncoder`
+        /// `2. Setup a Command Buffer and Render Encoder`
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else { fatalError("Unable to create command buffer") }
         guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor!) else { return }
     
         
         
-        /// `2. Render the source texture, to the base texture`
+        /// `3. Prepare draw calls for compositing the textures`
         for source in GlobalState.shared.currentSources {
             guard let texture = source.mtlTexture else { continue }
         
@@ -220,100 +220,38 @@ class OutputService: ObservableObject {
             renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
         }
         
+        
+        /// `4. Send drawing commands to GPU`
         // End encoding
         renderEncoder.endEncoding()
         
+        // Commit commands to GPU
         commandBuffer.present(drawable)
         commandBuffer.commit()
             
             
          
-           
-       
-
-
-            
-        
+        /// `5. Turn the Metal Texture into a CMSampleBuffer`
         let buffer = MetalService.mtlTextureToCMSampleBuffer(texture: drawable.texture)
         guard let buffer = buffer else { return }
         
         
+        /// `6. The end. Send the buffer off to the requested outputs`
+    
+        if(isRecording) { videoWriter?.writeSampleBuffer(buffer) }
         
-        print("buffer created. Attempting to writing it out.")
-        if(isRecording) {
-            videoWriter?.writeSampleBuffer(buffer)
-        }
         
         if(isStreamingToVirtualCamera) {
             let pointerRef = UnsafeMutableRawPointer(Unmanaged.passRetained(buffer).toOpaque())
             guard let sinkQueue = CameraViewModel.shared.sinkQueue else { return }
-            do {
+            
+            do { 
                 try sinkQueue.enqueue(pointerRef)
-                print("Successfully enqueued")
             } catch {
                 print("Error enqueuing: \(error)")
             }
         }
-    
-        print("running")
-        
-        
+
         
     }
-    
-//    func drawMetalTextureToDrawable(texture: MTLTexture, drawable: CAMetalDrawable, layer: CAMetalLayer) {
-//        if checkMetalStatus() == false { return }
-//        
-//
-//        
-//
-//        var drawableSize = float2(Float(drawable.texture.width), Float(drawable.texture.height))
-//        
-//        // Superlayer and sublayer properties
-//        guard let superlayer = layer.superlayer else { return }
-//        
-//        var layerInfo = LayerInfo(
-//            layerOrigin: float2(Float(layer.frame.origin.x), Float(layer.frame.origin.y)),
-//            layerSize: float2(Float(layer.frame.size.width), Float(layer.frame.size.height)),
-//            superlayerSize: float2(Float(superlayer.bounds.size.width), Float(superlayer.bounds.size.height))
-//        )
-//
-//        // Pass the LayerInfo to the shader
-//        renderEncoder.setVertexBytes(&layerInfo, length: MemoryLayout<LayerInfo>.size, index: 0)
-//        
-//        // Pass the texture size as before
-//        renderEncoder.setVertexBytes(&drawableSize, length: MemoryLayout<float2>.size, index: 1)
-//        
-//        renderEncoder.setRenderPipelineState(pipelineState!)
-//        renderEncoder.setFragmentTexture(texture, index: 0)
-//        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-//        renderEncoder.endEncoding()
-//
-//        commandBuffer.present(drawable)
-//        commandBuffer.commit()
-//    }
-
-
-
-
-
-    
-    
-    
-        // TODO: Implement Texture Compositing
-    
-        // 1. Somehow need ot iterate through all the sources and get their mtlTexture property
-        // and then composite all their texutres into 1, layer them all on top of each other
-        // in the order they are in for the GlobalState.shared.currentSources, with the first
-        // one being the top most one.
-        
-        
-        // 2. Convert the texture to CMSampleBuffer
-        
-        
-        
-        // 3. Send the texture off to wherever (ie. Recording, Virtual Camera)
-
-        
-    
 }
