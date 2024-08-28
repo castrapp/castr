@@ -16,6 +16,22 @@ struct ScreenCaptureConfiguration: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            
+            HStack {
+                Text("Active")
+                
+                Spacer()
+                
+                Toggle(isOn: $model.isActive) {}
+                .labelsHidden() // Hides the label for the Toggle
+                .fixedSize(horizontal: true, vertical: true)
+            }
+            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            
+            Spacer().panelSubSeparatorStyle()
+            
             HStack {
                 Text("Name")
                 

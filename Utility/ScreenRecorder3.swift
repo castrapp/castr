@@ -105,7 +105,7 @@ class ScreenRecorder3: NSObject, ObservableObject {
 
         streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
         
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 60)
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
         
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.
@@ -158,8 +158,8 @@ class ScreenRecorder3: NSObject, ObservableObject {
            
             // TODO: Set all of the layers parameters here, like device, frame, bounds, pixelFormat
             capturePreview.frame = Previewer.shared.contentLayer.frame
-            capturePreview.contentsGravity = .resizeAspect
-            capturePreview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
+//            capturePreview.contentsGravity = .resizeAspect
+//            capturePreview.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
             
             capturePreview.drawableSize = CGSize(width: streamConfiguration.width, height: streamConfiguration.height)
             capturePreview.pixelFormat = .bgra8Unorm

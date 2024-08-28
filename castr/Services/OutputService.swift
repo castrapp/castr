@@ -66,7 +66,7 @@ class OutputService: ObservableObject {
         // Ensure the timer isn't already running
         if outputTimer == nil {
             print("Starting Output Timer")
-            outputTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { _ in
+            outputTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { _ in
                 self.updateOutput()
             }
         }

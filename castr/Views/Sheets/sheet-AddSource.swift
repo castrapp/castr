@@ -57,7 +57,7 @@ struct AddSourceSheet: View {
                 .fontWeight(.bold)
                 .padding(.bottom, 6)
             
-            Text(content.newSourceSelection?.displayName ?? "")
+            Text(content.newSourceSelection?.name ?? "")
                 .font(.system(size: 14))
                 .foregroundStyle(.secondary)
                 .padding(.bottom, 40)
@@ -122,7 +122,7 @@ struct AddSourceSheet: View {
         // For a New Source
         if(content.selectedAddSourceOption == .newSource) {
             guard let newSourceSelection = content.newSourceSelection else { return }
-            global.addSource(sourceType: newSourceSelection, name: newSourceSelection.displayName)
+            global.addSource(sourceType: newSourceSelection, name: newSourceSelection.name)
         }
         
         // For an existing Source

@@ -34,6 +34,9 @@ class GlobalState: ObservableObject {
         didSet {
             selectedSourceId = ""
             updateCurrentSources()
+            for source in currentSources {
+                // TODO: Call the start method
+            }
         }
     }
     

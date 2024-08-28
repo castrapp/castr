@@ -102,9 +102,9 @@ extension GlobalState {
         selectedSourceId = windowCaptureSource.id
     
         // TODO: Start the source
-        Task { @MainActor in
-           await windowCaptureSource.start()
-        }
+//        Task { @MainActor in
+//           await windowCaptureSource.start()
+//        }
     }
     
     
@@ -126,9 +126,9 @@ extension GlobalState {
         selectedSourceId = videoSource.id
     
         // TODO: Start the source
-        Task { @MainActor in
-            await videoSource.start()
-        }
+//        Task { @MainActor in
+//            await videoSource.start()
+//        }
     }
     
     
@@ -173,9 +173,9 @@ extension GlobalState {
         selectedSourceId = colorSource.id
     
         // TODO: Start the source
-        Task { @MainActor in
-            await colorSource.start()
-        }
+//        Task { @MainActor in
+//            await colorSource.start()
+//        }
     }
     
     
@@ -196,18 +196,15 @@ extension GlobalState {
         selectedSourceId = textSource.id
     
         // TODO: Start the source
-        Task { @MainActor in
-            await textSource.start()
-        }
+//        Task { @MainActor in
+//            await textSource.start()
+//        }
     }
     
     
     func updateCurrentSources() {
         // Find the current scene
-        guard let currentScene = scenes.first(where: { $0.id == selectedSceneId }) else {
-            print("Error: No scene found with the selected scene ID")
-            return
-        }
+        guard let currentScene = getSelectedScene() else { return }
         
         // Create a temporary array to hold the current sources
         var tempSources: [SourceModel] = []

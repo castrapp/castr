@@ -12,21 +12,47 @@ import Combine
 import AVFoundation
 import MetalKit
 
+class CustomMetalLayer: CAMetalLayer {
+    override func resize(withOldSuperlayerSize oldSize: CGSize) {
+
+        guard let newSize = superlayer?.frame.size else { return }
+        
+        let scale = (newSize.width / oldSize.width)
+        
+        self.frame = CGRect(
+            origin: CGPoint(
+                x: self.frame.origin.x * scale,
+                y: self.frame.origin.y * scale
+            ),
+            size: CGSize(
+                width: self.frame.width * scale,
+                height: self.frame.height * scale
+            )
+        )
+        
+    }
+}
+
+
+
+
 class SourceModel: Identifiable, ObservableObject {
     
     let id: String
     let type: SourceType
     @Published var name: String
-    @Published var isHidden: Bool
+    @Published var isActive: Bool {
+        didSet { layer.isHidden = !isActive }
+    }
     @Published var scenes: [String]
-    var layer: CAMetalLayer = CAMetalLayer()
+    var layer: CAMetalLayer = CustomMetalLayer()
     var mtlTexture: MTLTexture?
     
     init(type: SourceType, name: String) {
         self.id = UUID().uuidString
         self.type = type
         self.name = name
-        self.isHidden = false
+        self.isActive = true
         self.scenes = []
     }
     
@@ -36,10 +62,6 @@ class SourceModel: Identifiable, ObservableObject {
         class ScreenCaptureSourceModel: SourceModel {
             
     
-            
-            // TODO: Create available displays variable
-            // TODO: Create available apps variable
-            // TODO: Create available windows variable
             @Published var availableDisplays = [SCDisplay]()
             @Published var availableApps = [SCRunningApplication]()
             @Published var availableWindows = [SCWindow]()
@@ -69,68 +91,20 @@ class SourceModel: Identifiable, ObservableObject {
                 self.excludedApps = []
                 super.init(type: .screenCapture, name: name)
                 
-                setupObservers()
                 print("INITIALIZING SCREEN CAPTURE")
-               
             }
             
             deinit {
                 Task { @MainActor in
                     await stop()
                 }
-                cancellables.forEach { $0.cancel() }
+
                 print("DE-INITIALIZING SCREEN CAPTURE")
             }
             
-            private func setupObservers() {
-                GlobalState.shared.$selectedSceneId.sink { [weak self] newSceneId in
-                    self?.handleSceneChange(newSceneId)
-                }
-                .store(in: &cancellables)
-                
-                GlobalState.shared.$selectedSourceId.sink { [weak self] newSourceId in
-                    self?.handleSourceChange(newSourceId)
-                }
-                .store(in: &cancellables)
-            }
+     
             
-            private func handleSceneChange(_ newSceneId: String) {
-                
-            // TODO: Whenever the selectedSceneId changes, we nede to iterate through the list
-            // TODO: of sources, all of them, and do 2 checks:
-            //
-            //              • If there 'scenes' array DOES CONTAIN the selectedSceneId then:
-            //                then call 'start' or something.
-            //
-            //              • If there 'scenes' array DOES NOT CONTAIN the selectedSceneId then:
-            //                then call 'stop' or something.
-                
-                Task { @MainActor in
-                    scenes.contains(newSceneId) ? await start() : await stop()
-                }
-            }
-            
-            func handleSourceChange(_ newSourceId: String) {
-                
-            // TODO: iterate through all of the global sources and if the source type is
-            // TODO: .screencapture or .windowcapture, then check if the selectedSourceId
-            // TODO: is equal to the selectedSourcesId or not:
-            // TODO: (This logic will need to be slightly changed at some point to make sure we don't double poll)
-            //
-            //  If the selectedSourceId IS EQUAL to the source's Id, then:
-            //  • Call startMonitoringAvailableContent()
-            //
-            //  If the selectedSourceId IS NOT EQUAL to the source's Id, then:
-            //  • Call stopMonitoringAvailableContent ()
-            //
-                
-                if(newSourceId == id) {
-                    Task { await startMonitoringAvailableContent() }
-                } else {
-                    stopMonitoringAvailableContent()
-                }
-            }
-            
+     
             @MainActor
             func start() async {
 
@@ -228,6 +202,8 @@ class SourceModel: Identifiable, ObservableObject {
             }
                 
         }
+
+
 
 
 
@@ -439,7 +415,7 @@ class SourceModel: Identifiable, ObservableObject {
                     
                 }
             }
-            
+    
             override var mtlTexture: MTLTexture? {
                 didSet {
                     guard let texture = mtlTexture else { return }
@@ -459,6 +435,7 @@ class SourceModel: Identifiable, ObservableObject {
                             height: CGFloat(texture.height) * scalingfactor
                         )
                     )
+//                    layer.autoresizingMask = [.layerMaxXMargin, .layerMaxYMargin, .layerHeightSizable, .layerWidthSizable]
 //                    layer.contentsGravity = .resizeAspect
 //                    layer.autoresizingMask = [.layerWidthSizable, .layerHeightSizable]
                     print("the previewers frame is: ", Previewer.shared.contentLayer.frame)
@@ -486,46 +463,15 @@ class SourceModel: Identifiable, ObservableObject {
                 }
             }
             
-            private var cancellables: Set<AnyCancellable> = []
             
             init(name: String) {
                 super.init(type: .image, name: name)
                 layer.device = MetalService.shared.device
+                layer.name = self.id
                 
-                setupObservers()
             }
             
-            deinit {
-                Task { @MainActor in
-                    await stop()
-                }
-                cancellables.forEach { $0.cancel() }
-            }
-            
-            private func setupObservers() {
-                GlobalState.shared.$selectedSceneId.sink { [weak self] newSceneId in
-                    self?.handleSceneChange(newSceneId)
-                }
-                .store(in: &cancellables)
-            }
-            
-            private func handleSceneChange(_ newSceneId: String) {
-                
-            // TODO: Whenever the selectedSceneId changes, we nede to iterate through the list
-            // TODO: of sources, all of them, and do 2 checks:
-            //
-            //              • If there 'scenes' array DOES CONTAIN the selectedSceneId then:
-            //                then call 'start' or something.
-            //
-            //              • If there 'scenes' array DOES NOT CONTAIN the selectedSceneId then:
-            //                then call 'stop' or something.
-                
-                print("scene is CHANGING")
-                Task { @MainActor in
-                    scenes.contains(newSceneId) ? await start() : await stop()
-                }
-            }
-            
+    
             @MainActor
             private func updateImage(_ newImage: NSImage) {
                 print("updating with new image: ", newImage)

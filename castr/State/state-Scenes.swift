@@ -52,8 +52,14 @@ extension GlobalState {
     }
     
     func addSourceIdToScene(sourceId: String) {
-        guard let index = scenes.firstIndex(where: { $0.id == selectedSceneId }) else { return }
-        scenes[index].sources.append(sourceId)
+        guard let scene = getSelectedScene() else { return }
+//        scene.sources.insert(sourceId, at: 0)
+        scene.sources.append(sourceId) 
+    }
+    
+    
+    func getSelectedScene() -> SceneModel? {
+        return scenes.first { $0.id == selectedSceneId } ?? nil
     }
     
 }

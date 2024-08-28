@@ -74,25 +74,25 @@ struct ContentView: View {
             Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
             
             HStack(spacing: 20) {
-               Text("Virtual Camera Name")
-               .font(.subheadline)
-               .foregroundColor(.secondary)
-               .padding(.leading, 10)
-
-               Text("Status")
-               .font(.subheadline)
-               .foregroundColor(.secondary)
-
-               Spacer()
-
-               Text("30 / 30 FPS")
-               .font(.subheadline)
-               .foregroundColor(.secondary)
-
-               Text("1920 x 1080")
-               .font(.subheadline)
-               .foregroundColor(.secondary)
-               .padding(.trailing, 10)
+//               Text("Virtual Camera Name")
+//               .font(.subheadline)
+//               .foregroundColor(.secondary)
+//               .padding(.leading, 10)
+//
+//               Text("Status")
+//               .font(.subheadline)
+//               .foregroundColor(.secondary)
+//
+//               Spacer()
+//
+//               Text("30 / 30 FPS")
+//               .font(.subheadline)
+//               .foregroundColor(.secondary)
+//
+//               Text("1920 x 1080")
+//               .font(.subheadline)
+//               .foregroundColor(.secondary)
+//               .padding(.trailing, 10)
 
            }
            .frame(maxWidth: .infinity, maxHeight: 30).background(BackgroundStyle.background)
@@ -130,6 +130,13 @@ struct ContentView: View {
             }
             Button("Set Just Property") {
                 CameraViewModel.shared.setJustProperty2()
+            }
+            Button("Print scenes sources") {
+                guard let currentScene = GlobalState.shared.getSelectedScene() else { return }
+                print("sources are: ", currentScene.sources)
+            }
+            Button("Print sublayers") {
+                print("sublayers are: ", previewer.contentLayer.sublayers)
             }
             Controls()
             SourceConfiguration()
@@ -271,14 +278,16 @@ struct Scenes: View {
         List(selection: $global.selectedSceneId) {
             ForEach(global.scenes, id: \.id) { scene in
                 HStack {
-                    Image(systemName: "square.and.arrow.up.circle")
-                        .font(.system(size: 30))
-                    Text(scene.id)
+                    Image(systemName: "square.3.layers.3d")
+                    .font(.system(size: 20))
+                    
+                    Text(scene.name)
                 }
+                .frame(height: 32)
                 
             }
             // TODO: Enable Moving of scenes
-//                .onMove(perform: move)
+            .onMove(perform: move)
         }
         .listStyle(SidebarListStyle()) // Sidebar style for macOS
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -303,7 +312,7 @@ struct Scenes: View {
     /// `Functions`
     
     func move(from source: IndexSet, to destination: Int) {
-        app.scenes.move(fromOffsets: source, toOffset: destination)
+        global.scenes.move(fromOffsets: source, toOffset: destination)
     }
  
 }
@@ -336,16 +345,27 @@ struct Sources: View {
             
             List(selection: $global.selectedSourceId) {
                 ForEach(global.currentSources, id: \.id) { source in
-
-                        HStack {
-                            Image(systemName: "square.and.arrow.up.circle")
-                                .font(.system(size: 30))
-                            Text(source.id)
+                
+                    HStack {
+                        source.type.imageThumbnail(active: source.isActive)
+                        VStack(alignment: .leading) {
+                            Text(source.name)
+                            Text(source.type.name)
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
                         }
+                        
+                    }
+                    .frame(height: 32)
+                    .onReceive(source.objectWillChange, perform: { _ in
+                          // Ensure the view updates when `isActive` changes
+                        print("change detected")
+                      })
+//                        .border(Color.red)
 
                 }
                 // TODO: Enable Moving of sources
-//                .onMove(perform: move)
+                .onMove(perform: move)
             }
             .listStyle(SidebarListStyle()) // Sidebar style for macOS
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -424,12 +444,27 @@ struct Sources: View {
     
     
     func move(from source: IndexSet, to destination: Int) {
-        global.scenes.move(fromOffsets: source, toOffset: destination)
+        guard let currentScene = global.getSelectedScene() else { return }
+        
+        print("source is: ", source)
+        print("destination is: ", destination)
+        
+        currentScene.sources.move(fromOffsets: source, toOffset: destination)
+        
+        Previewer.shared.contentLayer.sublayers?.move(fromOffsets: source, toOffset: destination)
+        
+        global.updateCurrentSources()
     }
  
     
     
 }
+
+
+
+
+
+
 
 
 
