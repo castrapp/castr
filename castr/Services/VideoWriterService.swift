@@ -75,7 +75,12 @@ class VideoWriter {
                 let outputSettings: [String: Any] = [
                     AVVideoCodecKey: AVVideoCodecType.h264,
                     AVVideoWidthKey: width,
-                    AVVideoHeightKey: height
+                    AVVideoHeightKey: height,
+                    AVVideoCompressionPropertiesKey: [
+                        AVVideoAverageBitRateKey: 50_000_000, // 50 Mbps, adjust based on quality needs
+                        AVVideoMaxKeyFrameIntervalKey: 60, // Keyframes every second at 120 FPS
+                        AVVideoExpectedSourceFrameRateKey: 60, // Set the frame rate to 120 FPS
+                   ]
                 ]
                 
                 self.assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)

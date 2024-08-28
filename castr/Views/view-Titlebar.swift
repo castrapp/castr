@@ -11,7 +11,7 @@ import SwiftUI
 
 struct TitlebarView: View {
     @ObservedObject var app = App.shared
-    
+    @State private var flipped = false
     
     var body: some View {
             HSplitView {
@@ -45,7 +45,34 @@ struct TitlebarView: View {
     /// `Main`
     var main: some View {
         HStack {
+            Spacer()
+            Button("flip text") {
+                flipped.toggle()
+            }
             
+            Text("Middle")
+                .padding(.trailing)
+                .font(.system(size: 16))
+                .rotation3DEffect(
+                    .degrees(flipped ? -90 : 0),
+                    axis: (x: 1, y: 0, z: 0)
+//                        perspective: 0.5
+                )
+                .animation(.easeInOut(duration: 1), value: flipped)
+                .offset(x: 0, y: flipped ? 10 : 0)
+            
+//            HStack {
+//                Spacer()
+//                
+//            }
+//            .frame(maxWidth: 1132, maxHeight: 22)
+////            .border(Color.red)
+//            .background(
+//                RoundedRectangle(cornerRadius: 6)
+//                    .fill(WindowBackgroundShapeStyle.windowBackground)
+//            )
+            
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(BackgroundStyle.background)

@@ -71,6 +71,7 @@ class SourceModel: Identifiable, ObservableObject {
                 
                 setupObservers()
                 print("INITIALIZING SCREEN CAPTURE")
+               
             }
             
             deinit {
@@ -452,7 +453,7 @@ class SourceModel: Identifiable, ObservableObject {
                     layer.framebufferOnly = true
 //                    layer.frame = Previewer.shared.contentLayer.frame
                     layer.frame = CGRect(
-                        origin: Previewer.shared.contentLayer.frame.origin,
+                        origin: CGPoint(x: 0, y: 0),
                         size: CGSize(
                             width: CGFloat(texture.width) * scalingfactor,
                             height: CGFloat(texture.height) * scalingfactor
@@ -466,6 +467,8 @@ class SourceModel: Identifiable, ObservableObject {
                     
                     layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 0, alpha: 1.0)
                     layer.borderWidth = CGFloat(1)
+                    
+                    print("drawing this texture to the layer: ", texture)
 
                     MetalService.shared.drawMetalTextureToLayer(texture: texture, metalLayer: layer)
              

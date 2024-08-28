@@ -260,7 +260,7 @@ class MetalService: ObservableObject {
         guard let cvTexture = cvTexture,
               let texture = CVMetalTextureGetTexture(cvTexture) else { return nil }
         
-//        print("metal texture extracted")
+//        print("metal texture extracted: ", texture)
         
         return texture
     }
@@ -273,7 +273,6 @@ class MetalService: ObservableObject {
         guard let drawable = metalLayer.nextDrawable() else { fatalError("Unable to get next drawable") }
         guard let commandBuffer = commandQueue?.makeCommandBuffer() else { fatalError("Unable to create command buffer") }
  
-        
 //        print("the textue ioSurface is: ", texture.iosurface)
         renderPassDescriptor!.colorAttachments[0].texture = drawable.texture
         
@@ -286,6 +285,28 @@ class MetalService: ObservableObject {
         
         commandBuffer.present(drawable)
         commandBuffer.commit()
+
+    }
+    
+    
+    func drawMetalTextureToDrawable(texture: MTLTexture, drawable: CAMetalDrawable) {
+        
+        if isMetalServiceReady == false { return }
+        guard let commandBuffer = commandQueue?.makeCommandBuffer() else { fatalError("Unable to create command buffer") }
+ 
+//        print("the textue ioSurface is: ", texture.iosurface)
+        renderPassDescriptor!.colorAttachments[0].texture = drawable.texture
+        
+        guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor!) else { return }
+
+        renderEncoder.setRenderPipelineState(pipelineState!)
+        renderEncoder.setFragmentTexture(texture, index: 0)
+        renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        renderEncoder.endEncoding()
+        
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+
     }
     
     

@@ -23,6 +23,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         MetalService.shared.setupMetal()
         print("the app group identifier is: ", appGroupIdentifier)
         
+        
+        
+        // Logging main UserDefaults
+        if let userDefaultsDirectory = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first {
+               let preferencesDirectory = userDefaultsDirectory.appendingPathComponent("Preferences")
+               print("UserDefaults directory: \(preferencesDirectory.path)")
+           } else {
+               print("Could not find the UserDefaults directory.")
+           }
+        
+        
+        
+        
+        // Logging App Group Container Defaults
         // Access the shared UserDefaults using the app group identifier
         if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
             // Save a string value
@@ -372,12 +386,30 @@ func checkForCastrVirtualCamera() -> Bool {
                                                            position: .unspecified)
     
     let devices = discoverySession.devices
-    
+    print("devices are: ", devices)
     for device in discoverySession.devices {
-        if device.localizedName == "Castr Virtual Camera" {
+        print("device is: ", device)
+        if device.localizedName == cameraName {
+            print("Found device")
+            print("Devices input sources are: ", device.inputSources)
+            print("Device is connected is: ", device.isConnected)
             return true
         }
     }
     
     return false
+}
+
+
+func requestCameraAccess() {
+    AVCaptureDevice.requestAccess(for: .video) { granted in
+        if granted {
+            print("Camera access granted")
+            // Proceed with setting up the camera session
+        } else {
+            print("Camera access denied")
+            // Inform the user they need to grant camera access
+            // You might want to show an alert here or guide them to System Settings
+        }
+    }
 }

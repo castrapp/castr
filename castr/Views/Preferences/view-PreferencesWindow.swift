@@ -7,7 +7,8 @@
 
 import Foundation
 import SwiftUI
-
+import AVFoundation
+import ScreenCaptureKit
 
 
 struct PreferencesView: View {
@@ -45,8 +46,8 @@ struct PreferencesView: View {
             
             ScrollView {
                 switch settings.selectedSetting {
-                    case .permissions:      PermissionsView
-                    case .virtualCamera:    VirtualCameraView
+                    case .permissions:      PermissionsSettingsView()
+                    case .virtualCamera:    VirtualCameraSettingsView()
                     case .recording:        RecordingSettingsView()
                 }
             }
@@ -55,100 +56,30 @@ struct PreferencesView: View {
 
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-//
+
     }
+
+}
+
+
+
+
+
+
+/// `Permissions Settings`
+
+struct PermissionsSettingsView: View {
     
+    @State var screenRecordingEnabled = false
+    @State var cameraEnabled = false
+    @State var microphoneEnabled = false
     
-    /// `Virtual Camera Settings`
-    var VirtualCameraView: some View {
-        VStack(spacing: 0) {
-            
-            Text(settings.virtualCamera_modelName)
-                .font(.system(size: 16, weight: .bold))
-                .padding(.top, 50)
-            
-            Text(settings.virtualCamera_extensionBundleIdentifier)
-                .font(.system(size: 14))
-                .padding(.top, 10)
-                .padding(.bottom, 20)
-            
-            VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Text("Model Name")
-                    Spacer()
-                    Text(settings.virtualCamera_modelName)
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Extension Bundle Identifier")
-                    Spacer()
-                    Text(settings.virtualCamera_extensionBundleIdentifier)
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Status")
-                    Spacer()
-                    Text(settings.virtualCamera_status ? "Connected" : "Not Connected")
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Framerate")
-                    Spacer()
-                    Text(String(settings.virtualCamera_framerate))
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Output Resolution")
-                    Spacer()
-                    Text(settings.virtualCamera_outputResolution)
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Installed")
-                    Spacer()
-                    Text(settings.virtualCamera_installed ? "Yes" : "no")
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Spacer()
-                    Button("Uninstall") {}
-                    Button("Install") {}
-                }
-              
-            }
-            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-            ._groupBox()
-            .fixedSize(horizontal: false, vertical: true)
-            
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
-        .padding(.top, 2)
-    }
-    
-    
-    
-    
-    /// `Permissions Settings`
-    var PermissionsView: some View {
+    @State var screenRecordingDenied = false
+    @State var cameraDenied = false
+    @State var microphoneDenied = false
+   
+ 
+    var body: some View {
         
         VStack(alignment: .leading, spacing: 0) {
             Text("Castr requires your permission to be able to provide certain features. It is recommended to enable these permissions. but they are not required to use the app. You can always enable them later.")
@@ -163,7 +94,18 @@ struct PreferencesView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
         .padding(.top, 2)
+        .onAppear { 
+            requestScreenRecording()
+            requestCamera()
+            requestMicrophone()
+            print("Permissions settings are appearing:")
+        }
     }
+    
+    
+    
+    
+    /// `Screen Recording Permission View`
     
     var ScreenRecordingView: some View {
 
@@ -192,15 +134,30 @@ struct PreferencesView: View {
             HStack {
                 Text("Enabled")
                 Spacer()
-                Text("Yes")
+                HStack(spacing: 0) {
+                    Text(screenRecordingEnabled ? "Yes" : "No")
+                    Image(systemName: "circle.fill")
+                            .foregroundColor(screenRecordingEnabled ? .green : .red)
+                            .font(.system(size: 7))
+                            .padding(.leading, 5)
+                }
             }
             
             Divider()
             
             HStack {
+                if(screenRecordingDenied && !screenRecordingEnabled) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 10))
+                            .symbolRenderingMode(.multicolor)
+                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Screen & System Audio Recording' to enable it.'")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                }
                 Spacer()
-                Button("Request Permission") {}
-                Button("Change Permission") {}
+                Button("Request Permission") { requestScreenRecording() }
             }
         }
         .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
@@ -210,6 +167,10 @@ struct PreferencesView: View {
     }
     
     
+    
+    
+    
+    /// `Camera/Video Permission View
     
     var CameraView: some View {
         
@@ -239,15 +200,30 @@ struct PreferencesView: View {
             HStack {
                 Text("Enabled")
                 Spacer()
-                Text("Yes")
+                HStack(spacing: 0) {
+                    Text(cameraEnabled ? "Yes" : "No")
+                    Image(systemName: "circle.fill")
+                            .foregroundColor(cameraEnabled ? .green : .red)
+                            .font(.system(size: 7))
+                            .padding(.leading, 5)
+                }
             }
             
             Divider()
             
             HStack {
+                if(cameraDenied && !cameraEnabled) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 10))
+                            .symbolRenderingMode(.multicolor)
+                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Camera' to enable it.'")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                }
                 Spacer()
-                Button("Request Permission") {}
-                Button("Change Permission") {}
+                Button("Request Permission") { requestCamera() }
             }
         }
         .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
@@ -256,6 +232,11 @@ struct PreferencesView: View {
        
     }
     
+    
+    
+    
+    
+    /// `Microphone Permission View`
     
     var MicrophoneView: some View {
             
@@ -284,15 +265,30 @@ struct PreferencesView: View {
             HStack {
                 Text("Enabled")
                 Spacer()
-                Text("Yes")
+                HStack(spacing: 0) {
+                    Text(microphoneEnabled ? "Yes" : "No")
+                    Image(systemName: "circle.fill")
+                            .foregroundColor(microphoneEnabled ? .green : .red)
+                            .font(.system(size: 7))
+                            .padding(.leading, 5)
+                }
             }
             
             Divider()
             
             HStack {
+                if(microphoneDenied && !microphoneEnabled) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.system(size: 10))
+                            .symbolRenderingMode(.multicolor)
+                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Microphone' to enable it.'")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                }
                 Spacer()
-                Button("Request Permission") {}
-                Button("Change Permission") {}
+                Button("Request Permission") { requestMicrophone() }
             }
         }
         .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
@@ -300,31 +296,106 @@ struct PreferencesView: View {
         .fixedSize(horizontal: false, vertical: true)
     }
     
-
+    private func requestScreenRecording() {
+        Task {
+            do {
+                // If the app doesn't have screen recording permission, this call generates an exception.
+                try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+                screenRecordingEnabled = true
+            } catch {
+                screenRecordingEnabled = false
+                screenRecordingDenied = true
+            }
+        }
+    }
     
-   
+    private func requestCamera() {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            if granted {
+                print("Camera access granted")
+                // Proceed with setting up the camera session
+                cameraEnabled = true
+            } else {
+                print("Camera access denied")
+                // Inform the user they need to grant camera access
+                // You might want to show an alert here or guide them to System Settings
+                cameraEnabled = false
+                cameraDenied = true
+            }
+        }
+    }
+    
+    
+    private func requestMicrophone() {
+        AVCaptureDevice.requestAccess(for: .audio) { granted in
+                if granted {
+                    print("Microphone access granted")
+                    microphoneEnabled = true
+                } else {
+                    print("Microphone access denied")
+                    // Inform the user they need to grant microphone access
+                    // You might want to show an alert here or guide them to System Settings
+                    microphoneEnabled = false
+                    microphoneDenied = true
+                }
+            }
+    }
+    
 }
 
 
 
-struct RecordingSettingsView: View {
+
+
+
+
+
+
+/// `Virutal Camera Settings`
+
+
+
+struct VirtualCameraSettingsView: View {
     
     @ObservedObject var settings = Settings.shared
-    @State var outputDestination: String?
-    @State private var selectedFramerate = 30
-     
-     let framerates = [15, 30, 45, 60]
+    
+    // Define @State properties with default values
+    @State private var modelName: String = "Castr Virtual Camera"
+    @State private var extensionBundleIdentifier: String = "harrisonhall.castr.virtualcamera"
+    @State private var connectedStatus: Bool = false
+    @State private var selectedFramerate: Int = 30
+    @State private var selectedResolution: String = "1728x1117"
+    @State private var installationStatus: Bool = false
+    
+    let resolutions = ["1728x1117", "3456x2234"]
     
     var body: some View {
         VStack(spacing: 0) {
             
+            Text(modelName)
+                .font(.system(size: 16, weight: .bold))
+                .padding(.top, 50)
+            
+            Text(extensionBundleIdentifier)
+                .font(.system(size: 14))
+                .padding(.top, 10)
+                .padding(.bottom, 20)
+            
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text("Recording Output")
+                    Text("Model Name")
                     Spacer()
-                    Text(outputDestination ?? "")
-                    .foregroundStyle(.secondary)
-                    .onAppear { loadSavedOutputDestination() }
+                    Text(modelName)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Divider()
+                
+                HStack {
+                    Text("Extension Bundle Identifier")
+                    Spacer()
+                    Text(extensionBundleIdentifier)
+                        .foregroundStyle(.secondary)
                 }
                 
                 Divider()
@@ -332,8 +403,17 @@ struct RecordingSettingsView: View {
                 HStack {
                     Text("Output Resolution")
                     Spacer()
-                    Text("1728x1117")
-                    .foregroundStyle(.secondary)
+                    Picker("", selection: $selectedResolution) {
+                        ForEach(resolutions, id: \.self) { resolution in
+                            Text("\(resolution)").tag(resolution)
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                    .fixedSize()
+                    .onChange(of: selectedResolution) { newValue in
+                        saveVirtualCameraSetting(key: "resolution", value: newValue)
+                    }
+                    .disabled(installationStatus == false)
                 }
                 
                 Divider()
@@ -341,62 +421,71 @@ struct RecordingSettingsView: View {
                 HStack {
                     Text("Output Framerate")
                     Spacer()
-                    Picker("", selection: $selectedFramerate) {
-                        ForEach(framerates, id: \.self) { rate in
-                            Text("\(rate) FPS").tag(rate)
+                    Stepper("\(selectedFramerate)",
+                        value: $selectedFramerate,
+                        in: 0...60
+                    )
+                    .onChange(of: selectedFramerate) { newValue in
+                       saveVirtualCameraSetting(key: "framerate", value: newValue)
+                    }
+                    .disabled(installationStatus == false)
+                    .foregroundColor(installationStatus ? .primary : Color(NSColor.tertiaryLabelColor))
+                }
+                
+                Divider()
+                
+                HStack {
+                    Text("Status")
+                    Spacer()
+                    HStack(spacing: 0) {
+                        Text(connectedStatus ? "Connected" : "Not Connected")
+//                            .foregroundStyle(.secondary)
+                        Image(systemName: "circle.fill")
+                                .foregroundColor(connectedStatus ? .green : .red)
+                                .font(.system(size: 7))
+                                .padding(.leading, 5)
+                    }
+                }
+                
+                Divider()
+                
+                HStack {
+                    Text("Installation Status")
+                    Spacer()
+                    HStack(spacing: 0) {
+                        Text(installationStatus ? "Installed" : "Not Installed")
+//                            .foregroundStyle(.secondary)
+                        Image(systemName: "circle.fill")
+                            .foregroundColor(installationStatus ? .green : .red)
+                            .font(.system(size: 7))
+                            .padding(.leading, 5)
+                    }
+                    .onAppear { installationStatus = checkForCastrVirtualCamera() }
+                }
+                
+                Divider()
+                
+                HStack {
+                    if(installationStatus == false) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 10))
+                                .symbolRenderingMode(.multicolor)
+                            Text("To stream to the virtual camera, you must install it.")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
                         }
                     }
-              
-//                    .pickerStyle(MenuPickerStyle())
-                    .buttonStyle(.borderless)
-                    .fixedSize()
-         
-                
+                    Spacer()
+                    Button("Uninstall") { uninstallVirtualCamera() }
+                    Button("Install") { installVirtualCamera() }
                 }
               
-                Divider()
-                
-                HStack {
-                    Text("Color Format")
-                    Spacer()
-                    Text("BGRA")
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Bitrate")
-                    Spacer()
-                    Text("15 mbps")
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Text("Encoder")
-                    Spacer()
-                    Text("h264")
-                    .foregroundStyle(.secondary)
-                }
-                
-                Divider()
-                
-                HStack {
-                    Spacer()
-                    Button("Set Default Output") {
-                        selectOutputDestination()
-                    }
-                    Button("Load saved") {
-                        loadSavedOutputDestination()
-                    }
-                }
-                
             }
             .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
             ._groupBox()
             .fixedSize(horizontal: false, vertical: true)
+            .onAppear { loadVirtualCameraSettings() }
             
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -404,35 +493,275 @@ struct RecordingSettingsView: View {
         .padding(.top, 2)
     }
     
-    private func selectOutputDestination() {
-           let openPanel = NSOpenPanel()
-           openPanel.canChooseDirectories = true
-           openPanel.canCreateDirectories = true
-           openPanel.canChooseFiles = false
-           openPanel.prompt = "Select Output Folder"
+    private func installVirtualCamera() {
+        SystemExtensionManager.shared.installExtension(extensionIdentifier: appVirtualCameraBundleId) { success, error in
+            if success {
+                print("Castr Virtual Camera installed successfully")
+                installationStatus = true
+            } else {
+                installationStatus = false
+                if let error = error {
+                    print("Failed to install Castr Virtual Camera: \(error.localizedDescription)")
+                } else {
+                    print("Failed to install Castr Virtual Camera")
+                }
+            }
+        }
+    }
+    
+    private func uninstallVirtualCamera() {
+        SystemExtensionManager.shared.uninstallExtension(extensionIdentifier: appVirtualCameraBundleId) { success, error in
+            if success {
+                print("Castr Virtual Camera uninstalled successfully")
+                installationStatus = false
+            } else {
+//                installationStatus = false
+                if let error = error {
+                    print("Failed to install Castr Virtual Camera: \(error.localizedDescription)")
+                } else {
+                    print("Failed to install Castr Virtual Camera")
+                }
+            }
+        }
+    }
+    
+    
+    private func loadVirtualCameraSettings() {
+        guard let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) else { return }
+        
+        var virtualCameraSettings = sharedDefaults.dictionary(forKey: "virtualCameraSettings") as? [String: Any] ?? [:]
 
-           if openPanel.runModal() == .OK {
-               if let url = openPanel.url {
-                   saveOutputDestination(url)
-                   outputDestination = url.lastPathComponent
-               }
+        // Load or initialize each setting
+        selectedResolution = virtualCameraSettings["resolution"] as? String ?? selectedResolution
+        selectedFramerate = virtualCameraSettings["framerate"] as? Int ?? selectedFramerate
+       
+
+        // Save default values if they weren't present
+        virtualCameraSettings["resolution"] = selectedResolution
+        virtualCameraSettings["framerate"] = selectedFramerate
+        
+
+        sharedDefaults.set(virtualCameraSettings, forKey: "virtualCameraSettings")
+        print("Virtual Camera Settings loaded successfully.")
+    }
+    
+    private func saveVirtualCameraSetting(key: String, value: Any) {
+        guard let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) else { return }
+        
+        var virtualCameraSettings = sharedDefaults.dictionary(forKey: "virtualCameraSettings") as? [String: Any] ?? [:]
+        virtualCameraSettings[key] = value
+        sharedDefaults.set(virtualCameraSettings, forKey: "virtualCameraSettings")
+        print("Virtual Camera setting '\(key)' saved with value: \(value)")
+    }
+}
+
+
+
+
+
+/// `Recording Settings`
+
+struct RecordingSettingsView: View {
+    
+    @ObservedObject var settings = Settings.shared
+    @State var outputDestination: String?
+    @State var selectedFramerate = 30
+    @State var selectedResolution = "1728x1117"
+    @State var selectedColorFormat = "BGRA"
+    @State var selectedBitrate = 15_000_000
+    @State var selectedEncoder = "h264"
+     
+    let resolutions = ["1728x1117", "3456x2234"]
+    let encoders = ["h264", "h265"]
+    let colorFormats = ["BGRA", "YUV"]
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            
+            VStack(alignment: .leading, spacing: 10) {
+                
+                HStack {
+                    Text("Output Resolution")
+                    Spacer()
+                    Picker("", selection: $selectedResolution) {
+                        ForEach(resolutions, id: \.self) { resolution in
+                            Text("\(resolution)").tag(resolution)
+                        }
+                    }
+                    .buttonStyle(.borderless)
+                    .fixedSize()
+                    .onChange(of: selectedResolution) { newValue in
+                        saveRecordingSetting(key: "resolution", value: newValue)
+                    }
+                }
+                
+                Divider()
+                
+                HStack {
+                    Text("Output Framerate")
+                    Spacer()
+                    Stepper("\(selectedFramerate)",
+                        value: $selectedFramerate,
+                        in: 0...60
+                    )
+                    .onChange(of: selectedFramerate) { newValue in
+                       saveRecordingSetting(key: "framerate", value: newValue)
+                    }
+                }
+
+                Divider()
+
+                HStack {
+                    Text("Color Format")
+                    Spacer()
+                    Picker("", selection: $selectedColorFormat) {
+                        ForEach(colorFormats, id: \.self) { format in
+                            Text("\(format)").tag(format)
+                        }
+                    }
+                    .buttonStyle(.borderless) // Use the same button style as output resolution picker
+                    .fixedSize()
+                    .onChange(of: selectedColorFormat) { newValue in
+                        saveRecordingSetting(key: "colorFormat", value: newValue)
+                    }
+                }
+
+                Divider()
+
+                HStack {
+                    Text("Bitrate")
+                    Spacer()
+                    Stepper("\(selectedBitrate)",
+                        value: $selectedBitrate,
+                        in: 1_000_000...30_000_000,
+                        step: 1_000_000
+                    )
+                    .onChange(of: selectedBitrate) { newValue in
+                        saveRecordingSetting(key: "bitrate", value: newValue)
+                    }
+
+                }
+
+                Divider()
+
+                HStack {
+                    Text("Encoder")
+                    Spacer()
+                    Picker("", selection: $selectedEncoder) {
+                        ForEach(encoders, id: \.self) { encoder in
+                            Text("\(encoder)").tag(encoder)
+                        }
+                    }
+                    .buttonStyle(.borderless) // Use the same button style as output resolution picker
+                    .fixedSize()
+                    .onChange(of: selectedEncoder) { newValue in
+                        saveRecordingSetting(key: "encoder", value: newValue)
+                    }
+                }
+                
+                Divider()
+                
+                HStack {
+                    Text("Recording Output")
+                    Spacer()
+                    Text(outputDestination ?? "No Ouput Specified")
+                    .foregroundStyle(.secondary)
+                    .onAppear { loadSavedOutputDestination() }
+                }
+                
+//                Divider()
+                
+                HStack {
+                    if(outputDestination == nil) {
+                        HStack(spacing: 2) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 10))
+                                .symbolRenderingMode(.multicolor)
+                            Text("To enable recording, you must specify a recording output destination.")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    Spacer()
+                    Button("Set Output Destination") {
+                        selectOutputDestination()
+                    }
+                }
+                
+            }
+            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+            ._groupBox()
+            .fixedSize(horizontal: false, vertical: true)
+            .onAppear { loadRecordingSettings() }
+            
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
+        .padding(.top, 2)
+    }
+    
+    private func loadRecordingSettings() {
+        guard let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) else { return }
+        
+        var recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings") as? [String: Any] ?? [:]
+
+        // Load or initialize each setting
+        selectedResolution = recordingSettings["resolution"] as? String ?? selectedResolution
+        selectedFramerate = recordingSettings["framerate"] as? Int ?? selectedFramerate
+        selectedColorFormat = recordingSettings["colorFormat"] as? String ?? selectedColorFormat
+        selectedBitrate = recordingSettings["bitrate"] as? Int ?? selectedBitrate
+        selectedEncoder = recordingSettings["encoder"] as? String ?? selectedEncoder
+
+        // Save default values if they weren't present
+        recordingSettings["resolution"] = selectedResolution
+        recordingSettings["framerate"] = selectedFramerate
+        recordingSettings["colorFormat"] = selectedColorFormat
+        recordingSettings["bitrate"] = selectedBitrate
+        recordingSettings["encoder"] = selectedEncoder
+
+        sharedDefaults.set(recordingSettings, forKey: "recordingSettings")
+        print("Recording Settings loaded successfully.")
+    }
+    
+    private func saveRecordingSetting(key: String, value: Any) {
+        guard let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) else { return }
+        
+        var recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings") as? [String: Any] ?? [:]
+        recordingSettings[key] = value
+        sharedDefaults.set(recordingSettings, forKey: "recordingSettings")
+        print("Recording setting '\(key)' saved with value: \(value)")
+    }
+    
+    private func selectOutputDestination() {
+       let openPanel = NSOpenPanel()
+       openPanel.canChooseDirectories = true
+       openPanel.canCreateDirectories = true
+       openPanel.canChooseFiles = false
+       openPanel.prompt = "Select Output Folder"
+
+       if openPanel.runModal() == .OK {
+           if let url = openPanel.url {
+               saveOutputDestination(url)
+               outputDestination = url.path(percentEncoded: false)
+               print("new output is: ", url.path(percentEncoded: false))
            }
        }
+   }
 
    private func saveOutputDestination(_ url: URL) {
-           do {
-               let bookmarkData = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
-               
-               if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) {
-                   var recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings") as? [String: Any] ?? [:]
-                   recordingSettings["outputDestination"] = url.path
-                   recordingSettings["outputDestinationBookmark"] = bookmarkData
-                   sharedDefaults.set(recordingSettings, forKey: "recordingSettings")
-               }
-           } catch {
-               print("Failed to create bookmark: \(error)")
+       do {
+           let bookmarkData = try url.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+           
+           if let sharedDefaults = UserDefaults(suiteName: settingsDefaultsIdentifier) {
+               var recordingSettings = sharedDefaults.dictionary(forKey: "recordingSettings") as? [String: Any] ?? [:]
+               recordingSettings["outputDestination"] = url.path
+               recordingSettings["outputDestinationBookmark"] = bookmarkData
+               sharedDefaults.set(recordingSettings, forKey: "recordingSettings")
            }
+       } catch {
+           print("Failed to create bookmark: \(error)")
        }
+   }
 
    private func loadSavedOutputDestination() {
        print("attempting to load saved output destination")

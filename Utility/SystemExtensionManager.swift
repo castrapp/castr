@@ -23,6 +23,8 @@ class SystemExtensionManager: NSObject, OSSystemExtensionRequestDelegate {
     }
     
     func uninstallExtension(extensionIdentifier: String, completion: @escaping (Bool, Error?) -> Void) {
+        print("Attempting to uninstall")
+        print("System extension identifier: ", extensionIdentifier)
         let deactivationRequest = OSSystemExtensionRequest.deactivationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
         deactivationRequest.delegate = self
         

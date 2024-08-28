@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDE82C69CEE60046718B /* MouseListener.swift */; };
 		2A3AFDEC2C69D0730046718B /* view-MouseEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDEB2C69D0730046718B /* view-MouseEvent.swift */; };
+		2A3FD5282C7E37B700B905CD /* Shaders2.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FD5272C7E37B700B905CD /* Shaders2.metal */; };
 		2A54A2FD2C5ECD2900D657BC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A2FC2C5ECD2900D657BC /* main.swift */; };
 		2A54A3012C5ECD2B00D657BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3002C5ECD2B00D657BC /* Assets.xcassets */; };
 		2A54A3042C5ECD2B00D657BC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */; };
@@ -43,6 +44,7 @@
 		2A9122CC2C712AA8005194AC /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122CB2C712AA8005194AC /* Device.swift */; };
 		2A9122CE2C712AB5005194AC /* Stream-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122CD2C712AB5005194AC /* Stream-Source.swift */; };
 		2A9122D32C712B52005194AC /* Stream-Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122D22C712B52005194AC /* Stream-Sink.swift */; };
+		2A914AED2C7ED9A2003174BB /* view-TestFlip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A914AEC2C7ED9A2003174BB /* view-TestFlip.swift */; };
 		2ACAD4982C7B0A4800B706D1 /* state-App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD4972C7B0A4800B706D1 /* state-App.swift */; };
 		2ACAD49A2C7B0A6C00B706D1 /* view-Titlebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD4992C7B0A6C00B706D1 /* view-Titlebar.swift */; };
 		2ACAD49C2C7B0A9E00B706D1 /* material-Transparent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACAD49B2C7B0A9E00B706D1 /* material-Transparent.swift */; };
@@ -105,6 +107,7 @@
 /* Begin PBXFileReference section */
 		2A3AFDE82C69CEE60046718B /* MouseListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseListener.swift; sourceTree = "<group>"; };
 		2A3AFDEB2C69D0730046718B /* view-MouseEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-MouseEvent.swift"; sourceTree = "<group>"; };
+		2A3FD5272C7E37B700B905CD /* Shaders2.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders2.metal; sourceTree = "<group>"; };
 		2A54A2F92C5ECD2900D657BC /* castr.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = castr.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A54A2FC2C5ECD2900D657BC /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		2A54A3002C5ECD2B00D657BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -142,6 +145,7 @@
 		2A9122CB2C712AA8005194AC /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		2A9122CD2C712AB5005194AC /* Stream-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream-Source.swift"; sourceTree = "<group>"; };
 		2A9122D22C712B52005194AC /* Stream-Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream-Sink.swift"; sourceTree = "<group>"; };
+		2A914AEC2C7ED9A2003174BB /* view-TestFlip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-TestFlip.swift"; sourceTree = "<group>"; };
 		2ACAD4972C7B0A4800B706D1 /* state-App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-App.swift"; sourceTree = "<group>"; };
 		2ACAD4992C7B0A6C00B706D1 /* view-Titlebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Titlebar.swift"; sourceTree = "<group>"; };
 		2ACAD49B2C7B0A9E00B706D1 /* material-Transparent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "material-Transparent.swift"; sourceTree = "<group>"; };
@@ -247,6 +251,7 @@
 				2A3AFDEA2C69D0630046718B /* Utility */,
 				2A54A32B2C5FF70500D657BC /* SourceConfiguration */,
 				2ACAD4AF2C7B1BEB00B706D1 /* Sheets */,
+				2A914AEC2C7ED9A2003174BB /* view-TestFlip.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -395,6 +400,7 @@
 				2AEEF3AE2C7C580B008F4F13 /* OutputService.swift */,
 				2AEEF3B02C7C7463008F4F13 /* VideoWriterService.swift */,
 				2ACAD4B52C7B324300B706D1 /* Shaders.metal */,
+				2A3FD5272C7E37B700B905CD /* Shaders2.metal */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -521,6 +527,7 @@
 				2AEEF3B12C7C7463008F4F13 /* VideoWriterService.swift in Sources */,
 				2AEEF3AF2C7C580B008F4F13 /* OutputService.swift in Sources */,
 				2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */,
+				2A914AED2C7ED9A2003174BB /* view-TestFlip.swift in Sources */,
 				2A54A3222C5F37D300D657BC /* style-Text.swift in Sources */,
 				2ACAD4A82C7B0B8B00B706D1 /* style-ToolbarButton.swift in Sources */,
 				2A9122C32C703DB2005194AC /* virtualcamerahelper.swift in Sources */,
@@ -545,6 +552,7 @@
 				2A9122C12C7033DB005194AC /* VirtualCameraConnecterDraft.swift in Sources */,
 				2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */,
 				2A54A3382C60395500D657BC /* state-Sources.swift in Sources */,
+				2A3FD5282C7E37B700B905CD /* Shaders2.metal in Sources */,
 				2A8D2A222C6733BD00E1B5EF /* view-TextConfiguration.swift in Sources */,
 				2AEEF3AD2C7C4A05008F4F13 /* ScreenRecorder3.swift in Sources */,
 				2A54A3482C60619B00D657BC /* CaptureEngine.swift in Sources */,
@@ -714,8 +722,9 @@
 				INFOPLIST_FILE = castr/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Castr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to capture video for streaming.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Castr needs access to your microphone in order to capture your screen.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Castr needs access to your microphone in order to capture your audio.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -747,8 +756,9 @@
 				INFOPLIST_FILE = castr/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Castr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.video";
-				INFOPLIST_KEY_NSCameraUsageDescription = "This app needs access to your camera to capture video for streaming.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Castr needs access to your microphone in order to capture your screen.";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Castr needs access to your microphone in order to capture your audio.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

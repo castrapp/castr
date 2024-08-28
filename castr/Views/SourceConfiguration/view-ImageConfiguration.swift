@@ -78,36 +78,5 @@ struct ImageConfiguration: View {
            return try loader.newTexture(URL: url, options: nil)
    }
     
-    func renderTextureToCAMetalLayer(texture: MTLTexture, metalLayer: CAMetalLayer) {
-        guard let drawable = metalLayer.nextDrawable() else {
-            print("Failed to get CAMetalLayer drawable")
-            return
-        }
-        guard let device = MetalService.shared.device else { return }
-        let commandQueue = device.makeCommandQueue()!
-        let commandBuffer = commandQueue.makeCommandBuffer()!
-        
-        let renderPassDescriptor = MTLRenderPassDescriptor()
-        renderPassDescriptor.colorAttachments[0].texture = drawable.texture
-        renderPassDescriptor.colorAttachments[0].loadAction = .clear
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0.0, 0.0, 0.0, 1.0)
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-        
-        let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
-        
-        // Set up your rendering pipeline and shaders here
-        // For simplicity, this example assumes you have a pre-configured render pipeline
-//        renderEncoder.setRenderPipelineState(model.renderPipelineState)
-        
-        // Set the texture to the fragment shader (assuming you use slot 0)
-        renderEncoder.setFragmentTexture(texture, index: 0)
-        
-        // Draw a full-screen quad or whatever is appropriate for your rendering
-        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
-        
-        renderEncoder.endEncoding()
-        
-        commandBuffer.present(drawable)
-        commandBuffer.commit()
-    }
+
 }
