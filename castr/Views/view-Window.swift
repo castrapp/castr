@@ -17,6 +17,7 @@ struct ContentView: View {
     @ObservedObject var global = GlobalState.shared
     let previewer = Previewer.shared
     let layout = Layout.shared
+//    let mainView = MainView2()
     @State var counter: Double = 0
     
 
@@ -25,7 +26,18 @@ struct ContentView: View {
             
             leftSidebar
         
-            main
+//            mainView
+//                .frame(idealWidth: .infinity, maxWidth: .infinity, maxHeight: .infinity)
+//                .border(Color.red)
+//            MainView2 {
+//                Text("Hello")
+//            }
+//            .border(Color.red)
+            
+            MainView {
+                Text("Hello world")
+            }
+//            .border(Color.red)
           
             rightSidebar
         }
@@ -52,100 +64,7 @@ struct ContentView: View {
         .frame(minWidth: 300, maxWidth: 300, maxHeight: .infinity)
         .background(MaterialView(material: .sidebar))
     }
-    
-    
-    /// `Main`
-    var main: some View {
-        VStack(spacing: 0) {
-            Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
-        
 
-            MouseEventView(
-               onMouseDown: { event in print("Mouse down at \(event.locationInWindow)") },
-               onMouseDrag: { event in print("Mouse dragged to \(event.locationInWindow)") },
-               onMouseUp: { event in print("Mouse up at \(event.locationInWindow)") },
-               onMouseMoved: { event in
-                   
-                 
-                   let locationInView = previewer.captureVideoPreview.convert(event.locationInWindow, from: nil)
-                   let locationInLayer = previewer.contentLayer.convert(locationInView, from: previewer.contentLayer)
-                   
-                   guard let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) else { return }
-                   
-                   if let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) as? CustomMetalLayer, deepestLayer != previewer.contentLayer {
-                       // If the deepest layer is a CustomMetalLayer, highlight it
-//                       print("the deepest layer is: ", deepestLayer)
-                       
-                       let convertedRect = previewer.contentLayer.convert(deepestLayer.frame, to: Layout.shared.layer)
-                       let convertedOrigin = previewer.contentLayer.convert(deepestLayer.frame.origin, to: nil)
-                       let convertedOrigin2 = Layout.shared.layer
-                       
-                       Layout.shared.layer.frame = convertedRect
-                       Layout.shared.layer.frame.origin = convertedOrigin
-//                       print("the layers origin is: ", originX, originY)
-                       
-                       print("converted origin is: ", convertedOrigin, "original coordinates are: ", deepestLayer.frame.origin)
-                       
-                       Layout.shared.layer.isHidden = false
-                       Layout.shared.layer.borderWidth = 1.0
-                       Layout.shared.layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
-                       
-                   } else {
-                       Layout.shared.layer.isHidden = true
-                   }
-          
-               }
-           ) {
-               ZStack {
-                   previewer
-                  .frame(maxWidth: .infinity, maxHeight: .infinity)
-                  .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
-                  .border(.quaternary, width: 1)
-                  .background(.ultraThickMaterial)
-                  .clipped()
-                  .padding(.horizontal, 10)
-                   
-                   layout
-                   .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                   .border(Color.green)
-//                   .padding()
-               }
-               .frame(maxWidth: .infinity, maxHeight: .infinity)
-               .border(Color.blue)
-           }
-           .frame(maxWidth: .infinity, maxHeight: .infinity)
-           .border(Color.red)
-            
-            
-            Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
-            
-            HStack(spacing: 20) {
-//               Text("Virtual Camera Name")
-//               .font(.subheadline)
-//               .foregroundColor(.secondary)
-//               .padding(.leading, 10)
-//
-//               Text("Status")
-//               .font(.subheadline)
-//               .foregroundColor(.secondary)
-//
-//               Spacer()
-//
-//               Text("30 / 30 FPS")
-//               .font(.subheadline)
-//               .foregroundColor(.secondary)
-//
-//               Text("1920 x 1080")
-//               .font(.subheadline)
-//               .foregroundColor(.secondary)
-//               .padding(.trailing, 10)
-
-           }
-           .frame(maxWidth: .infinity, maxHeight: 30).background(BackgroundStyle.background)
-        }
-        .frame(idealWidth: .infinity, maxWidth: .infinity, maxHeight: .infinity)
-        .background(WindowBackgroundShapeStyle.windowBackground)
-    }
    
     
     /// `Right Sidebar`

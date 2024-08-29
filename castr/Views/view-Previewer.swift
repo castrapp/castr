@@ -26,6 +26,7 @@ struct Previewer: NSViewRepresentable {
     private init() {
         contentLayer.contentsGravity = .resizeAspect
 //        contentLayer.masksToBounds = true
+        contentLayer.bounds.insetBy(dx: <#T##CGFloat#>, dy: <#T##CGFloat#>)
         contentLayer.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
         captureVideoPreview = CaptureVideoPreview(layer: contentLayer)
     }

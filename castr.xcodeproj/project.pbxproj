@@ -13,7 +13,7 @@
 		2A54A2FD2C5ECD2900D657BC /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A2FC2C5ECD2900D657BC /* main.swift */; };
 		2A54A3012C5ECD2B00D657BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3002C5ECD2B00D657BC /* Assets.xcassets */; };
 		2A54A3042C5ECD2B00D657BC /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */; };
-		2A54A3172C5F096C00D657BC /* view-MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3162C5F096C00D657BC /* view-MainContent.swift */; };
+		2A54A3172C5F096C00D657BC /* view-Window.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3162C5F096C00D657BC /* view-Window.swift */; };
 		2A54A3222C5F37D300D657BC /* style-Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3212C5F37D300D657BC /* style-Text.swift */; };
 		2A54A3242C5F38E600D657BC /* style-Spacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3232C5F38E600D657BC /* style-Spacer.swift */; };
 		2A54A32A2C5F428400D657BC /* view-Previewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3292C5F428400D657BC /* view-Previewer.swift */; };
@@ -30,6 +30,8 @@
 		2A5CDF892C7FE46F00F8BD49 /* screenRecorder4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */; };
 		2A5CDF8B2C8053A200F8BD49 /* MouseEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */; };
 		2A5CDF902C811CC700F8BD49 /* manager-LayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF8F2C811CC700F8BD49 /* manager-LayoutManager.swift */; };
+		2A5CDF922C811FC500F8BD49 /* view-Previewer2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF912C811FC500F8BD49 /* view-Previewer2.swift */; };
+		2A5CDF942C81202E00F8BD49 /* view-Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF932C81202E00F8BD49 /* view-Main.swift */; };
 		2A8D2A172C657BB400E1B5EF /* state-Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A162C657BB400E1B5EF /* state-Global.swift */; };
 		2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */; };
 		2A8D2A1E2C671DAD00E1B5EF /* view-ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */; };
@@ -116,7 +118,7 @@
 		2A54A3002C5ECD2B00D657BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2A54A3032C5ECD2B00D657BC /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2A54A3052C5ECD2B00D657BC /* castr.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = castr.entitlements; sourceTree = "<group>"; };
-		2A54A3162C5F096C00D657BC /* view-MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-MainContent.swift"; sourceTree = "<group>"; };
+		2A54A3162C5F096C00D657BC /* view-Window.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Window.swift"; sourceTree = "<group>"; };
 		2A54A3212C5F37D300D657BC /* style-Text.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "style-Text.swift"; sourceTree = "<group>"; };
 		2A54A3232C5F38E600D657BC /* style-Spacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "style-Spacer.swift"; sourceTree = "<group>"; };
 		2A54A3292C5F428400D657BC /* view-Previewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Previewer.swift"; sourceTree = "<group>"; };
@@ -133,6 +135,8 @@
 		2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screenRecorder4.swift; sourceTree = "<group>"; };
 		2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseEventView.swift; sourceTree = "<group>"; };
 		2A5CDF8F2C811CC700F8BD49 /* manager-LayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "manager-LayoutManager.swift"; sourceTree = "<group>"; };
+		2A5CDF912C811FC500F8BD49 /* view-Previewer2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Previewer2.swift"; sourceTree = "<group>"; };
+		2A5CDF932C81202E00F8BD49 /* view-Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Main.swift"; sourceTree = "<group>"; };
 		2A8D2A162C657BB400E1B5EF /* state-Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-Global.swift"; sourceTree = "<group>"; };
 		2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "protocol-Source.swift"; sourceTree = "<group>"; };
 		2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ImageConfiguration.swift"; sourceTree = "<group>"; };
@@ -251,9 +255,11 @@
 		2A54A30B2C5ED7A300D657BC /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				2A54A3162C5F096C00D657BC /* view-MainContent.swift */,
+				2A54A3162C5F096C00D657BC /* view-Window.swift */,
 				2ACAD4992C7B0A6C00B706D1 /* view-Titlebar.swift */,
+				2A5CDF932C81202E00F8BD49 /* view-Main.swift */,
 				2A54A3292C5F428400D657BC /* view-Previewer.swift */,
+				2A5CDF912C811FC500F8BD49 /* view-Previewer2.swift */,
 				2ACAD49D2C7B0AC900B706D1 /* Preferences */,
 				2A3AFDEA2C69D0630046718B /* Utility */,
 				2A54A32B2C5FF70500D657BC /* SourceConfiguration */,
@@ -528,7 +534,7 @@
 				2AEEF31F2C7C1426008F4F13 /* Shared.swift in Sources */,
 				2A54A2FD2C5ECD2900D657BC /* main.swift in Sources */,
 				2A54A3312C5FF8D700D657BC /* view-SystemAudioCaptureConfiguration.swift in Sources */,
-				2A54A3172C5F096C00D657BC /* view-MainContent.swift in Sources */,
+				2A54A3172C5F096C00D657BC /* view-Window.swift in Sources */,
 				2ACAD49A2C7B0A6C00B706D1 /* view-Titlebar.swift in Sources */,
 				2ACAD4B12C7B24F400B706D1 /* view-VideoConfiguration.swift in Sources */,
 				2A5CDF892C7FE46F00F8BD49 /* screenRecorder4.swift in Sources */,
@@ -542,6 +548,7 @@
 				2A8D2A202C671DBC00E1B5EF /* view-ColorConfiguration.swift in Sources */,
 				2A9122BC2C702508005194AC /* CameraViewModel.swift in Sources */,
 				2ACAD4B62C7B324300B706D1 /* Shaders.metal in Sources */,
+				2A5CDF942C81202E00F8BD49 /* view-Main.swift in Sources */,
 				2AEEF3B12C7C7463008F4F13 /* VideoWriterService.swift in Sources */,
 				2AEEF3AF2C7C580B008F4F13 /* OutputService.swift in Sources */,
 				2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */,
@@ -559,6 +566,7 @@
 				2A54A32A2C5F428400D657BC /* view-Previewer.swift in Sources */,
 				2ACAD4B42C7B2D7700B706D1 /* MetalService.swift in Sources */,
 				2AEEF3B32C7CA7A7008F4F13 /* utility-ImageUtility.swift in Sources */,
+				2A5CDF922C811FC500F8BD49 /* view-Previewer2.swift in Sources */,
 				2A54A32D2C5FF73100D657BC /* view-ScreenCaptureConfiguration.swift in Sources */,
 				2ACAD4AA2C7B0C1100B706D1 /* modelView-ContentModel.swift in Sources */,
 				2ACAD4AE2C7B118200B706D1 /* sheet-AddSource.swift in Sources */,
