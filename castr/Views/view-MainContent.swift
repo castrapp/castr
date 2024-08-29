@@ -608,7 +608,7 @@ struct SourceConfiguration: View {
         .frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
     }
 
-    
+    // TODO: FIX THIS
 //    var SourceConfig: some View {
 //        if let source = global.sources.first(where: { $0.id == global.selectedSourceId }) {
 //            switch source.type {
