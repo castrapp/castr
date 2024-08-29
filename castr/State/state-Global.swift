@@ -46,6 +46,7 @@ class GlobalState: ObservableObject {
     /// `Sources Properties`
     @Published var sources:[SourceModel] = [] 
     @Published var currentSources:[SourceModel] = []
+    @Published var currentSource: SourceModel?
     @Published var selectedSourceId: String = ""
     
     

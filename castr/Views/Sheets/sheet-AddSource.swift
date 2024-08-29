@@ -47,7 +47,7 @@ struct AddSourceSheet: View {
     
     var HeaderArea: some View {
         VStack(spacing: 0) {
-            Image(systemName: content.newSourceSelection?.imageName ?? "")
+            Image(systemName: content.newSourceSelection?.imageName ?? "questionmark.circle.fill")
                 .font(.system(size: 50))
                 .padding(.top, 60)
                 .padding(.bottom, 6)
@@ -130,7 +130,7 @@ struct AddSourceSheet: View {
             
         }
         
-        print("confirming")
+//        print("confirming")
         // Close the sheet and reset
         content.showAddSourceSheet = false
         content.newSourceSelection = nil

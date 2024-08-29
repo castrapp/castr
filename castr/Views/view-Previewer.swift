@@ -8,38 +8,39 @@
 import Foundation
 import SwiftUI
 
-//struct Previewer: NSViewRepresentable {
-//    
-//    static let shared = Previewer()
-//    
-//    let contentLayer = CALayer()
-//    
-//    private init() {
-//        contentLayer.contentsGravity = .resizeAspect
-//        contentLayer.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
-//    }
-//    
-//    func makeNSView(context: Context) -> CaptureVideoPreview {
-//        CaptureVideoPreview(layer: contentLayer)
-//    }
-//    
-//    func updateNSView(_ nsView: CaptureVideoPreview, context: Context) {}
-//    
-//    class CaptureVideoPreview: NSView {
-//        
-//        init(layer: CALayer) {
-//            super.init(frame: .zero)
-//            self.layer = layer
-//            wantsLayer = true
-//        }
-//        
-//        required init?(coder: NSCoder) {
-//            fatalError("init(coder:) has not been implemented")
-//        }
-//        
-//       
-//    }
-//}
+struct Layout: NSViewRepresentable {
+    
+    static let shared = Layout()
+    
+    let layer = CALayer()
+    
+    private init() {
+        layer.contentsGravity = .resizeAspect
+//        layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
+//        layer.borderWidth = 1
+    }
+    
+    func makeNSView(context: Context) -> LayoutPreview {
+        LayoutPreview(layer: layer)
+    }
+    
+    func updateNSView(_ nsView: LayoutPreview, context: Context) {}
+    
+    class LayoutPreview: NSView {
+        
+        init(layer: CALayer) {
+            super.init(frame: .zero)
+            self.layer = layer
+            wantsLayer = true
+        }
+        
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+       
+    }
+}
 
 
 
@@ -52,14 +53,17 @@ struct Previewer: NSViewRepresentable {
     static let shared = Previewer()
     
     let contentLayer = CALayer()
+    var captureVideoPreview: CaptureVideoPreview
     
     private init() {
         contentLayer.contentsGravity = .resizeAspect
+//        contentLayer.masksToBounds = true
         contentLayer.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
+        captureVideoPreview = CaptureVideoPreview(layer: contentLayer)
     }
     
     func makeNSView(context: Context) -> CaptureVideoPreview {
-        CaptureVideoPreview(layer: contentLayer)
+        captureVideoPreview
     }
     
     func updateNSView(_ nsView: CaptureVideoPreview, context: Context) {}
@@ -84,7 +88,7 @@ struct Previewer: NSViewRepresentable {
         
         override func mouseDown(with event: NSEvent) {
             let locationInWindow = event.locationInWindow
-            let locationInView = convert(locationInWindow, from: nil)
+            let locationInView = convert(event.locationInWindow, from: nil)
             
             guard let rootLayer = self.layer else {
                 print("No layer found")

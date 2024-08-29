@@ -63,6 +63,7 @@ extension GlobalState {
     
 
     func addScreenCaptureSource(name: String) {
+        
         // TODO: Create the new Source Model
         let screenCaptureSource = ScreenCaptureSourceModel(name: name)
     
@@ -77,11 +78,12 @@ extension GlobalState {
     
         // TODO: Set the selectedSourceId to the new source's id
         selectedSourceId = screenCaptureSource.id
-    
+        print("adding source about to start it")
         // TODO: Start the source
-        Task { @MainActor in
-           await screenCaptureSource.start()
-        }
+        
+//          screenCaptureSource.start()
+
+        
     }
     
     

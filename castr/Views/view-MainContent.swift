@@ -16,7 +16,9 @@ struct ContentView: View {
     @ObservedObject var content = ContentModel.shared
     @ObservedObject var global = GlobalState.shared
     let previewer = Previewer.shared
+    let layout = Layout.shared
     @State var counter: Double = 0
+    
 
     var body: some View {
         HSplitView {
@@ -54,22 +56,74 @@ struct ContentView: View {
     
     /// `Main`
     var main: some View {
-        VStack {
+        VStack(spacing: 0) {
             Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
+        
             
-            Spacer()
-            
-            previewer
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
-            .border(.quaternary, width: 1)
-            .background(.ultraThickMaterial)
-            .padding(.horizontal, 10)
+
          
+            previewer
+           .frame(maxWidth: .infinity, maxHeight: .infinity)
+           .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
+           .border(.quaternary, width: 1)
+           .background(.ultraThickMaterial)
+           .clipped()
+           .padding(.horizontal, 10)
+//            MouseEventView(
+//               onMouseDown: { event in print("Mouse down at \(event.locationInWindow)") },
+//               onMouseDrag: { event in print("Mouse dragged to \(event.locationInWindow)") },
+//               onMouseUp: { event in print("Mouse up at \(event.locationInWindow)") },
+//               onMouseMoved: { event in
+//                   
+//                 
+//                   let locationInView = previewer.captureVideoPreview.convert(event.locationInWindow, from: nil)
+//                   let locationInLayer = previewer.contentLayer.convert(locationInView, from: previewer.contentLayer)
+//                   
+//                   guard let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) else { return }
+//                   
+//                   if let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) as? CustomMetalLayer, deepestLayer != previewer.contentLayer {
+//                       // If the deepest layer is a CustomMetalLayer, highlight it
+////                       print("the deepest layer is: ", deepestLayer)
+//                       
+//                       let convertedRect = previewer.contentLayer.convert(deepestLayer.frame, to: Layout.shared.layer)
+//                       let convertedOrigin = previewer.contentLayer.convert(deepestLayer.frame.origin, to: Layout.shared.layer)
+//                       
+//                       Layout.shared.layer.frame = convertedRect
+//                       Layout.shared.layer.frame.origin = convertedOrigin
+////                       print("the layers origin is: ", originX, originY)
+//                       
+//                       print("converted origin is: ", convertedOrigin)
+//                       
+//                       Layout.shared.layer.isHidden = false
+//                       Layout.shared.layer.borderWidth = 1.0
+//                       Layout.shared.layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
+//                       
+//                   } else {
+//                       Layout.shared.layer.isHidden = true
+//                   }
+//          
+//               }
+//           ) {
+//               ZStack {
+//                   previewer
+//                  .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                  .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
+//                  .border(.quaternary, width: 1)
+//                  .background(.ultraThickMaterial)
+//                  .clipped()
+//                  .padding(.horizontal, 10)
+//                   
+//                   layout
+//                   .frame(maxWidth: .infinity, maxHeight: .infinity)
+////                   .border(Color.green)
+////                   .padding()
+//               }
+//               .frame(maxWidth: .infinity, maxHeight: .infinity)
+//               .border(Color.blue)
+//           }
+//           .frame(maxWidth: .infinity, maxHeight: .infinity)
+//           .border(Color.red)
             
-           
-            
-            Spacer()
             
             Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
             
@@ -137,6 +191,12 @@ struct ContentView: View {
             }
             Button("Print sublayers") {
                 print("sublayers are: ", previewer.contentLayer.sublayers)
+            }
+            Button ("show caLayer") {
+                Layout.shared.layer.borderColor = CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0)
+                Layout.shared.layer.borderWidth = 1
+                
+                Layout.shared.layer.frame = CGRect(x: 10, y:10, width: 100, height: 100)
             }
             Controls()
             SourceConfiguration()
@@ -214,7 +274,7 @@ struct ContentView: View {
                 Spacer()
                 
                 Button("Confirm") {
-                    print("confirming")
+//                    print("confirming")
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
@@ -281,7 +341,13 @@ struct Scenes: View {
                     Image(systemName: "square.3.layers.3d")
                     .font(.system(size: 20))
                     
-                    Text(scene.name)
+                    VStack(alignment: .leading) {
+                        Text(scene.name)
+                        Text("0 Sources")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                    }
+                   
                 }
                 .frame(height: 32)
                 
@@ -357,14 +423,7 @@ struct Sources: View {
                         
                     }
                     .frame(height: 32)
-                    .onReceive(source.objectWillChange, perform: { _ in
-                          // Ensure the view updates when `isActive` changes
-                        print("change detected")
-                      })
-//                        .border(Color.red)
-
                 }
-                // TODO: Enable Moving of sources
                 .onMove(perform: move)
             }
             .listStyle(SidebarListStyle()) // Sidebar style for macOS
@@ -533,7 +592,7 @@ struct SourceConfiguration: View {
             
             Divider()._panelDivider()
             
-            SourceConfig
+//            SourceConfig
         
         }
         ._groupBox(padding: 10)
@@ -550,26 +609,26 @@ struct SourceConfiguration: View {
     }
 
     
-    var SourceConfig: some View {
-        if let source = global.sources.first(where: { $0.id == global.selectedSourceId }) {
-            switch source.type {
-            case .screenCapture:
-                AnyView(ScreenCaptureConfiguration(model: source as! ScreenCaptureSourceModel))
-            case .windowCapture:
-                AnyView(WindowCaptureConfiguration(model: source as! WindowCaptureSourceModel))
-            case .video:
-                AnyView(VideoConfiguration(model: source as! VideoSourceModel))
-            case .image:
-                AnyView(ImageConfiguration(model: source as! ImageSourceModel))
-            case .color:
-                AnyView(ColorConfiguration(model: source as! ColorSourceModel))
-            case .text:
-                AnyView(TextConfiguration(model: source as! TextSourceModel))
-            }
-        } else {
-            AnyView(Text("No source selected"))
-        }
-    }
+//    var SourceConfig: some View {
+//        if let source = global.sources.first(where: { $0.id == global.selectedSourceId }) {
+//            switch source.type {
+//            case .screenCapture:
+//                AnyView(ScreenCaptureConfiguration(model: source as! ScreenCaptureSourceModel))
+//            case .windowCapture:
+//                AnyView(WindowCaptureConfiguration(model: source as! WindowCaptureSourceModel))
+//            case .video:
+//                AnyView(VideoConfiguration(model: source as! VideoSourceModel))
+//            case .image:
+//                AnyView(ImageConfiguration(model: source as! ImageSourceModel))
+//            case .color:
+//                AnyView(ColorConfiguration(model: source as! ColorSourceModel))
+//            case .text:
+//                AnyView(TextConfiguration(model: source as! TextSourceModel))
+//            }
+//        } else {
+//            AnyView(Text("No source selected"))
+//        }
+//    }
 }
 
 

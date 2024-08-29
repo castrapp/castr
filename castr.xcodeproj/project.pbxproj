@@ -27,6 +27,8 @@
 		2A54A33D2C603E9C00D657BC /* model-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A33C2C603E9C00D657BC /* model-Source.swift */; };
 		2A54A3462C60611B00D657BC /* ScreenRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3452C60611B00D657BC /* ScreenRecorder.swift */; };
 		2A54A3482C60619B00D657BC /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3472C60619B00D657BC /* CaptureEngine.swift */; };
+		2A5CDF892C7FE46F00F8BD49 /* screenRecorder4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */; };
+		2A5CDF8B2C8053A200F8BD49 /* MouseEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */; };
 		2A8D2A172C657BB400E1B5EF /* state-Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A162C657BB400E1B5EF /* state-Global.swift */; };
 		2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */; };
 		2A8D2A1E2C671DAD00E1B5EF /* view-ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */; };
@@ -127,6 +129,8 @@
 		2A54A33C2C603E9C00D657BC /* model-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "model-Source.swift"; sourceTree = "<group>"; };
 		2A54A3452C60611B00D657BC /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		2A54A3472C60619B00D657BC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
+		2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screenRecorder4.swift; sourceTree = "<group>"; };
+		2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseEventView.swift; sourceTree = "<group>"; };
 		2A8D2A162C657BB400E1B5EF /* state-Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-Global.swift"; sourceTree = "<group>"; };
 		2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "protocol-Source.swift"; sourceTree = "<group>"; };
 		2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ImageConfiguration.swift"; sourceTree = "<group>"; };
@@ -319,6 +323,7 @@
 				2A54A3452C60611B00D657BC /* ScreenRecorder.swift */,
 				2AEEF3AA2C7C411E008F4F13 /* ScreenRecorder2.swift */,
 				2AEEF3AC2C7C4A05008F4F13 /* ScreenRecorder3.swift */,
+				2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */,
 				2A54A3472C60619B00D657BC /* CaptureEngine.swift */,
 				2AEEF3B22C7CA7A7008F4F13 /* utility-ImageUtility.swift */,
 				2A8D2A242C674B3300E1B5EF /* SystemExtensionManager.swift */,
@@ -326,6 +331,7 @@
 				2A9122BA2C7022D0005194AC /* CameraViewModel.swift */,
 				2A9122C02C7033DB005194AC /* VirtualCameraConnecterDraft.swift */,
 				2A9122C22C703DB2005194AC /* virtualcamerahelper.swift */,
+				2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -514,6 +520,7 @@
 				2A54A3172C5F096C00D657BC /* view-MainContent.swift in Sources */,
 				2ACAD49A2C7B0A6C00B706D1 /* view-Titlebar.swift in Sources */,
 				2ACAD4B12C7B24F400B706D1 /* view-VideoConfiguration.swift in Sources */,
+				2A5CDF892C7FE46F00F8BD49 /* screenRecorder4.swift in Sources */,
 				2A3AFDEC2C69D0730046718B /* view-MouseEvent.swift in Sources */,
 				2AEEF3AB2C7C411E008F4F13 /* ScreenRecorder2.swift in Sources */,
 				2ACAD4982C7B0A4800B706D1 /* state-App.swift in Sources */,
@@ -548,6 +555,7 @@
 				2ACAD4A12C7B0B0400B706D1 /* state-Settings.swift in Sources */,
 				2ACAD49C2C7B0A9E00B706D1 /* material-Transparent.swift in Sources */,
 				2A54A3342C60239D00D657BC /* state-Scenes.swift in Sources */,
+				2A5CDF8B2C8053A200F8BD49 /* MouseEventView.swift in Sources */,
 				2A54A3362C60251C00D657BC /* model-Scene.swift in Sources */,
 				2A9122C12C7033DB005194AC /* VirtualCameraConnecterDraft.swift in Sources */,
 				2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */,
