@@ -59,70 +59,62 @@ struct ContentView: View {
         VStack(spacing: 0) {
             Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
         
-            
 
-         
-            previewer
+            MouseEventView(
+               onMouseDown: { event in print("Mouse down at \(event.locationInWindow)") },
+               onMouseDrag: { event in print("Mouse dragged to \(event.locationInWindow)") },
+               onMouseUp: { event in print("Mouse up at \(event.locationInWindow)") },
+               onMouseMoved: { event in
+                   
+                 
+                   let locationInView = previewer.captureVideoPreview.convert(event.locationInWindow, from: nil)
+                   let locationInLayer = previewer.contentLayer.convert(locationInView, from: previewer.contentLayer)
+                   
+                   guard let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) else { return }
+                   
+                   if let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) as? CustomMetalLayer, deepestLayer != previewer.contentLayer {
+                       // If the deepest layer is a CustomMetalLayer, highlight it
+//                       print("the deepest layer is: ", deepestLayer)
+                       
+                       let convertedRect = previewer.contentLayer.convert(deepestLayer.frame, to: Layout.shared.layer)
+                       let convertedOrigin = previewer.contentLayer.convert(deepestLayer.frame.origin, to: nil)
+                       let convertedOrigin2 = Layout.shared.layer
+                       
+                       Layout.shared.layer.frame = convertedRect
+                       Layout.shared.layer.frame.origin = convertedOrigin
+//                       print("the layers origin is: ", originX, originY)
+                       
+                       print("converted origin is: ", convertedOrigin, "original coordinates are: ", deepestLayer.frame.origin)
+                       
+                       Layout.shared.layer.isHidden = false
+                       Layout.shared.layer.borderWidth = 1.0
+                       Layout.shared.layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
+                       
+                   } else {
+                       Layout.shared.layer.isHidden = true
+                   }
+          
+               }
+           ) {
+               ZStack {
+                   previewer
+                  .frame(maxWidth: .infinity, maxHeight: .infinity)
+                  .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
+                  .border(.quaternary, width: 1)
+                  .background(.ultraThickMaterial)
+                  .clipped()
+                  .padding(.horizontal, 10)
+                   
+                   layout
+                   .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                   .border(Color.green)
+//                   .padding()
+               }
+               .frame(maxWidth: .infinity, maxHeight: .infinity)
+               .border(Color.blue)
+           }
            .frame(maxWidth: .infinity, maxHeight: .infinity)
-           .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
-           .border(.quaternary, width: 1)
-           .background(.ultraThickMaterial)
-           .clipped()
-           .padding(.horizontal, 10)
-//            MouseEventView(
-//               onMouseDown: { event in print("Mouse down at \(event.locationInWindow)") },
-//               onMouseDrag: { event in print("Mouse dragged to \(event.locationInWindow)") },
-//               onMouseUp: { event in print("Mouse up at \(event.locationInWindow)") },
-//               onMouseMoved: { event in
-//                   
-//                 
-//                   let locationInView = previewer.captureVideoPreview.convert(event.locationInWindow, from: nil)
-//                   let locationInLayer = previewer.contentLayer.convert(locationInView, from: previewer.contentLayer)
-//                   
-//                   guard let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) else { return }
-//                   
-//                   if let deepestLayer = previewer.contentLayer.hitTest(locationInLayer) as? CustomMetalLayer, deepestLayer != previewer.contentLayer {
-//                       // If the deepest layer is a CustomMetalLayer, highlight it
-////                       print("the deepest layer is: ", deepestLayer)
-//                       
-//                       let convertedRect = previewer.contentLayer.convert(deepestLayer.frame, to: Layout.shared.layer)
-//                       let convertedOrigin = previewer.contentLayer.convert(deepestLayer.frame.origin, to: Layout.shared.layer)
-//                       
-//                       Layout.shared.layer.frame = convertedRect
-//                       Layout.shared.layer.frame.origin = convertedOrigin
-////                       print("the layers origin is: ", originX, originY)
-//                       
-//                       print("converted origin is: ", convertedOrigin)
-//                       
-//                       Layout.shared.layer.isHidden = false
-//                       Layout.shared.layer.borderWidth = 1.0
-//                       Layout.shared.layer.borderColor = CGColor(red: 0.0, green: 1.0, blue: 1.0, alpha: 1.0)
-//                       
-//                   } else {
-//                       Layout.shared.layer.isHidden = true
-//                   }
-//          
-//               }
-//           ) {
-//               ZStack {
-//                   previewer
-//                  .frame(maxWidth: .infinity, maxHeight: .infinity)
-//                  .aspectRatio(CGSize(width: 1728, height: 1117), contentMode: .fit)
-//                  .border(.quaternary, width: 1)
-//                  .background(.ultraThickMaterial)
-//                  .clipped()
-//                  .padding(.horizontal, 10)
-//                   
-//                   layout
-//                   .frame(maxWidth: .infinity, maxHeight: .infinity)
-////                   .border(Color.green)
-////                   .padding()
-//               }
-//               .frame(maxWidth: .infinity, maxHeight: .infinity)
-//               .border(Color.blue)
-//           }
-//           .frame(maxWidth: .infinity, maxHeight: .infinity)
-//           .border(Color.red)
+           .border(Color.red)
             
             
             Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
@@ -352,7 +344,6 @@ struct Scenes: View {
                 .frame(height: 32)
                 
             }
-            // TODO: Enable Moving of scenes
             .onMove(perform: move)
         }
         .listStyle(SidebarListStyle()) // Sidebar style for macOS
@@ -372,11 +363,7 @@ struct Scenes: View {
         )
     }
     
-    
-    
-    
-    /// `Functions`
-    
+
     func move(from source: IndexSet, to destination: Int) {
         global.scenes.move(fromOffsets: source, toOffset: destination)
     }

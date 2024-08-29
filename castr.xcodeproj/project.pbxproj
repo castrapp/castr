@@ -29,6 +29,7 @@
 		2A54A3482C60619B00D657BC /* CaptureEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A54A3472C60619B00D657BC /* CaptureEngine.swift */; };
 		2A5CDF892C7FE46F00F8BD49 /* screenRecorder4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */; };
 		2A5CDF8B2C8053A200F8BD49 /* MouseEventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */; };
+		2A5CDF902C811CC700F8BD49 /* manager-LayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5CDF8F2C811CC700F8BD49 /* manager-LayoutManager.swift */; };
 		2A8D2A172C657BB400E1B5EF /* state-Global.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A162C657BB400E1B5EF /* state-Global.swift */; };
 		2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */; };
 		2A8D2A1E2C671DAD00E1B5EF /* view-ImageConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */; };
@@ -131,6 +132,7 @@
 		2A54A3472C60619B00D657BC /* CaptureEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureEngine.swift; sourceTree = "<group>"; };
 		2A5CDF882C7FE46F00F8BD49 /* screenRecorder4.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = screenRecorder4.swift; sourceTree = "<group>"; };
 		2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseEventView.swift; sourceTree = "<group>"; };
+		2A5CDF8F2C811CC700F8BD49 /* manager-LayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "manager-LayoutManager.swift"; sourceTree = "<group>"; };
 		2A8D2A162C657BB400E1B5EF /* state-Global.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "state-Global.swift"; sourceTree = "<group>"; };
 		2A8D2A192C66C48A00E1B5EF /* protocol-Source.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "protocol-Source.swift"; sourceTree = "<group>"; };
 		2A8D2A1D2C671DAD00E1B5EF /* view-ImageConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-ImageConfiguration.swift"; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 				2A54A3202C5F37BF00D657BC /* Styles */,
 				2A54A3392C603E0E00D657BC /* Enums */,
 				2A54A3322C601AF800D657BC /* Models */,
+				2A5CDF8E2C811CA600F8BD49 /* Managers */,
 				2A54A30E2C5EF2CA00D657BC /* State */,
 				2ACAD4A42C7B0B5900B706D1 /* Modifiers */,
 				2ACAD4B22C7B2D6200B706D1 /* Services */,
@@ -334,6 +337,14 @@
 				2A5CDF8A2C8053A200F8BD49 /* MouseEventView.swift */,
 			);
 			path = Utility;
+			sourceTree = "<group>";
+		};
+		2A5CDF8E2C811CA600F8BD49 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				2A5CDF8F2C811CC700F8BD49 /* manager-LayoutManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		2A8D2A4B2C68828B00E1B5EF /* virtualcamera */ = {
@@ -557,6 +568,7 @@
 				2A54A3342C60239D00D657BC /* state-Scenes.swift in Sources */,
 				2A5CDF8B2C8053A200F8BD49 /* MouseEventView.swift in Sources */,
 				2A54A3362C60251C00D657BC /* model-Scene.swift in Sources */,
+				2A5CDF902C811CC700F8BD49 /* manager-LayoutManager.swift in Sources */,
 				2A9122C12C7033DB005194AC /* VirtualCameraConnecterDraft.swift in Sources */,
 				2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */,
 				2A54A3382C60395500D657BC /* state-Sources.swift in Sources */,

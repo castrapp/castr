@@ -80,10 +80,10 @@ extension GlobalState {
         selectedSourceId = screenCaptureSource.id
         print("adding source about to start it")
         // TODO: Start the source
-        
-//          screenCaptureSource.start()
-
-        
+     
+        Task { @MainActor in
+            screenCaptureSource.start()
+        }
     }
     
     

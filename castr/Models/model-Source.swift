@@ -19,27 +19,17 @@ class CustomMetalLayer: CAMetalLayer {
         
         let scale = (newSize.width / oldSize.width)
         
-//        self.frame = CGRect(
-//            origin: CGPoint(
-//                x: self.frame.origin.x * scale,
-//                y: self.frame.origin.y * scale
-//            ),
-//            size: CGSize(
-//                width: self.frame.width * scale,
-//                height: self.frame.height * scale
-//            )
-//        )
+        self.frame = CGRect(
+            origin: CGPoint(
+                x: self.frame.origin.x * scale,
+                y: self.frame.origin.y * scale
+            ),
+            size: CGSize(
+                width: self.frame.width * scale,
+                height: self.frame.height * scale
+            )
+        )
         
-    }
-    
-    func highlight() {
-        self.borderColor = CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0)
-        self.borderWidth = 1
-    }
-    
-    func unhighlight() {
-        self.borderColor = CGColor(red: 0.0, green: 0.0, blue: 0.0, alpha: 0.0)
-        self.borderWidth = 0
     }
 }
 
@@ -86,16 +76,14 @@ class SourceModel: Identifiable, ObservableObject {
             
         
      
-            
+            @MainActor
             func start() {
-//                layer.frame = Previewer.shared.contentLayer.frame
-//                Previewer.shared.contentLayer.addSublayer(layer)
-//                screenRecorder = ScreenRecorder4(model: self)
-//                Task { @MainActor in
-//                    await screenRecorder?.start()
-//                }
-                print("source started")
-               
+                layer.frame = Previewer.shared.contentLayer.frame
+                Previewer.shared.contentLayer.addSublayer(layer)
+                screenRecorder = ScreenRecorder4(model: self)
+                Task { @MainActor in
+                    await screenRecorder?.start()
+                }
             }
             
          
