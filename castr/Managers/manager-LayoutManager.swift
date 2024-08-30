@@ -41,6 +41,23 @@ struct Layout: NSViewRepresentable {
             fatalError("init(coder:) has not been implemented")
         }
         
+        
+        override func mouseDown(with event: NSEvent) {
+            print("Mouse downed")
+            
+        }
+        
+        override func mouseDragged(with event: NSEvent) {
+            print("Mouse dragged")
+        }
+        
+        override func mouseUp(with event: NSEvent) {
+            print("Mouse upped")
+        }
+        
        
     }
 }
+
+
+

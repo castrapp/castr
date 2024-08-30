@@ -19,13 +19,17 @@ struct ContentView: View {
     let layout = Layout.shared
     @State var counter: Double = 0
     
+    var mainSection = Main.shared
+    
 
     var body: some View {
         HSplitView {
             
             leftSidebar
         
-            main
+            mainSection
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+//            .border(Color.red)
           
             rightSidebar
         }
@@ -184,11 +188,35 @@ struct ContentView: View {
             Button("Print sublayers") {
                 print("sublayers are: ", previewer.contentLayer.sublayers)
             }
-            Button ("show caLayer") {
-                Layout.shared.layer.borderColor = CGColor(red: 0.0, green: 0.0, blue: 1.0, alpha: 1.0)
-                Layout.shared.layer.borderWidth = 1
+            Button ("add layer") {
+//                Layers.shared.preview.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
+//                mainSection.main.addSublayer(mainSection.preview)
+//                mainSection.preview.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+                let test = CALayer()
+                test.borderColor = CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+                test.borderWidth = 1.0
                 
-                Layout.shared.layer.frame = CGRect(x: 10, y:10, width: 100, height: 100)
+                test.frame.size = CGSize(width: 100.0, height: 100.0)
+                
+                Main.shared.preview.addSublayer(test)
+            }
+            Button ("set layer resize aspect") {
+//                Layers.shared.preview.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
+//                mainSection.main.addSublayer(mainSection.preview)
+//                mainSection.preview.position = CGPoint(x: mainSection.main.bounds.midX, y: mainSection.main.bounds.midY)
+                
+                let parentWidth = mainSection.main.frame.width
+                let desiredWidth = 3456.0
+                let desiredHeight = 2234.0
+                let scaleRatio = parentWidth / desiredWidth
+                
+                let newWidth = desiredWidth * scaleRatio
+                let newHeight = desiredHeight * scaleRatio
+                
+                mainSection.preview.frame.size = CGSize(width: newWidth, height: newHeight)
+                mainSection.preview.position = CGPoint(x: mainSection.main.bounds.midX, y: mainSection.main.bounds.midY)
+                
+                
             }
             Controls()
             SourceConfiguration()

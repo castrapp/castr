@@ -11,11 +11,6 @@ import SwiftUI
 
 
 
-
-
-
-
-
 struct Previewer: NSViewRepresentable {
 
     static let shared = Previewer()

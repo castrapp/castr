@@ -48,8 +48,11 @@ class GlobalState: ObservableObject {
     @Published var currentSources:[SourceModel] = []
     @Published var currentSource: SourceModel?
     @Published var selectedSourceId: String = ""
-    
-    
-    
     @Published var streamToVirtualCamera: Bool = false
+    @Published var selectedSourceLayer: CustomMetalLayer? = nil {
+        didSet {
+//            print("selected source is: ", selectedSourceLayer)
+        }
+    }
+    
 }

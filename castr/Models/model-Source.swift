@@ -78,8 +78,12 @@ class SourceModel: Identifiable, ObservableObject {
      
             @MainActor
             func start() {
-                layer.frame = Previewer.shared.contentLayer.frame
-                Previewer.shared.contentLayer.addSublayer(layer)
+                layer.frame.size = Main.shared.preview.frame.size
+                Main.shared.preview.addSublayer(layer)
+                layer.borderColor = CGColor(red: 1.0, green: 1.0, blue: 0.0, alpha: 1.0)
+                layer.borderWidth = 1.0
+                
+                print("previewers origin is: ", Main.shared.preview.frame.origin)
                 screenRecorder = ScreenRecorder4(model: self)
                 Task { @MainActor in
                     await screenRecorder?.start()
@@ -177,7 +181,7 @@ class SourceModel: Identifiable, ObservableObject {
                     guard let texture = mtlTexture else { return }
                     print("METAL TEXTURE HAS CHANGED: ", mtlTexture)
                     
-                    let scalingfactor = Previewer.shared.contentLayer.frame.width / 3456
+                    let scalingfactor = Main.shared.preview.frame.width / 3456
                     print("The scaling factor is: ", scalingfactor)
                     
                     layer.device = MetalService.shared.device
@@ -251,7 +255,7 @@ class SourceModel: Identifiable, ObservableObject {
     
                  
                 // TODO: Add the CALayer to the super Layer which is previewer.contentLayer
-                Previewer.shared.contentLayer.addSublayer(layer)
+                Main.shared.preview.addSublayer(layer)
             }
             
             @MainActor
