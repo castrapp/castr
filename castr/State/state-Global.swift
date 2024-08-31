@@ -47,7 +47,11 @@ class GlobalState: ObservableObject {
     @Published var sources:[SourceModel] = [] 
     @Published var currentSources:[SourceModel] = []
     @Published var currentSource: SourceModel?
-    @Published var selectedSourceId: String = ""
+    @Published var selectedSourceId: String = "" {
+        didSet {
+            if selectedSourceId.isEmpty { LayoutState.shared.selectedSourceLayer = nil}
+        }
+    }
     @Published var streamToVirtualCamera: Bool = false
     @Published var selectedSourceLayer: CustomMetalLayer? = nil {
         didSet {
