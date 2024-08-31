@@ -50,7 +50,7 @@
 		2A9122D32C712B52005194AC /* Stream-Sink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A9122D22C712B52005194AC /* Stream-Sink.swift */; };
 		2A914AED2C7ED9A2003174BB /* view-TestFlip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A914AEC2C7ED9A2003174BB /* view-TestFlip.swift */; };
 		2AC14FE92C8258ED00D034FD /* layer-Select.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC14FE82C8258ED00D034FD /* layer-Select.swift */; };
-		2AC14FEB2C825FFD00D034FD /* layer-Highlight.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC14FEA2C825FFD00D034FD /* layer-Highlight.swift */; };
+		2AC14FEB2C825FFD00D034FD /* layer-Hover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC14FEA2C825FFD00D034FD /* layer-Hover.swift */; };
 		2AC14FED2C826A9200D034FD /* layer-Bounds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC14FEC2C826A9200D034FD /* layer-Bounds.swift */; };
 		2AC14FEF2C826AC700D034FD /* layer-Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AC14FEE2C826AC700D034FD /* layer-Preview.swift */; };
 		2ACA0A072C813FBF00968CA6 /* view-Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACA0A062C813FBF00968CA6 /* view-Main.swift */; };
@@ -160,7 +160,7 @@
 		2A9122D22C712B52005194AC /* Stream-Sink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream-Sink.swift"; sourceTree = "<group>"; };
 		2A914AEC2C7ED9A2003174BB /* view-TestFlip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-TestFlip.swift"; sourceTree = "<group>"; };
 		2AC14FE82C8258ED00D034FD /* layer-Select.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "layer-Select.swift"; sourceTree = "<group>"; };
-		2AC14FEA2C825FFD00D034FD /* layer-Highlight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "layer-Highlight.swift"; sourceTree = "<group>"; };
+		2AC14FEA2C825FFD00D034FD /* layer-Hover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "layer-Hover.swift"; sourceTree = "<group>"; };
 		2AC14FEC2C826A9200D034FD /* layer-Bounds.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "layer-Bounds.swift"; sourceTree = "<group>"; };
 		2AC14FEE2C826AC700D034FD /* layer-Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "layer-Preview.swift"; sourceTree = "<group>"; };
 		2ACA0A062C813FBF00968CA6 /* view-Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-Main.swift"; sourceTree = "<group>"; };
@@ -404,7 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				2AC14FE82C8258ED00D034FD /* layer-Select.swift */,
-				2AC14FEA2C825FFD00D034FD /* layer-Highlight.swift */,
+				2AC14FEA2C825FFD00D034FD /* layer-Hover.swift */,
 				2AC14FEC2C826A9200D034FD /* layer-Bounds.swift */,
 				2AC14FEE2C826AC700D034FD /* layer-Preview.swift */,
 				2A7E889E2C82765400E0E06E /* layer-Main.swift */,
@@ -589,7 +589,7 @@
 				2AEEF3B32C7CA7A7008F4F13 /* utility-ImageUtility.swift in Sources */,
 				2AC14FEF2C826AC700D034FD /* layer-Preview.swift in Sources */,
 				2A54A32D2C5FF73100D657BC /* view-ScreenCaptureConfiguration.swift in Sources */,
-				2AC14FEB2C825FFD00D034FD /* layer-Highlight.swift in Sources */,
+				2AC14FEB2C825FFD00D034FD /* layer-Hover.swift in Sources */,
 				2A7E889F2C82765400E0E06E /* layer-Main.swift in Sources */,
 				2ACAD4AA2C7B0C1100B706D1 /* modelView-ContentModel.swift in Sources */,
 				2ACAD4AE2C7B118200B706D1 /* sheet-AddSource.swift in Sources */,

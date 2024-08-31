@@ -21,6 +21,7 @@ class LayoutState {
     var selectedSourceLayer: CAMetalLayer? {
         didSet {
             Main.shared.onSelectlayer.isHidden = (selectedSourceLayer == nil)
+            print("selected source is: ", selectedSourceLayer)
         }
     }
     
@@ -37,25 +38,25 @@ struct Main: NSViewRepresentable {
     
     static let shared = Main()
     
-    let main = MainLayer()
+    let root = RootLayer()
     let preview = PreviewLayer()
     let onSelectlayer = SelectLayer()
     
     
     private init() {
-        main.borderColor = CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-        main.borderWidth = 1.0
+        root.borderColor = CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
+        root.borderWidth = 1.0
         
-        main.addSublayer(preview)
-        main.addSublayer(onSelectlayer)
+        root.addSublayer(preview)
+        root.addSublayer(onSelectlayer)
     }
     
     
     func makeNSView(context: Context) -> LayoutPreview {
         LayoutPreview(
-            mainLayer: main,
-            preview: preview,
-            onSelectlayer: onSelectlayer
+            rootLayer: root,
+            previewLayer: preview,
+            onSelectLayer: onSelectlayer
         )
     }
     
@@ -72,17 +73,20 @@ struct Main: NSViewRepresentable {
 
 class LayoutPreview: NSView {
     
-    let preview: PreviewLayer
-    let onSelectlayer: SelectLayer
-    var initalMouseDownPosition: NSPoint?
-    var cornerBoundName: String?
+    let rootLayer: RootLayer
+    let previewLayer: PreviewLayer
+    let onSelectLayer: SelectLayer
+    var mouseDownPositionInMain: NSPoint?
+    var boundLayer: CornerBound?
    
     
-    init(mainLayer: CALayer, preview: PreviewLayer, onSelectlayer: SelectLayer) {
-        self.preview = preview
-        self.onSelectlayer = onSelectlayer
+    init(rootLayer: RootLayer, previewLayer: PreviewLayer, onSelectLayer: SelectLayer) {
+        self.rootLayer = rootLayer
+        self.previewLayer = previewLayer
+        self.onSelectLayer = onSelectLayer
         super.init(frame: .zero)
-        self.layer = mainLayer
+        
+        self.layer = rootLayer
         wantsLayer = true
         
         self.addTrackingArea(NSTrackingArea(rect: self.bounds, options: [.mouseMoved, .activeInKeyWindow, .inVisibleRect], owner: self, userInfo: nil))
@@ -100,37 +104,43 @@ class LayoutPreview: NSView {
     
     
     override func mouseDown(with event: NSEvent) {
-        let location = event.locationIn(in: self)
-        initalMouseDownPosition = preview.convert(location, from: self.layer)
-       
+        mouseDownPositionInMain = event.locationIn(in: self)
         
+        guard 
+            let location = mouseDownPositionInMain
+        else { return }
         
-//        let mouseInViewCoordinates = convert(event.locationInWindow, from: nil)
-        
-        // If its a Corner Bound
-        if let cornerBound = onSelectlayer.hitTest(location) as? CornerBounds {
-            cornerBoundName = cornerBound.name
-            print("CornerBounds hit: \(cornerBound.name ?? "Unknown")")
-           
-        }
-        // If its a Metal Layer
-        else if let deepestLayer = preview.hitTest(location) as? CustomMetalLayer {
-            LayoutState.shared.selectedSourceLayer = deepestLayer
-            print("MetalLayer hit: \(deepestLayer.name ?? "Unknown")")
+        print("mouse down")
+        // MARK: -
+        // First Check for Bounds
+        if let deepestBoundLayer = rootLayer.hitTest(location) as? CornerBound {
+            boundLayer = deepestBoundLayer
+            print("found bound. returning")
+            return
         }
         
+        // MARK: -
+        // Then for Metal Layer
+        if let deepestMetalLayer = previewLayer.hitTest(location) as? CustomMetalLayer {
+            LayoutState.shared.selectedSourceLayer = deepestMetalLayer
+            print("found metal layer. returning")
+            return
+        }
         
-        
-        // Otherwise
-        else  {
+        // MARK: -
+        // Otherwise default
+        else {
             LayoutState.shared.selectedSourceLayer = nil
-            cornerBoundName = nil
+            boundLayer = nil
+            print("found nothing. defaulting")
         }
+        
+
     }
     
     override func mouseUp(with event: NSEvent) {
-        initalMouseDownPosition = nil
-        cornerBoundName = nil
+        mouseDownPositionInMain = nil
+        boundLayer = nil
 //            print("Mouse upped")
     }
     
@@ -147,63 +157,84 @@ class LayoutPreview: NSView {
 
 
     override func mouseMoved(with event: NSEvent) {
-        let mouseInViewCoordinates = convert(event.locationInWindow, from: nil)
-        
-        if let deepestLayer = preview.hitTest(mouseInViewCoordinates) as? CustomMetalLayer {
-            let originInMainLayer = preview.convert(deepestLayer.frame.origin, to: self.layer)
-            
-            CATransaction.begin()
-            CATransaction.setDisableActions(true)
-            
-            onSelectlayer.frame.size = deepestLayer.frame.size
-            onSelectlayer.frame.origin = originInMainLayer
-            
-            CATransaction.commit()
-            
-        } else {
-            
-        }
+      
         
     }
     
     override func mouseDragged(with event: NSEvent) {
-     
-        guard var initialMouseDown = initalMouseDownPosition else { return }
-        
+        guard let initialMouseDown = mouseDownPositionInMain else { return }
         let currentLocation = event.locationIn(in: self)
-        let convertedCurrentLocation = preview.convert(currentLocation, from: self.layer)
+       
+        let amountMoved = currentLocation - initialMouseDown
         
-        let dragDifference = convertedCurrentLocation - initialMouseDown
+        mouseDownPositionInMain = currentLocation
         
         
+//        print("the orignal mouse down locaiton is: ", amountMoved)
+
+        // Re-size
+        if boundLayer != nil {
+            
+            
+            
+        }
         
-        // For resizing the layer
-        if let cornerBoundName = cornerBoundName {
-              print("corner being dragged: ", cornerBoundName)
-              return // Exit the function
+        // Re-position
+        else {
+            guard let selectedSource = LayoutState.shared.selectedSourceLayer else { return }
+            
+            CATransaction.begin()
+            CATransaction.setDisableActions(true)
+            selectedSource.frame.origin = selectedSource.frame.origin + amountMoved
+            CATransaction.commit()
+            
+            onSelectLayer.repositionToSelected()
         }
         
         
         
-        // For moving the layer
-        guard let selectedSourceLayer = LayoutState.shared.selectedSourceLayer else { return }
-    
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
-        // 1. Set the selectedSourceLayer's origin
-        selectedSourceLayer.frame.origin = selectedSourceLayer.frame.origin + dragDifference
-        print("selected source layers frame is: ", selectedSourceLayer.frame)
-        print("selected source layers bounds are: ", selectedSourceLayer.bounds.size)
         
-        // 2. Set the onSelectLayers origin
-        let newOrigin = preview.convert(selectedSourceLayer.frame.origin, to: self.layer)
-        onSelectlayer.frame.origin = onSelectlayer.frame.origin + dragDifference
-        CATransaction.commit()
-        
-        
-        
-        initalMouseDownPosition = convertedCurrentLocation
     }
+    
+    
+//    override func mouseDragged(with event: NSEvent) {
+//     
+//        guard var initialMouseDown = initalMouseDownPosition else { return }
+//        
+//        let currentLocation = event.locationIn(in: self)
+//        let convertedCurrentLocation = preview.convert(currentLocation, from: self.layer)
+//        
+//
+//        
+//        
+//        
+//        // For resizing the layer
+//        if let cornerBoundName = cornerBoundName {
+//              print("corner being dragged: ", cornerBoundName)
+//              return // Exit the function
+//        }
+//        
+//        
+//        
+//        // For moving the layer
+//        guard let selectedSourceLayer = LayoutState.shared.selectedSourceLayer else { return }
+//    
+//        CATransaction.begin()
+//        CATransaction.setDisableActions(true)
+//        // 1. Set the selectedSourceLayer's origin
+//        selectedSourceLayer.frame.origin = selectedSourceLayer.frame.origin + dragDifference
+//        print("selected source layers frame is: ", selectedSourceLayer.frame)
+//        print("selected source layers bounds are: ", selectedSourceLayer.bounds.size)
+//        
+//        // 2. Set the onSelectLayers origin
+//        let newOrigin = preview.convert(selectedSourceLayer.frame.origin, to: self.layer)
+//        onSelectlayer.frame.origin = onSelectlayer.frame.origin + dragDifference
+//        CATransaction.commit()
+//        
+//        
+//        
+//        initalMouseDownPosition = convertedCurrentLocation
+//    }
     
     
     

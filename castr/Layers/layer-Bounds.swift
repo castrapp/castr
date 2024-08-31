@@ -30,7 +30,7 @@ enum CornerType {
 
 
 
-class CornerBounds: CALayer {
+class CornerBound: CALayer {
     
     let cornerType: CornerType
     

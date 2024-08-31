@@ -10,24 +10,17 @@ import AppKit
 
 
 
-class MainLayer: CALayer {
+class RootLayer: CALayer {
     
    
     
     override func layoutSublayers() {
 
-        guard let selectedSourceLayer = LayoutState.shared.selectedSourceLayer else { return }
-       
-        CATransaction.begin()
-        CATransaction.setDisableActions(true)
+        Main.shared.onSelectlayer.repositionToSelected()
+        Main.shared.onSelectlayer.resizeToSelected()
         
-        Main.shared.onSelectlayer.frame.size = selectedSourceLayer.frame.size
-//        Main.shared.onSelectlayer.frame.origin = selectedSourceLayer.convert(selectedSourceLayer.frame.origin, to: self)
+        print("resizing sublayers ")
         
-        print("new frames origin should be: ",  selectedSourceLayer.convert(selectedSourceLayer.frame.origin, to: self))
-        
-        CATransaction.commit()
-//        print("subviews should update")
     }
     
 }

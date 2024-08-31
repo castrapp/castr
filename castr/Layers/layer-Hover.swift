@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import AppKit
 
-class HighlightLayer: CALayer {
+class Hover: CALayer {
     
     func highlight()  {
         

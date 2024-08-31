@@ -200,24 +200,7 @@ struct ContentView: View {
                 
                 Main.shared.preview.addSublayer(test)
             }
-            Button ("set layer resize aspect") {
-//                Layers.shared.preview.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
-//                mainSection.main.addSublayer(mainSection.preview)
-//                mainSection.preview.position = CGPoint(x: mainSection.main.bounds.midX, y: mainSection.main.bounds.midY)
-                
-                let parentWidth = mainSection.main.frame.width
-                let desiredWidth = 3456.0
-                let desiredHeight = 2234.0
-                let scaleRatio = parentWidth / desiredWidth
-                
-                let newWidth = desiredWidth * scaleRatio
-                let newHeight = desiredHeight * scaleRatio
-                
-                mainSection.preview.frame.size = CGSize(width: newWidth, height: newHeight)
-                mainSection.preview.position = CGPoint(x: mainSection.main.bounds.midX, y: mainSection.main.bounds.midY)
-                
-                
-            }
+           
             Controls()
             SourceConfiguration()
         }
