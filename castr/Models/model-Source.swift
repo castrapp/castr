@@ -19,16 +19,16 @@ class CustomMetalLayer: CAMetalLayer {
         
         let scale = (newSize.width / oldSize.width)
         
-        self.frame = CGRect(
-            origin: CGPoint(
-                x: self.frame.origin.x * scale,
-                y: self.frame.origin.y * scale
-            ),
-            size: CGSize(
-                width: self.frame.width * scale,
-                height: self.frame.height * scale
-            )
-        )
+//        self.frame = CGRect(
+//            origin: CGPoint(
+//                x: self.frame.origin.x * scale,
+//                y: self.frame.origin.y * scale
+//            ),
+//            size: CGSize(
+//                width: self.frame.width * scale,
+//                height: self.frame.height * scale
+//            )
+//        )
         
     }
 }
@@ -54,6 +54,7 @@ class SourceModel: Identifiable, ObservableObject {
         self.name = name
         self.isActive = true
         self.scenes = []
+        layer.name = self.id
         
     }
     

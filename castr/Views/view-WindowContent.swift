@@ -172,12 +172,6 @@ struct ContentView: View {
                     }
                 }
             }
-            Button("Post notification") {
-                let notificationName = Notification.Name("com.yourcompany.yourapp.UserDefaultsDidChange")
-
-                // Post a notification
-                DistributedNotificationCenter.default().post(name: notificationName, object: nil)
-            }
             Button("Set Just Property") {
                 CameraViewModel.shared.setJustProperty2()
             }
@@ -188,19 +182,17 @@ struct ContentView: View {
             Button("Print sublayers") {
                 print("sublayers are: ", previewer.contentLayer.sublayers)
             }
-            Button ("add layer") {
-//                Layers.shared.preview.frame = CGRect(x: 0, y: 0, width: 3456, height: 2234)
-//                mainSection.main.addSublayer(mainSection.preview)
-//                mainSection.preview.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
-                let test = CALayer()
-                test.borderColor = CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-                test.borderWidth = 1.0
-                
-                test.frame.size = CGSize(width: 100.0, height: 100.0)
-                
-                Main.shared.preview.addSublayer(test)
-            }
+   
            
+
+  
+           
+            Button("flip horizontally") {
+                guard let selectedSource = LayoutState.shared.selectedSourceLayer else { return }
+                selectedSource.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
+//                Main.shared.onSelectlayer.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
+                Main.shared.onSelectlayer.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
+            }
             Controls()
             SourceConfiguration()
         }

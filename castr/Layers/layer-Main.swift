@@ -12,15 +12,9 @@ import AppKit
 
 class RootLayer: CALayer {
     
-   
-    
     override func layoutSublayers() {
-
         Main.shared.onSelectlayer.repositionToSelected()
         Main.shared.onSelectlayer.resizeToSelected()
-        
-        print("resizing sublayers ")
-        
     }
     
 }

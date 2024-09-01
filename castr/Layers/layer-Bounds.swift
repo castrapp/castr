@@ -47,37 +47,37 @@ class CornerBound: CALayer {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func resize(withOldSuperlayerSize oldSize: CGSize) {
-        guard let superlayer = superlayer else { return }
-//        print("resizing bounds")
-        switch cornerType {
-        case .topLeft:
-            self.frame.origin = CGPoint(
-                x: superlayer.frame.minX - (self.frame.width / 2),
-                y: superlayer.frame.maxY - (self.frame.height / 2)
-            )
-        case .topRight:
-            self.frame.origin = CGPoint(
-                x: superlayer.frame.maxX - (self.frame.width / 2),
-                y: superlayer.frame.maxY - (self.frame.height / 2)
-            )
-        case .bottomLeft:
-            self.frame.origin = CGPoint(
-                x: superlayer.frame.minX - (self.frame.width / 2),
-                y: superlayer.frame.minY - (self.frame.height / 2)
-            )
-        case .bottomRight:
-            self.frame.origin = CGPoint(
-                x: superlayer.frame.maxX - (self.frame.width / 2),
-                y: superlayer.frame.minY - (self.frame.height / 2)
-            )
-        }
-        
-    }
+//    override func resize(withOldSuperlayerSize oldSize: CGSize) {
+//        guard let superlayer = superlayer else { return }
+////        print("resizing bounds")
+//        switch cornerType {
+//        case .topLeft:
+//            self.frame.origin = CGPoint(
+//                x: superlayer.frame.minX - (self.frame.width / 2),
+//                y: superlayer.frame.maxY - (self.frame.height / 2)
+//            )
+//        case .topRight:
+//            self.frame.origin = CGPoint(
+//                x: superlayer.frame.maxX - (self.frame.width / 2),
+//                y: superlayer.frame.maxY - (self.frame.height / 2)
+//            )
+//        case .bottomLeft:
+//            self.frame.origin = CGPoint(
+//                x: superlayer.frame.minX - (self.frame.width / 2),
+//                y: superlayer.frame.minY - (self.frame.height / 2)
+//            )
+//        case .bottomRight:
+//            self.frame.origin = CGPoint(
+//                x: superlayer.frame.maxX - (self.frame.width / 2),
+//                y: superlayer.frame.minY - (self.frame.height / 2)
+//            )
+//        }
+//        
+//    }
     
-    override func action(forKey event: String) -> CAAction? {
-        return NSNull()
-        
-    }
+//    override func action(forKey event: String) -> CAAction? {
+//        return NSNull()
+//        
+//    }
 }
 
