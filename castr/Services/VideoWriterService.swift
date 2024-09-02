@@ -80,7 +80,13 @@ class VideoWriter {
                         AVVideoAverageBitRateKey: 50_000_000, // 50 Mbps, adjust based on quality needs
                         AVVideoMaxKeyFrameIntervalKey: 60, // Keyframes every second at 120 FPS
                         AVVideoExpectedSourceFrameRateKey: 60, // Set the frame rate to 120 FPS
-                   ]
+                        AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                   ],
+                    AVVideoColorPropertiesKey: [
+                            AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2,
+                            AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2,
+                            AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2
+                        ]
                 ]
                 
                 self.assetWriterInput = AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)
@@ -150,6 +156,7 @@ class VideoWriter {
             }
 
             if assetWriterInput.isReadyForMoreMediaData {
+                print(sampleBuffer.imageBuffer)
                 assetWriterInput.append(sampleBuffer)
             } else {
                 print("AssetWriterInput is not ready for more data")

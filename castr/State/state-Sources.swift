@@ -223,4 +223,8 @@ extension GlobalState {
         // Update the currentSources array
         currentSources = tempSources
     }
+    
+    func getCurrentSource() -> SourceModel? {
+        return sources.first { $0.id == selectedSourceId }
+    }
 }

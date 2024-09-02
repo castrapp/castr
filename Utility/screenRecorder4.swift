@@ -101,7 +101,7 @@ class ScreenRecorder4: NSObject, ObservableObject {
         
         // Set the capture interval at 60 fps.
         streamConfig.pixelFormat = kCVPixelFormatType_32BGRA
-        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 30)
+        streamConfig.minimumFrameInterval = CMTime(value: 1, timescale: 60)
         
         // Increase the depth of the frame queue to ensure high fps at the expense of increasing
         // the memory footprint of WindowServer.

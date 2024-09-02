@@ -57,11 +57,8 @@ func createArrowLayer() -> CALayer {
 class LayoutState {
     static let shared = LayoutState()
     
-    var currentOrigin: CGPoint?
     var selectedSourceLayer: CAMetalLayer? {
-        didSet {
-            
-            Main.shared.onSelectlayer.isHidden = (selectedSourceLayer == nil)
+        didSet { Main.shared.onSelectlayer.isHidden = (selectedSourceLayer == nil)
             print("selected source is: ", selectedSourceLayer)
         }
     }
@@ -89,8 +86,6 @@ struct Main: NSViewRepresentable {
         root.borderColor = CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
         root.borderWidth = 1.0
         
-//        onSelectlayer.actions = ["hidden": NSNull()]
-        
         root.addSublayer(preview)
         root.addSublayer(onSelectlayer)
     }
@@ -107,9 +102,6 @@ struct Main: NSViewRepresentable {
     func updateNSView(_ nsView: LayoutPreview, context: Context) {}
     
     
-    
-
-   
 }
 
 
@@ -121,7 +113,11 @@ class LayoutPreview: NSView {
     let previewLayer: PreviewLayer
     let onSelectLayer: SelectLayer
     var mouseDownPositionInMain: NSPoint?
+    var initialMouseDownPositionInMain: NSPoint?
     var boundLayer: CornerBound?
+    var shiftChangeMonitor: Any?
+    var isShiftTrue: Bool = false { didSet { handleShiftChange() } }
+    var initialAspectRatio: CGFloat?
    
     
     init(rootLayer: RootLayer, previewLayer: PreviewLayer, onSelectLayer: SelectLayer) {
@@ -140,6 +136,36 @@ class LayoutPreview: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func handleShiftChange() {
+        // During shift change we need to essentailly set the CGSize of the source.bounds
+        guard
+            let selectedSource = LayoutState.shared.selectedSourceLayer,
+            let mouseDownPositionInMain = mouseDownPositionInMain,
+            let initialAspectRatio = initialAspectRatio
+        else { return }
+        
+        let dynamicSize = getDynamicSize(layer: selectedSource, previewLayer: previewLayer, coordinate: mouseDownPositionInMain)
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
+        // Use aspect-ratio preserved size
+        if isShiftTrue {
+            selectedSource.bounds.size = calculateAspectRatioPreservedSize(aspectRatio: initialAspectRatio, for: dynamicSize)
+            print("Handing shift change. Apply aspect-ratio preserved size.")
+        }
+        
+        // Use dynamic size
+        else {
+            selectedSource.bounds.size = dynamicSize
+            print("Handing shift change. Apply dynamic size.")
+        }
+        
+        onSelectLayer.resizeToSelected()
+        
+        CATransaction.commit()
+    }
+    
     override func updateTrackingAreas() {
         super.updateTrackingAreas()
         for trackingArea in trackingAreas { removeTrackingArea(trackingArea) }
@@ -149,26 +175,46 @@ class LayoutPreview: NSView {
     
     override func mouseDown(with event: NSEvent) {
         mouseDownPositionInMain = event.locationIn(in: self)
+        initialMouseDownPositionInMain =  event.locationIn(in: self)
         
-        guard 
+        guard
             let location = mouseDownPositionInMain
         else { return }
         
         print("mouse down")
-        // MARK: -
+        
+        if let selectedSource = LayoutState.shared.selectedSourceLayer {
+            initialAspectRatio = selectedSource.bounds.size.width / selectedSource.bounds.size.height
+        }
+        
+        
+        // MARK: - Bounds
         // First Check for Bounds
         if let deepestBoundLayer = rootLayer.hitTest(location) as? CornerBound {
             boundLayer = deepestBoundLayer
             print("bound type: \(boundLayer?.cornerType.name) is hit")
+            
+         
+            
+            if shiftChangeMonitor == nil {
+                
+//                isShiftTrue = NSEvent.modifierFlags.contains(.shift)
+                
+                shiftChangeMonitor = NSEvent.addLocalMonitorForEvents(matching: .flagsChanged) { [weak self] event in
+                    guard let self = self else { return event }
+                    self.isShiftTrue = event.modifierFlags.contains(.shift)
+                    return event
+                }
+            }
+           
+            
             print("found bound. returning")
             return
         }
         
-        // MARK: -
+        // MARK: - Metal Layer
         // Then for Metal Layer
         if let deepestMetalLayer = previewLayer.hitTest(location) as? CustomMetalLayer {
-            // TODO: I think we may need to set the transform for the onSelectedLayer to the
-            // TODO: to the same whatever transform this layer has
             CATransaction.begin()
             CATransaction.setDisableActions(true)
             LayoutState.shared.selectedSourceLayer = deepestMetalLayer
@@ -182,15 +228,11 @@ class LayoutPreview: NSView {
             return
         }
         
-        // MARK: -
+        // MARK: - Default
         // Otherwise default
         else {
             LayoutState.shared.selectedSourceLayer = nil
             boundLayer = nil
-            
-            if let selectedSource = LayoutState.shared.selectedSourceLayer {
-                LayoutState.shared.currentOrigin = selectedSource.frame.origin
-            }
             
             print("found nothing. defaulting")
         }
@@ -201,6 +243,12 @@ class LayoutPreview: NSView {
     override func mouseUp(with event: NSEvent) {
         mouseDownPositionInMain = nil
         boundLayer = nil
+        isShiftTrue = false
+        if var shiftChangeMonitor = shiftChangeMonitor {
+            NSEvent.removeMonitor(shiftChangeMonitor)
+            self.shiftChangeMonitor = nil
+            print("shift change monitor removed")
+        }
 //            print("Mouse upped")
     }
     
@@ -223,117 +271,170 @@ class LayoutPreview: NSView {
     
     override func mouseDragged(with event: NSEvent) {
         guard let initialMouseDown = mouseDownPositionInMain else { return }
+        guard let initialAspectRatio = initialAspectRatio else { return }
         let currentLocation = event.locationIn(in: self)
         let amountMoved = currentLocation - initialMouseDown
         mouseDownPositionInMain = currentLocation
         
         
-        // MARK: -
-        // Re-size
+        // MARK: - Re-size
+        // For when the user re-sizes a layer
         if let boundLayer = boundLayer {
             guard let selectedSource = LayoutState.shared.selectedSourceLayer else { return }
-            
-            
-            let transform = selectedSource.affineTransform()
-            var newWidth: CGFloat?
-            var newHeight: CGFloat?
-            
-            
-            // MARK: -
-            // Top left
-            if boundLayer.cornerType == .topLeft {
-                
-                if selectedSource.anchorPoint != CGPoint(x: 1.0, y: 0.0) {
-                    adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 1.0, y: 0.0))
-                    print("setting anchor point for top left")
-                }
-   
-                newWidth = selectedSource.bounds.size.width - (amountMoved.x * transform.a) /* I think we need to times this amount movedx by the current scale x*/
-                newHeight = selectedSource.bounds.size.height + (amountMoved.y * transform.d)
-            }
-            
-            // MARK: -
-            // Top Right
-            else if boundLayer.cornerType == .topRight {
-                
-                if selectedSource.anchorPoint != CGPoint(x: 0.0, y: 0.0) {
-                    adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 0.0, y: 0.0))
-                    print("setting anchor point for top right")
-                }
-                
-                /*
-                 So right here I also need to do a check like how I do in the topleft part
-                 where i check if the anchorpoint is 0,0 or not, and if its not then I need to set it.
-                 When I do this the same way as above in the top left, where I first save the current origin
-                 then apply the new anchor point, then set the origin to that saved origin / restore the original origin
-                 it works fine, that is, when there are no transforms applied to the layer, but see there is a problem
-                 that occurs when transforms are appled to the layer, like if the layer is flipped vertically for example
-                 when the layer is flipped vertically, it sets the origins x right but as for the y, it will set it either
-                 one whole layers hieght above the orignal origins y or below it, it seems like it depends on what the pervious
-                 anchor point was
-                 */
-                
-                newWidth = selectedSource.bounds.size.width + (amountMoved.x * transform.a) /* I think we need to times this amount movedx by the current scale x*/
-                newHeight = selectedSource.bounds.size.height + (amountMoved.y * transform.d)
-            }
-            
-            
-            // MARK: -
-            // Bottom Left
-            else if boundLayer.cornerType == .bottomLeft {
-                
-                if selectedSource.anchorPoint != CGPoint(x: 1.0, y: 1.0) {
-                    adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 1.0, y: 1.0))
-                    print("setting anchor point for bottom left")
-                }
-                
-                newWidth = selectedSource.bounds.size.width - (amountMoved.x * transform.a) /* I think we need to times this amount movedx by the current scale x*/
-                newHeight = selectedSource.bounds.size.height - (amountMoved.y * transform.d)
-            }
-            
-            // MARK: -
-            // Bottom Right
-            else if boundLayer.cornerType == .bottomRight {
-                
-                if selectedSource.anchorPoint != CGPoint(x: 0.0, y: 1.0) {
-                    adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 0.0, y: 1.0))
-                    print("setting anchor point for bottom right")
-                }
-                
-                newWidth = selectedSource.bounds.size.width + (amountMoved.x * transform.a) /* I think we need to times this amount movedx by the current scale x*/
-                newHeight = selectedSource.bounds.size.height - (amountMoved.y * transform.d)
-            }
-            
-            
-            
-            
-            guard let newWidth = newWidth, let newHeight = newHeight else { return }
             
             CATransaction.begin()
             CATransaction.setDisableActions(true)
             
-            selectedSource.bounds.size.width = newWidth
-            selectedSource.bounds.size.height = newHeight
+            /// `1. Determine and set the Anchor point (if it hasnt been set already)`
+            setAnchorPoint(boundLayer: boundLayer, selectedSource: selectedSource)
             
+            
+            /// `2. Determine and set transforms`
+            /*
+             (if this idea fails then I must be gtting the anchor point wrong)
+             This portion of code sets the transform based on the current frame the drag is creating.
+             This is depenedent upon the the current anchor point, the current bound that is being dragged,
+             and the drag coordinate.
+             
+             The variables to use are currentLocation and anchorInSuperlayer
+             
+             if the bound type is top left:
+                if the anchor point is positioned lower and to the right, relative to the drag coordinate,
+                then no transform is applied
+             
+                if the anchor point is positioned higher and to the right, relative to the drag coordinate,
+                then a vertical flip transform is applied
+             
+                if the anchor point is positioned higher and to the left, relative to the drag coordinate,
+                then both a vertical flip and horizontal flip transform is applied
+             
+                if the anchor point is positioned lower and to the left, relative to the drag coordinate,
+                then a horizontal flip is applied
+             
+             if the bound type is the bottom left:
+                if the anchor point is positioned lower and to the left, relative to the drag coordinate,
+                then no transform is applied
+             
+                if the anchor point is positioned higher and to the left, relative to the drag coordinate,
+                then a vertical flip transform is applied
+             
+                if the anchor point is positioned higher and to the right, relative to the drag coordinate,
+                then both a vertical flip and horizontal flip transform is applied
+             
+                if the anchor point is positioned lower and to the right, relative to the drag coordinate,
+                then a horizontal flip is applied
+              
+            */
+            let transform = selectedSource.affineTransform()
             var transformX: Double = transform.a
             var transformY: Double = transform.d
             
-            // Width
-            if newWidth < 0 {
-                if transform.a > 0 { transformX = -1.0 }
-                if transform.a < 0 { transformX = 1.0 }
+            let anchorInSuperLayer = selectedSource.position + previewLayer.frame.origin
+            
+            if boundLayer.cornerType == .topLeft {
+                // Refactor: Anchor point comes first, then compare with the drag coordinate
+                // Determine the position of the anchor point relative to the drag coordinate
+                if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the right (no flip needed)
+                    transformX = 1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the right (vertical flip needed)
+                    transformX = 1.0
+                    transformY = -1.0
+                } else if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the left (horizontal flip needed)
+                    transformX = -1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the left (both horizontal and vertical flips needed)
+                    transformX = -1.0
+                    transformY = -1.0
+                }
+            } 
+            
+            else if boundLayer.cornerType == .bottomLeft {
+                // Refactor: Anchor point comes first, then compare with the drag coordinate
+                // Determine the position of the anchor point relative to the drag coordinate
+                if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the left (no flip needed)
+                    transformX = 1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the left (vertical flip needed)
+                    transformX = 1.0
+                    transformY = -1.0
+                } else if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the right (horizontal flip needed)
+                    transformX = -1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the right (both horizontal and vertical flips needed)
+                    transformX = -1.0
+                    transformY = -1.0
+                }
             }
-                
             
-            // Height
-            if newHeight < 0 {
-                if transform.d > 0 { transformY = -1.0 }
-                if transform.d < 0 { transformY = 1.0 }
+            else if boundLayer.cornerType == .topRight {
+                // Determine the position of the anchor point relative to the drag coordinate
+                if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the left (no flip needed)
+                    transformX = 1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the left (vertical flip needed)
+                    transformX = 1.0
+                    transformY = -1.0
+                } else if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the right (horizontal flip needed)
+                    transformX = -1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the right (both horizontal and vertical flips needed)
+                    transformX = -1.0
+                    transformY = -1.0
+                }
             }
             
-            
+            else if boundLayer.cornerType == .bottomRight {
+                // Determine the position of the anchor point relative to the drag coordinate
+                if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the left (no flip needed)
+                    transformX = 1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x < currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the left (vertical flip needed)
+                    transformX = 1.0
+                    transformY = -1.0
+                } else if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y > currentLocation.y {
+                    // Anchor point is higher and to the right (horizontal flip needed)
+                    transformX = -1.0
+                    transformY = 1.0
+                } else if anchorInSuperLayer.x > currentLocation.x && anchorInSuperLayer.y < currentLocation.y {
+                    // Anchor point is lower and to the right (both horizontal and vertical flips needed)
+                    transformX = -1.0
+                    transformY = -1.0
+                }
+            }
+
             selectedSource.setAffineTransform(CGAffineTransform(scaleX: transformX, y: transformY))
             onSelectLayer.setAffineTransform(CGAffineTransform(scaleX: transformX, y: transformY))
+            
+            
+            
+            /// `3. Determine and set the new layer size`
+            
+            let dynamicSize = getDynamicSize(layer: selectedSource, previewLayer: previewLayer, coordinate: currentLocation)
+            
+            
+            if isShiftTrue { // Use aspect-ratio preserved size
+                selectedSource.bounds.size = calculateAspectRatioPreservedSize(aspectRatio: initialAspectRatio, for: dynamicSize)
+            }
+            else {  // Use dynamic size
+                selectedSource.bounds.size = dynamicSize
+            }
+                
+
             
             
             onSelectLayer.resizeToSelected()
@@ -343,18 +444,21 @@ class LayoutPreview: NSView {
         }
         
         
-        // MARK: -
-        // Re-position
+        
+        
+        // MARK: - Re-position
+        // For when the user repositions a layer
         else {
             guard let selectedSource = LayoutState.shared.selectedSourceLayer else { return }
             CATransaction.begin()
             CATransaction.setDisableActions(true)
             
             selectedSource.position = selectedSource.position + amountMoved
-//            print("new position is: ", selectedSource.position)
             
             onSelectLayer.repositionToSelected()
             CATransaction.commit()
+            
+            print("repositioning layer")
         }
         
         
@@ -363,45 +467,7 @@ class LayoutPreview: NSView {
     }
     
     
-//    override func mouseDragged(with event: NSEvent) {
-//     
-//        guard var initialMouseDown = initalMouseDownPosition else { return }
-//        
-//        let currentLocation = event.locationIn(in: self)
-//        let convertedCurrentLocation = preview.convert(currentLocation, from: self.layer)
-//        
-//
-//        
-//        
-//        
-//        // For resizing the layer
-//        if let cornerBoundName = cornerBoundName {
-//              print("corner being dragged: ", cornerBoundName)
-//              return // Exit the function
-//        }
-//        
-//        
-//        
-//        // For moving the layer
-//        guard let selectedSourceLayer = LayoutState.shared.selectedSourceLayer else { return }
-//    
-//        CATransaction.begin()
-//        CATransaction.setDisableActions(true)
-//        // 1. Set the selectedSourceLayer's origin
-//        selectedSourceLayer.frame.origin = selectedSourceLayer.frame.origin + dragDifference
-//        print("selected source layers frame is: ", selectedSourceLayer.frame)
-//        print("selected source layers bounds are: ", selectedSourceLayer.bounds.size)
-//        
-//        // 2. Set the onSelectLayers origin
-//        let newOrigin = preview.convert(selectedSourceLayer.frame.origin, to: self.layer)
-//        onSelectlayer.frame.origin = onSelectlayer.frame.origin + dragDifference
-//        CATransaction.commit()
-//        
-//        
-//        
-//        initalMouseDownPosition = convertedCurrentLocation
-//    }
-    
+  
     
     
     
@@ -428,6 +494,56 @@ extension CGPoint {
         return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
     }
 }
+
+
+func setAnchorPoint(boundLayer: CornerBound, selectedSource: CAMetalLayer) {
+    
+    // Top left
+    if boundLayer.cornerType == .topLeft {
+        
+        // NOTE: All this does is set the anchor point once (if its not already set)
+        if selectedSource.anchorPoint != CGPoint(x: 1.0, y: 0.0) {
+            adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 1.0, y: 0.0))
+            print("setting anchor point for top left")
+        }
+    }
+    
+    
+    // Top Right
+    else if boundLayer.cornerType == .topRight {
+        
+        // NOTE: All this does is set the anchor point once (if its not already set)
+        if selectedSource.anchorPoint != CGPoint(x: 0.0, y: 0.0) {
+            adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 0.0, y: 0.0))
+            print("setting anchor point for top right")
+        }
+    }
+    
+    
+    // Bottom Left
+    else if boundLayer.cornerType == .bottomLeft {
+        
+        // NOTE: All this does is set the anchor point once (if its not already set)
+        if selectedSource.anchorPoint != CGPoint(x: 1.0, y: 1.0) {
+            adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 1.0, y: 1.0))
+            print("setting anchor point for bottom left")
+        }
+    }
+    
+ 
+    // Bottom Right
+    else if boundLayer.cornerType == .bottomRight {
+        
+        // NOTE: All this does is set the anchor point once (if its not already set)
+        if selectedSource.anchorPoint != CGPoint(x: 0.0, y: 1.0) {
+            adjustAnchorPointAndPosition(of: selectedSource, to: CGPoint(x: 0.0, y: 1.0))
+            print("setting anchor point for bottom right")
+        }
+    }
+    
+    
+}
+
 
 
 func adjustAnchorPointAndPosition(of layer: CALayer, to newAnchorPoint: CGPoint) {
@@ -464,4 +580,61 @@ func adjustAnchorPointAndPosition(of layer: CALayer, to newAnchorPoint: CGPoint)
     layer.position = oldPosition + transformedOffset
     
     CATransaction.commit()
+}
+
+
+func calculateAspectRatioPreservedSize(aspectRatio: CGFloat, for dynamicSize: CGSize) -> CGSize {
+    let widthRatio = dynamicSize.width / aspectRatio
+    let heightRatio = dynamicSize.height * aspectRatio
+    
+    if dynamicSize.width / aspectRatio <= dynamicSize.height {
+        // Width is the limiting factor, so adjust height based on width
+        return CGSize(width: dynamicSize.width, height: dynamicSize.width / aspectRatio)
+    } else {
+        // Height is the limiting factor, so adjust width based on height
+        return CGSize(width: dynamicSize.height * aspectRatio, height: dynamicSize.height)
+    }
+}
+
+
+// FIXME: This works when no transforms are applied, all we gotta do is make this work when transforms are applied
+//func calculateAspectRatioPreservedSize(layer: CALayer, dragCoordinate: CGPoint)
+
+func getDynamicSize(layer: CALayer, previewLayer: CALayer, coordinate: CGPoint) -> CGSize {
+    let anchorPointCoordinate = previewLayer.frame.origin + layer.position
+    
+    let dynamicWidth = abs(coordinate.x - anchorPointCoordinate.x)
+    let dynamicHeight = abs(coordinate.y - anchorPointCoordinate.y)
+    
+    return CGSize(width: dynamicWidth, height: dynamicHeight)
+}
+
+
+func calculateAspectRatioPreservedSize(for layer: CALayer, previewLayer: CALayer, with dragCoordinate: CGPoint) -> CGSize {
+    
+    // Get the layer's current aspect ratio
+    let aspectRatio = layer.bounds.size.width / layer.bounds.size.height
+    
+    // Calculate the origin of the layer in the superlayer's coordinate system
+    let anchorPointCoordinate = previewLayer.frame.origin + layer.position
+    
+    // Calculate the dynamic frame size based on the drag coordinate and the anchor point coordinate
+    let dynamicWidth = abs(dragCoordinate.x - anchorPointCoordinate.x)
+    let dynamicHeight = abs(dragCoordinate.y - anchorPointCoordinate.y)
+    
+    // Determine the largest aspect ratio-preserved size that fits within the dynamic frame
+    let adjustedWidth: CGFloat
+    let adjustedHeight: CGFloat
+    
+    if dynamicWidth / aspectRatio <= dynamicHeight {
+        // Width is the limiting factor, so adjust height based on width
+        adjustedWidth = dynamicWidth
+        adjustedHeight = dynamicWidth / aspectRatio
+    } else {
+        // Height is the limiting factor, so adjust width based on height
+        adjustedWidth = dynamicHeight * aspectRatio
+        adjustedHeight = dynamicHeight
+    }
+    
+    return CGSize(width: adjustedWidth, height: adjustedHeight)
 }

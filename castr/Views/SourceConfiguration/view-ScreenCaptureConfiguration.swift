@@ -75,14 +75,14 @@ struct ScreenCaptureConfiguration: View {
                 }
                 .labelsHidden()
                 .fixedSize(horizontal: true, vertical: true)
-//                .onChange(of: selectedDisplay) { newValue in
-//                    print("selected display has changed: ", selectedDisplay)
-//                    guard let newValue = newValue else { return }
-//                    if newValue.displayName != model.selectedDisplay {
-//                        model.selectedDisplay = newValue.displayName
-//                        model.screenRecorder?.selectedDisplay = newValue
-//                    }
-//                }
+                .onChange(of: selectedDisplay) { newValue in
+                    print("selected display has changed: ", selectedDisplay)
+                    guard let newValue = newValue else { return }
+                    if newValue.displayName != model.selectedDisplay {
+                        model.selectedDisplay = newValue.displayName
+                        model.screenRecorder?.selectedDisplay = newValue
+                    }
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
             .padding(.horizontal, 10)
@@ -166,22 +166,22 @@ struct ScreenCaptureConfiguration: View {
             .frame(maxWidth: .infinity)
             .padding(.vertical, 6)
         }
-//        .onAppear {
-//            Task { @MainActor in
-//                await refreshAvailableContent()
-//                if let display = availableDisplays.first { $0.displayName == model.selectedDisplay } {
-//                    selectedDisplay = display
-//                } else {
-//                    selectedDisplay = availableDisplays.first
-//                }
-//                await monitorAvailableContent()
-//            }
-//          
-//        }
-//        .onDisappear {
-//            contentRefreshTimer?.cancel()
-//            print("Stopped monitoring and deallocated resources")
-//        }
+        .onAppear {
+            Task { @MainActor in
+                await refreshAvailableContent()
+                if let display = availableDisplays.first { $0.displayName == model.selectedDisplay } {
+                    selectedDisplay = display
+                } else {
+                    selectedDisplay = availableDisplays.first
+                }
+                await monitorAvailableContent()
+            }
+          
+        }
+        .onDisappear {
+            contentRefreshTimer?.cancel()
+            print("Stopped monitoring and deallocated resources")
+        }
     }
     
     func onAppIconPress(bundleId: String) {

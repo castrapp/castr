@@ -16,7 +16,7 @@ let kWhiteStripeHeight: Int = 10
 
 
 
-let kFrameRate: Int = 30
+let kFrameRate: Int = 60
 let cameraName = "Castr Virtual Camera"
 let fixedCamWidth: Int32 = 3456
 let fixedCamHeight: Int32 = 2234
