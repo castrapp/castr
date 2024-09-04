@@ -189,6 +189,7 @@ class CameraViewModel: ObservableObject  {
             if resultStart {
 //                showMessage("initSink started")
                 print("initSink started")
+                GlobalState.shared.streamToVirtualCamera = true
             } else {
 //                showMessage("initSink error startstream")
                 print("initSink error startstream")

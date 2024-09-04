@@ -33,8 +33,9 @@ class OutputService: ObservableObject {
         handleOutputStateChange()
     } }
     @Published var isStreamingToVirtualCamera = false { didSet { handleOutputStateChange() } }
+    @Published var startStreamingTime: Date?
     var outputTimer: Timer?
-    var videoWriter: VideoWriter?
+    @Published var videoWriter: VideoWriter?
     var buffer: CMSampleBuffer?
     
     // Actions to do once

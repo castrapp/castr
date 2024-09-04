@@ -83,8 +83,6 @@ struct Main: NSViewRepresentable {
     
     
     private init() {
-        root.borderColor = CGColor(red: 1.0, green: 0.0, blue: 0.0, alpha: 1.0)
-        root.borderWidth = 1.0
         
         root.addSublayer(preview)
         root.addSublayer(onSelectlayer)

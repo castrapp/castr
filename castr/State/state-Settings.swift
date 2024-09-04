@@ -39,7 +39,8 @@ enum SettingsEnum: String, CaseIterable {
 //    case video = "Video"
 //    case audio = "Audio"
     case virtualCamera = "Virtual Camera"
-    case recording = "Recording"
+    // TODO: Implement recording functionality
+//    case recording = "Recording"
 //    case streaming = "Streaming"
     
     var title: String {
@@ -52,7 +53,7 @@ enum SettingsEnum: String, CaseIterable {
 //        case .video:            return ""
 //        case .audio:            return ""
         case .virtualCamera:    return "video"
-        case .recording:        return "rectangle.inset.filled.badge.record"
+//        case .recording:        return "rectangle.inset.filled.badge.record"
 //        case .streaming:        return ""
         }
     }

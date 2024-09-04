@@ -16,15 +16,19 @@ struct ScreenCaptureConfiguration: View {
     @FocusState var isTextFieldFocused: Bool
     
     @State var availableDisplays = [SCDisplay]()
-    @State var availableApps = [SCRunningApplication]()
+    @State var availableApps = [SCRunningApplication]() {
+        didSet {
+            print("available apps have changed", availableApps)
+        }
+    }
     @State var availableWindows = [SCWindow]()
     @State var selectedDisplay: SCDisplay?
     @State var selectedApp: String = ""
     @State var contentRefreshTimer: AnyCancellable?
     
     var body: some View {
+        ScrollView {
         VStack(spacing: 0) {
-            
             HStack {
                 Text("Active")
                 
@@ -100,68 +104,75 @@ struct ScreenCaptureConfiguration: View {
                 Text("Apps")
                     .padding(.bottom, 8)
                     .padding(.horizontal, 10)
-                
-//                ScrollView {
-//                    VStack(spacing: 0) {
-//                        ForEach(availableApps, id: \.self) { app in
-//                            Text(app.applicationName)
+//                
+//                                ScrollView {
+//                                    VStack(spacing: 0) {
+//                                        ForEach(availableApps, id: \.self) { app in
+//                                            Text(app.applicationName)
+//                                        }
+//                                    }
+//                                }
+                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VStack {
+//                        List(selection: $selectedApp) {
+                            ForEach(availableApps, id: \.bundleIdentifier) { app in
+                                
+                                HStack {
+                                    Button(action: {onAppIconPress(bundleId: app.bundleIdentifier)}) {
+                                        Image(systemName:
+                                                model.excludedApps.contains(app.bundleIdentifier)
+                                              ? "rectangle.on.rectangle.slash.circle.fill"
+                                              : "rectangle.on.rectangle.circle.fill"
+                                        )
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .symbolRenderingMode(
+                                            model.excludedApps.contains(app.bundleIdentifier)
+                                            ? .hierarchical
+                                            : .palette
+                                        )
+                                        .foregroundStyle(Color.primary, Color.accentColor)
+                                        //                                    .symbolEffect(.bounce, value: model.excludedApps.contains(app.bundleIdentifier))
+                                        .frame(minWidth: 30, maxWidth: 30, minHeight: 30, maxHeight: 30)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .fixedSize()
+                                    //                            .border(Color.red)
+                                    
+                                    VStack(alignment: .leading) {
+                                        Text(app.applicationName)
+                                        //                                Text(source.type.name)
+                                        //                                .font(.system(size: 12))
+                                        //                                .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                    
+                                    if let appIcon = getAppIcon(bundleId: app.bundleIdentifier) {
+                                        Image(nsImage: appIcon)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 30, height: 30)
+                                    } else {
+                                        Image(systemName: "app.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 30, height: 30)
+                                    }
+                                }
+                                .frame(height: 32)
+                                
+                            }
 //                        }
-//                    }
-//                }
-//                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
-                List(selection: $selectedApp) {
-                    ForEach(availableApps, id: \.bundleIdentifier) { app in
-                        
-                        HStack {
-                            Button(action: {onAppIconPress(bundleId: app.bundleIdentifier)}) {
-                                Image(systemName:
-                                        model.excludedApps.contains(app.bundleIdentifier)
-                                      ? "rectangle.on.rectangle.slash.circle.fill"
-                                      : "rectangle.on.rectangle.circle.fill"
-                                )
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .symbolRenderingMode(
-                                        model.excludedApps.contains(app.bundleIdentifier)
-                                        ? .hierarchical
-                                        : .palette
-                                    )
-                                    .foregroundStyle(Color.primary, Color.accentColor)
-//                                    .symbolEffect(.bounce, value: model.excludedApps.contains(app.bundleIdentifier))
-                                    .frame(minWidth: 30, maxWidth: 30, minHeight: 30, maxHeight: 30)
-                            }
-                            .buttonStyle(PlainButtonStyle())
-                            .fixedSize()
-//                            .border(Color.red)
-                            
-                            VStack(alignment: .leading) {
-                                Text(app.applicationName)
-//                                Text(source.type.name)
-//                                .font(.system(size: 12))
-//                                .foregroundColor(.secondary)
-                            }
-                            
-                            Spacer()
-                            
-                            if let appIcon = getAppIcon(bundleId: app.bundleIdentifier) {
-                            Image(nsImage: appIcon)
-                               .resizable()
-                               .aspectRatio(contentMode: .fit)
-                               .frame(width: 30, height: 30)
-                            } else {
-                            Image(systemName: "app.fill")
-                               .resizable()
-                               .aspectRatio(contentMode: .fit)
-                               .frame(width: 30, height: 30)
-                            }
-                        }
-                        .frame(height: 32)
-                        
+//                        .listStyle(SidebarListStyle()) // Sidebar style for macOS
+//                        .frame(minWidth: 100)
+//                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
+                    .frame(minWidth: 100)
+//                    .border(Color.blue)
+                    .padding(.horizontal, 10)
                 }
-                .listStyle(SidebarListStyle()) // Sidebar style for macOS
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 6)

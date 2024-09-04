@@ -24,7 +24,8 @@ struct AddSourceSheet: View {
     
                 NewSource
           
-                ExistingSource
+                // TODO: Implement "Choose Existing"
+//                ExistingSource
                 
             }
             .padding(.horizontal, 60)
@@ -80,20 +81,21 @@ struct AddSourceSheet: View {
     }
     
     
-    var ExistingSource: some View {
-        VStack(alignment: .leading) {
-            Text("Existing Sources").foregroundStyle(.secondary)
-            
-            ScrollView {
-
-            }
-            .frame(maxWidth:.infinity, maxHeight: 150)
-            ._groupBox()
-        }
-        .padding(10)
-        .tabItem { Text(AddSourceOption.existingSource.displayName) }
-        .tag(AddSourceOption.existingSource)
-    }
+    // TODO: Implement "Choose Existing"
+//    var ExistingSource: some View {
+//        VStack(alignment: .leading) {
+//            Text("Existing Sources").foregroundStyle(.secondary)
+//            
+//            ScrollView {
+//
+//            }
+//            .frame(maxWidth:.infinity, maxHeight: 150)
+//            ._groupBox()
+//        }
+//        .padding(10)
+//        .tabItem { Text(AddSourceOption.existingSource.displayName) }
+//        .tag(AddSourceOption.existingSource)
+//    }
     
     
     var CancelConfirmButtons: some View {
@@ -125,10 +127,11 @@ struct AddSourceSheet: View {
             global.addSource(sourceType: newSourceSelection, name: newSourceSelection.name)
         }
         
+        // TODO: Implement "Choose Existing"
         // For an existing Source
-        else if(content.selectedAddSourceOption == .existingSource) {
-            
-        }
+//        else if(content.selectedAddSourceOption == .existingSource) {
+//            
+//        }
         
 //        print("confirming")
         // Close the sheet and reset

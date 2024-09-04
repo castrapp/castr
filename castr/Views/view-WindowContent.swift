@@ -27,6 +27,7 @@ struct ContentView: View {
             
             leftSidebar
         
+            
             mainSection
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 //            .border(Color.red)
@@ -62,49 +63,49 @@ struct ContentView: View {
     /// `Right Sidebar`
     var rightSidebar: some View {
         VStack{
-            Button("Start extension") {
-                CameraViewModel.shared.start()
-                GlobalState.shared.streamToVirtualCamera = true
-            }
-            Button("Reinstall extension") {
-                SystemExtensionManager.shared.installExtension(extensionIdentifier: "harrisonhall.castr.virtualcamera") { success, error in
-                    if success {
-                        print("Castr Virtual Camera installed successfully")
-                    } else {
-                        if let error = error {
-                            print("Failed to install Castr Virtual Camera: \(error.localizedDescription)")
-                        } else {
-                            print("Failed to install Castr Virtual Camera")
-                        }
-                    }
-                }
-            }
-            Button("Set Just Property") {
-                CameraViewModel.shared.setJustProperty2()
-            }
-            Button("Print scenes sources") {
-                guard let currentScene = GlobalState.shared.getSelectedScene() else { return }
-                print("sources are: ", currentScene.sources)
-            }
-            Button("Print sublayers") {
-                print("sublayers are: ", previewer.contentLayer.sublayers)
-            }
-   
-           
-
-  
-           
-            Button("flip horizontally") {
-                guard let selectedSource = LayoutState.shared.selectedSourceLayer else { return }
-                selectedSource.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
+            
+        /// `Test Controls` (eventually get rid of these)
+//            Button("Start extension") {
+//                CameraViewModel.shared.start()
+//                GlobalState.shared.streamToVirtualCamera = true
+//            }
+//            Button("Reinstall extension") {
+//                SystemExtensionManager.shared.installExtension(extensionIdentifier: "harrisonhall.castr.virtualcamera") { success, error in
+//                    if success {
+//                        print("Castr Virtual Camera installed successfully")
+//                    } else {
+//                        if let error = error {
+//                            print("Failed to install Castr Virtual Camera: \(error.localizedDescription)")
+//                        } else {
+//                            print("Failed to install Castr Virtual Camera")
+//                        }
+//                    }
+//                }
+//            }
+//            Button("Set Just Property") {
+//                CameraViewModel.shared.setJustProperty2()
+//            }
+//            Button("Print scenes sources") {
+//                guard let currentScene = GlobalState.shared.getSelectedScene() else { return }
+//                print("sources are: ", currentScene.sources)
+//            }
+//            Button("Print sublayers") {
+//                print("sublayers are: ", previewer.contentLayer.sublayers)
+//            }
+//            Button("flip horizontally") {
+//                guard let selectedSource = LayoutState.shared.selectedSourceLayer else { return }
+//                selectedSource.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
+////                Main.shared.onSelectlayer.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
 //                Main.shared.onSelectlayer.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
-                Main.shared.onSelectlayer.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
-            }
+//            }
+            
             Controls()
+                .padding(10)
             SourceConfiguration()
         }
         .frame(minWidth: 300, maxWidth: 300, maxHeight: .infinity)
         .background(MaterialView(material: .sidebar))
+        
     }
     
 
@@ -205,15 +206,16 @@ struct Scenes: View {
             
             SceneList
             
-            ControlGroup {
-                Menu {
-                        Button("Option 1", action: { print("Option 1 selected") })
-                        Button("Option 2", action: { print("Option 2 selected") })
-                        Button("Option 3", action: { print("Option 3 selected") })
-                    } label: {
-                    }
-            }
-            
+            // TODO: Move this to the AddRemoveButtons and create "Options" menu dropdown
+//            ControlGroup {
+//                Menu {
+//                        Button("Option 1", action: { print("Option 1 selected") })
+//                        Button("Option 2", action: { print("Option 2 selected") })
+//                        Button("Option 3", action: { print("Option 3 selected") })
+//                    } label: {
+//                    }
+//            }
+//            
             Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color(nsColor: .quaternaryLabelColor))
             
             AddRemoveButtons
@@ -242,9 +244,11 @@ struct Scenes: View {
                     
                     VStack(alignment: .leading) {
                         Text(scene.name)
-                        Text("0 Sources")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
+                        
+                        // TODO: Add in number of sources here
+//                        Text("0 Sources")
+//                        .font(.system(size: 12))
+//                        .foregroundColor(.secondary)
                     }
                    
                 }
@@ -364,20 +368,22 @@ struct Sources: View {
                 content.newSourceSelection = .screenCapture
                 showPopover = false
             }
+            .padding(10)
             
-            Button("Color Source"){
-                print("adding color source")
-                content.showAddSourceSheet = true
-                content.newSourceSelection = .color
-                showPopover = false
-            }
-            
-            Button("Image Source"){
-                print("adding image source")
-                content.showAddSourceSheet = true
-                content.newSourceSelection = .image
-                showPopover = false
-            }
+            // TODO: Eventually add in more sources
+//            Button("Color Source"){
+//                print("adding color source")
+//                content.showAddSourceSheet = true
+//                content.newSourceSelection = .color
+//                showPopover = false
+//            }
+//            
+//            Button("Image Source"){
+//                print("adding image source")
+//                content.showAddSourceSheet = true
+//                content.newSourceSelection = .image
+//                showPopover = false
+//            }
             
         }
     }
@@ -426,6 +432,9 @@ struct Sources: View {
 
 struct Controls: View {
     @ObservedObject var output = OutputService.shared
+    @State private var isHovered: Bool = false
+    @State var isStarting: Bool = false
+    @State var isStreaming: Bool = false
     
     var body: some View {
         
@@ -434,41 +443,300 @@ struct Controls: View {
             HStack {
                 Text("Controls")._panelHeaderText()
             }
-            .frame(maxWidth: .infinity, maxHeight: 40, alignment: .leading)
+            .frame(maxWidth: .infinity, minHeight: 40, maxHeight: 40, alignment: .leading)
             
             Divider()._panelDivider()
+               
+            VirtualCameraControl()
             
-            HStack {
-                Text(output.isStreamingToVirtualCamera ? "Stop Virtual Camera" : "Start Virtual Camera")
-                
-                Spacer()
-                
-                Toggle("", isOn: $output.isStreamingToVirtualCamera)
-                    .labelsHidden()
-                    .toggleStyle(SwitchToggleStyle())
-            }
-            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            // TODO: Implement recording functionality
+//            RecordingControl()
             
             Spacer().panelSubSeparatorStyle()
             
-            HStack {
-                Text(output.isRecording ? "Stop Recording" : "Start Recording")
-                
-                Spacer()
-                
-                Toggle("", isOn: $output.isRecording)
-                    .labelsHidden()
-                    .toggleStyle(SwitchToggleStyle())
-            }
-            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
         }
-        ._groupBox(padding: 10)
+//        ._groupBox(padding: 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color(nsColor: .quaternarySystemFill))
+//        .padding(10)
+        
+        .overlay(
+            RoundedRectangle(cornerRadius: 6)
+                .stroke(Color(nsColor: .tertiaryLabelColor), lineWidth: 1)
+        )
+//        .padding(10)
+        .fixedSize(horizontal: false, vertical: true)
     }
+
 }
+
+
+
+struct VirtualCameraControl: View {
+    @State private var isHovered: Bool = false
+    @State var isStarting: Bool = false
+    @State var isStreaming: Bool = false
+    @ObservedObject var global = GlobalState.shared
+    @State private var timer: Timer? = nil
+    @State private var elapsedTime: TimeInterval = 0
+    
+    
+    var body: some View {
+        Button(action: onPress) {
+            HStack {
+                Image(systemName: isStreaming ? "video.circle.fill" : "video.slash.circle.fill")
+                    .font(.system(size: 28))
+                    .padding(.leading, 6)
+                    .symbolRenderingMode(isStreaming ? .palette : .monochrome)
+                    .foregroundStyle(isStreaming ? Color.white : Color.primary, isStreaming ? Color.blue : Color.primary)
+                    .animation(.easeInOut(duration: 0.3), value: isStreaming)
+
+
+
+                
+                VStack(alignment: .leading) {
+                    Text("Virtual Camera")
+                        .fontWeight(.bold)
+                        .font(.system(size: 12))
+                        .foregroundColor(.primary)
+                    if isHovered && !isStarting && !isStreaming {
+                        Text("Start")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    else if isStarting && !isStreaming{
+                        Text("Starting")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    else if isStreaming && !isHovered {
+                        Text("Streaming: \(formatTime(elapsedTime))")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+//                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    else if isStreaming && isHovered {
+                        Text("Stop: \(formatTime(elapsedTime))")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+//                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                Spacer()
+                if isHovered && !isStarting && !isStreaming  {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(NSColor.secondaryLabelColor))
+                        .padding(.trailing, 10)
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                }
+                else if isStarting && !isStreaming {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .scaleEffect(0.55)
+                        .padding(.trailing, 6)
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                }
+                
+            }
+            .frame(maxWidth: .infinity, minHeight: 42, maxHeight: 42, alignment: .leading)
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color( isHovered ? NSColor.quaternaryLabelColor : (isStarting ? NSColor.quaternaryLabelColor : NSColor.quaternarySystemFill)))
+                    .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1) // Apply border with curved corners
+            )
+            .onHover { hovering in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isHovered = hovering
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(10)
+//        .onChange(of: global.streamToVirtualCamera) { newValue in
+//            if newValue {
+//                isStarting = false
+//                isStreaming = true
+//                OutputService.shared.isStreamingToVirtualCamera = true
+//            }
+//          
+//            print("global.streamToVirtualCamera is now: ", newValue)
+//        }
+    }
+    
+    func onPress() {
+        print("button being pressed")
+        if isStreaming {
+            isStreaming = false
+            OutputService.shared.isStreamingToVirtualCamera = false
+            stopTimer()
+        }
+        else {
+//            isStarting = false
+            isStreaming = true
+            CameraViewModel.shared.start()
+            OutputService.shared.isStreamingToVirtualCamera = true
+            startTimer()
+        }
+    }
+    
+    
+    func startTimer() {
+       elapsedTime = 0
+       timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+           elapsedTime += 1
+       }
+   }
+       
+   func stopTimer() {
+       timer?.invalidate()
+       timer = nil
+   }
+   
+   func formatTime(_ interval: TimeInterval) -> String {
+       let hours = Int(interval) / 3600
+       let minutes = (Int(interval) % 3600) / 60
+       let seconds = Int(interval) % 60
+       return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+   }
+}
+
+
+
+struct RecordingControl: View {
+    @State private var isHovered: Bool = false
+    @State var isStarting: Bool = false
+    @State var isStreaming: Bool = false
+    @ObservedObject var global = GlobalState.shared
+    @State private var timer: Timer? = nil
+    @State private var elapsedTime: TimeInterval = 0
+    
+    
+    var body: some View {
+        Button(action: onPress) {
+            HStack {
+                Image(systemName: "record.circle.fill")
+                    .font(.system(size: 28))
+                    .padding(.leading, 6)
+                    .symbolRenderingMode(isStreaming ? .palette : .monochrome)
+                    .foregroundStyle(isStreaming ? Color.red : Color.primary, Color.primary)
+                    .animation(.easeInOut(duration: 0.3), value: isStreaming)
+
+
+
+                
+                VStack(alignment: .leading) {
+                    Text("Recording")
+                        .fontWeight(.bold)
+                        .font(.system(size: 12))
+                        .foregroundColor(.primary)
+                    if isHovered && !isStarting && !isStreaming {
+                        Text("Start")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    else if isStarting && !isStreaming{
+                        Text("Starting")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    else if isStreaming && !isHovered {
+                        Text("Recording: \(formatTime(elapsedTime))")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+//                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                    else if isStreaming && isHovered {
+                        Text("Stop: \(formatTime(elapsedTime))")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+//                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }
+                }
+                Spacer()
+                if isHovered && !isStarting && !isStreaming  {
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(NSColor.secondaryLabelColor))
+                        .padding(.trailing, 10)
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                }
+                else if isStarting && !isStreaming {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .scaleEffect(0.55)
+                        .padding(.trailing, 6)
+                        .transition(.move(edge: .leading).combined(with: .opacity))
+                }
+                
+            }
+            .frame(maxWidth: .infinity, minHeight: 42, maxHeight: 42, alignment: .leading)
+            .overlay(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color( isHovered ? NSColor.quaternaryLabelColor : (isStarting ? NSColor.quaternaryLabelColor : NSColor.quaternarySystemFill)))
+                    .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1) // Apply border with curved corners
+            )
+            .onHover { hovering in
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isHovered = hovering
+                }
+            }
+        }
+        .buttonStyle(PlainButtonStyle())
+        .padding(.horizontal, 10)
+        .padding(.vertical, 10)
+//        .onChange(of: global.streamToVirtualCamera) { newValue in
+//            if newValue {
+//                isStarting = false
+//                isStreaming = true
+//                OutputService.shared.isStreamingToVirtualCamera = true
+//            }
+//
+//            print("global.streamToVirtualCamera is now: ", newValue)
+//        }
+    }
+    
+    func onPress() {
+        print("button being pressed")
+        if isStreaming {
+            isStreaming = false
+            OutputService.shared.isRecording = false
+            stopTimer()
+        }
+        else {
+//            isStarting = false
+            isStreaming = true
+            OutputService.shared.isRecording = true
+            startTimer()
+        }
+    }
+    
+    
+    func startTimer() {
+       elapsedTime = 0
+       timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+           elapsedTime += 1
+       }
+   }
+       
+   func stopTimer() {
+       timer?.invalidate()
+       timer = nil
+   }
+   
+   func formatTime(_ interval: TimeInterval) -> String {
+       let hours = Int(interval) / 3600
+       let minutes = (Int(interval) % 3600) / 60
+       let seconds = Int(interval) % 60
+       return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+   }
+}
+
+
 
 
 
@@ -493,6 +761,12 @@ struct SourceConfiguration: View {
                         ScreenCaptureConfiguration(model: source as! ScreenCaptureSourceModel)
                     }
                 }
+            } else {
+                VStack(spacing: 4) {
+                    Text("Select a source to configure it.")
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                .border(Color.red)
             }
         
         }

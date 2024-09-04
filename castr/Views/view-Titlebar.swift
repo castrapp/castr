@@ -11,7 +11,8 @@ import SwiftUI
 
 struct TitlebarView: View {
     @ObservedObject var app = App.shared
-    @State private var flipped = false
+    @ObservedObject var global = GlobalState.shared
+    @State var sceneTitle = "No Scene Selected"
     
     var body: some View {
             HSplitView {
@@ -21,20 +22,30 @@ struct TitlebarView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .edgesIgnoringSafeArea(.all)
+            .onChange(of: global.selectedSceneId) { newValue in
+                let newScene = global.scenes.first { $0.id == newValue }
+                if let newScene = newScene {
+                    sceneTitle = newScene.name
+                } else {
+                    sceneTitle = "No Scene Selected"
+                }
+               
+                
+            }
     }
 
     
     /// `Left Sidebar`
     var leftSidebar: some View {
         HStack {
-            
-            _Button(
-                imageName: "sidebar.left",
-                onPress: {
-                    print("pressed")
-                }
-            )
-            .padding(.leading, app.trafficLightPadding)
+            // TODO: Implement side panel collapse button and functionality
+//            _Button(
+//                imageName: "sidebar.left",
+//                onPress: {
+//                    print("pressed")
+//                }
+//            )
+//            .padding(.leading, app.trafficLightPadding)
         }
         .frame(minWidth: 300, maxWidth: 300, maxHeight: .infinity, alignment: .leading)
         .background(MaterialView(material: .sidebar))
@@ -44,38 +55,36 @@ struct TitlebarView: View {
     
     /// `Main`
     var main: some View {
-        HStack {
-            Spacer()
-            Button("flip text") {
-                flipped.toggle()
+        VStack(alignment: .leading) {
+            HStack {
+                Spacer()
+                
+                
+                VStack(alignment: .leading) {
+                  Text(sceneTitle)
+                    .fontWeight(.bold)
+                    .font(.system(size: 14))
+                    .foregroundColor(.primary)
+    //            Text("Number of sources")
+    //                .font(.system(size: 12))
+    //                .foregroundColor(.secondary)
+                }
+                .fixedSize()
+                .padding(.leading, 10)
+                
+                Spacer()
+                    .frame(maxWidth: .infinity)
+
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(BackgroundStyle.background)
             
-            Text("Middle")
-                .padding(.trailing)
-                .font(.system(size: 16))
-                .rotation3DEffect(
-                    .degrees(flipped ? -90 : 0),
-                    axis: (x: 1, y: 0, z: 0)
-//                        perspective: 0.5
-                )
-                .animation(.easeInOut(duration: 1), value: flipped)
-                .offset(x: 0, y: flipped ? 10 : 0)
+            Spacer().frame(maxWidth: .infinity, maxHeight: 1).background(Color.black)
             
-//            HStack {
-//                Spacer()
-//                
-//            }
-//            .frame(maxWidth: 1132, maxHeight: 22)
-////            .border(Color.red)
-//            .background(
-//                RoundedRectangle(cornerRadius: 6)
-//                    .fill(WindowBackgroundShapeStyle.windowBackground)
-//            )
-            
-            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(BackgroundStyle.background)
+       
     }
     
     
@@ -83,13 +92,14 @@ struct TitlebarView: View {
     var rightSidebar: some View {
         HStack {
             
-            _Button(
-                imageName: "sidebar.right",
-                onPress: {
-                    print("pressed")
-                }
-            )
-            .padding(.trailing, app.defaultWindowPadding)
+            // TODO: Implement side panel collapse button and functionality
+//            _Button(
+//                imageName: "sidebar.right",
+//                onPress: {
+//                    print("pressed")
+//                }
+//            )
+//            .padding(.trailing, app.defaultWindowPadding)
                         
         }
         .frame(minWidth: 300, maxWidth: 300, maxHeight: .infinity, alignment: .trailing)

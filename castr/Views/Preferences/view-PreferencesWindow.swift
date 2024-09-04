@@ -21,10 +21,10 @@ struct PreferencesView: View {
         HSplitView {
             
             VStack(spacing: 0) {
-                TextField("Placeholder", text: $text)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .disabled(true)
-                .padding(.bottom, 10)
+//                TextField("Placeholder", text: $text)
+//                .textFieldStyle(RoundedBorderTextFieldStyle())
+//                .disabled(true)
+//                .padding(.bottom, 10)
                 
                 ForEach(SettingsEnum.allCases, id: \.self) { setting in
                     SettingCard(
@@ -48,7 +48,9 @@ struct PreferencesView: View {
                 switch settings.selectedSetting {
                     case .permissions:      PermissionsSettingsView()
                     case .virtualCamera:    VirtualCameraSettingsView()
-                    case .recording:        RecordingSettingsView()
+                    
+                    // TODO: Implement recording functionality
+//                    case .recording:        RecordingSettingsView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -88,16 +90,16 @@ struct PermissionsSettingsView: View {
             .padding(.leading, 10)
             
             ScreenRecordingView.padding(.vertical, 20)
-            CameraView.padding(.vertical, 20)
-            MicrophoneView.padding(.top, 20)
+//            CameraView.padding(.vertical, 20)
+//            MicrophoneView.padding(.top, 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
         .padding(.top, 2)
         .onAppear { 
             requestScreenRecording()
-            requestCamera()
-            requestMicrophone()
+//            requestCamera()
+//            requestMicrophone()
             print("Permissions settings are appearing:")
         }
     }
@@ -833,21 +835,21 @@ struct PreferencesPanelTitlebarView: View {
             .background(MaterialView(material: .sidebar))
             
             HStack(spacing: 0) {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 18))
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 10)
-                    ._toolbarButton {
-                        print("previous setting")
-                    }
-                
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 18))
-                    .padding(.vertical, 5)
-                    .padding(.horizontal, 10)
-                    ._toolbarButton {
-                        print("next setting")
-                    }
+//                Image(systemName: "chevron.left")
+//                    .font(.system(size: 18))
+//                    .padding(.vertical, 5)
+//                    .padding(.horizontal, 10)
+//                    ._toolbarButton {
+//                        print("previous setting")
+//                    }
+//                
+//                Image(systemName: "chevron.right")
+//                    .font(.system(size: 18))
+//                    .padding(.vertical, 5)
+//                    .padding(.horizontal, 10)
+//                    ._toolbarButton {
+//                        print("next setting")
+//                    }
                 
                 Text(settings.selectedSetting.title)
                 .font(.system(size: 14, weight: .bold))
