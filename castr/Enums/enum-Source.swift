@@ -108,12 +108,13 @@ enum SourceType: String {
 
 enum AddSourceOption: String, CaseIterable {
     case newSource
-    case existingSource
+    // TODO: Implement "Choose Existing"
+//    case existingSource
     
     var displayName: String {
         switch self {
             case .newSource: return "Add New"
-            case .existingSource: return "Choose Existing"
+//            case .existingSource: return "Choose Existing"
         }
     }
 }

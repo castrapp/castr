@@ -14,7 +14,9 @@ class ContentModel: ObservableObject {
     @Published var newSourceName = ""
     
     @Published var newSourceSelection: SourceType?
-    let addSourceOptions = ["Add New", "Choose Existing"]
+    // TODO: Implement "Choose Existing"
+//    let addSourceOptions = ["Add New", "Choose Existing"]
+    let addSourceOptions = ["Add New"]
     
     
     @Published var isVirtualCameraEnabled = false
