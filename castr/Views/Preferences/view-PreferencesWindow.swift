@@ -84,7 +84,7 @@ struct PermissionsSettingsView: View {
     var body: some View {
         
         VStack(alignment: .leading, spacing: 0) {
-            Text("Castr requires your permission to be able to provide certain features. It is recommended to enable these permissions. but they are not required to use the app. You can always enable them later.")
+            Text("Castr requires your permission to be able to provide certain features. It is recommended to enable these permissions and features now. Although, you can always enable them later.")
             .font(.system(size: 12))
             .foregroundColor(.secondary)
             .padding(.leading, 10)
@@ -98,9 +98,18 @@ struct PermissionsSettingsView: View {
         .padding(.top, 2)
         .onAppear { 
             requestScreenRecording()
+            
+            // Listen for app focus change notifications
+            NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { _ in
+                requestScreenRecording()
+            }
+            
 //            requestCamera()
 //            requestMicrophone()
             print("Permissions settings are appearing:")
+        }
+        .onDisappear {
+            NotificationCenter.default.removeObserver(self)
         }
     }
     
@@ -304,6 +313,7 @@ struct PermissionsSettingsView: View {
                 // If the app doesn't have screen recording permission, this call generates an exception.
                 try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
                 screenRecordingEnabled = true
+                screenRecordingDenied = false
             } catch {
                 screenRecordingEnabled = false
                 screenRecordingDenied = true
@@ -405,17 +415,20 @@ struct VirtualCameraSettingsView: View {
                 HStack {
                     Text("Output Resolution")
                     Spacer()
-                    Picker("", selection: $selectedResolution) {
-                        ForEach(resolutions, id: \.self) { resolution in
-                            Text("\(resolution)").tag(resolution)
-                        }
-                    }
-                    .buttonStyle(.borderless)
-                    .fixedSize()
-                    .onChange(of: selectedResolution) { newValue in
-                        saveVirtualCameraSetting(key: "resolution", value: newValue)
-                    }
-                    .disabled(installationStatus == false)
+                    Text("3456 x 2234")
+                        .foregroundStyle(.secondary)
+                    // TODO: Make this changable
+//                    Picker("", selection: $selectedResolution) {
+//                        ForEach(resolutions, id: \.self) { resolution in
+//                            Text("\(resolution)").tag(resolution)
+//                        }
+//                    }
+//                    .buttonStyle(.borderless)
+//                    .fixedSize()
+//                    .onChange(of: selectedResolution) { newValue in
+//                        saveVirtualCameraSetting(key: "resolution", value: newValue)
+//                    }
+//                    .disabled(installationStatus == false)
                 }
                 
                 Divider()
@@ -423,33 +436,38 @@ struct VirtualCameraSettingsView: View {
                 HStack {
                     Text("Output Framerate")
                     Spacer()
-                    Stepper("\(selectedFramerate)",
-                        value: $selectedFramerate,
-                        in: 0...60
-                    )
-                    .onChange(of: selectedFramerate) { newValue in
-                       saveVirtualCameraSetting(key: "framerate", value: newValue)
-                    }
-                    .disabled(installationStatus == false)
-                    .foregroundColor(installationStatus ? .primary : Color(NSColor.tertiaryLabelColor))
+                    Text("60 FPS")
+                        .foregroundStyle(.secondary)
+                    
+                    // TODO: Make this changeable
+//                    Stepper("\(selectedFramerate)",
+//                        value: $selectedFramerate,
+//                        in: 0...60
+//                    )
+//                    .onChange(of: selectedFramerate) { newValue in
+//                       saveVirtualCameraSetting(key: "framerate", value: newValue)
+//                    }
+//                    .disabled(installationStatus == false)
+//                    .foregroundColor(installationStatus ? .primary : Color(NSColor.tertiaryLabelColor))
                 }
                 
                 Divider()
                 
-                HStack {
-                    Text("Status")
-                    Spacer()
-                    HStack(spacing: 0) {
-                        Text(connectedStatus ? "Connected" : "Not Connected")
-//                            .foregroundStyle(.secondary)
-                        Image(systemName: "circle.fill")
-                                .foregroundColor(connectedStatus ? .green : .red)
-                                .font(.system(size: 7))
-                                .padding(.leading, 5)
-                    }
-                }
-                
-                Divider()
+                // TODO: Re-implement this
+//                HStack {
+//                    Text("Status")
+//                    Spacer()
+//                    HStack(spacing: 0) {
+//                        Text(connectedStatus ? "Connected" : "Not Connected")
+////                            .foregroundStyle(.secondary)
+//                        Image(systemName: "circle.fill")
+//                                .foregroundColor(connectedStatus ? .green : .red)
+//                                .font(.system(size: 7))
+//                                .padding(.leading, 5)
+//                    }
+//                }
+//                
+//                Divider()
                 
                 HStack {
                     Text("Installation Status")
@@ -489,10 +507,18 @@ struct VirtualCameraSettingsView: View {
             .fixedSize(horizontal: false, vertical: true)
             .onAppear { loadVirtualCameraSettings() }
             
+            Spacer()
+            
+            Text("Restart the application after installing the extension, if you do not see it available in the list of camera devices.")
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+                .padding(.top, 4)
+            
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(EdgeInsets(top: 0, leading: 20, bottom: 20, trailing: 20))
         .padding(.top, 2)
+        
     }
     
     private func installVirtualCamera() {

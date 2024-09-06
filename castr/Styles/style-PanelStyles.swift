@@ -24,7 +24,7 @@ struct PanelDivider: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: 1)
-            .background(Color(nsColor: .quaternarySystemFill))
+//            .background(Color(nsColor: .quaternarySystemFill))
             .padding(.horizontal, 10)
     }
 }

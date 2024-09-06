@@ -49,6 +49,8 @@ class PreviewLayer: CALayer {
         )
         
         CATransaction.commit()
+        
+        resizeSelectedLayer()
     }
     
     
@@ -58,20 +60,23 @@ class PreviewLayer: CALayer {
     }
     
     
-//    func resizeSelectedLayer() {
-//        guard let selectedLayer = LayoutState.shared.selectedSourceLayer else { return }
-//        
-//        CATransaction.begin()
-//        CATransaction.setDisableActions(true)
-//
-//        // 1. set the size
-//        Main.shared.onSelectlayer.frame.size = selectedLayer.frame.size
-//
-//       
-//        // 2. set the origin
-//        let newOrigin = selectedLayer.convert(selectedLayer.frame.origin, to: Main.shared.main)
-//        Main.shared.onSelectlayer.frame.origin = newOrigin
-//        
-//        CATransaction.commit()
-//    }
+    func resizeSelectedLayer() {
+//        guard
+//            let selectedLayer = LayoutState.shared.selectedSourceLayer
+//        else { return }
+        
+        print("resizing selected layer")
+        
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        
+        if let sublayers = self.sublayers {
+            for layer in sublayers {
+                layer.frame.size = self.frame.size
+            }
+        }
+//        selectedLayer.frame.size = self.frame.size
+        
+        CATransaction.commit()
+    }
 }

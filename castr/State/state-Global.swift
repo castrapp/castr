@@ -49,11 +49,11 @@ class GlobalState: ObservableObject {
     @Published var currentSource: SourceModel?
     @Published var selectedSourceId: String = "" {
         didSet {
-            if selectedSourceId.isEmpty {
-                LayoutState.shared.selectedSourceLayer = nil
-            } else {
-                LayoutState.shared.selectedSourceLayer = sources.first { $0.id == selectedSourceId }?.layer
-            }
+//            if selectedSourceId.isEmpty {
+//                LayoutState.shared.selectedSourceLayer = nil
+//            } else {
+//                LayoutState.shared.selectedSourceLayer = sources.first { $0.id == selectedSourceId }?.layer
+//            }
         }
     }
     @Published var streamToVirtualCamera: Bool = false

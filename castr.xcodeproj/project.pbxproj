@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A0C99962C89104C005B799C /* sheet-initialPermissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A0C99952C89104C005B799C /* sheet-initialPermissions.swift */; };
 		2A3AFDE92C69CEE60046718B /* MouseListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDE82C69CEE60046718B /* MouseListener.swift */; };
 		2A3AFDEC2C69D0730046718B /* view-MouseEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3AFDEB2C69D0730046718B /* view-MouseEvent.swift */; };
 		2A3FD5282C7E37B700B905CD /* Shaders2.metal in Sources */ = {isa = PBXBuildFile; fileRef = 2A3FD5272C7E37B700B905CD /* Shaders2.metal */; };
@@ -114,6 +115,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2A0C99952C89104C005B799C /* sheet-initialPermissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "sheet-initialPermissions.swift"; sourceTree = "<group>"; };
 		2A3AFDE82C69CEE60046718B /* MouseListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseListener.swift; sourceTree = "<group>"; };
 		2A3AFDEB2C69D0730046718B /* view-MouseEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "view-MouseEvent.swift"; sourceTree = "<group>"; };
 		2A3FD5272C7E37B700B905CD /* Shaders2.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders2.metal; sourceTree = "<group>"; };
@@ -432,6 +434,7 @@
 			isa = PBXGroup;
 			children = (
 				2ACAD4AD2C7B118200B706D1 /* sheet-AddSource.swift */,
+				2A0C99952C89104C005B799C /* sheet-initialPermissions.swift */,
 			);
 			path = Sheets;
 			sourceTree = "<group>";
@@ -579,6 +582,7 @@
 				2A54A33B2C603E2200D657BC /* enum-Source.swift in Sources */,
 				2A54A32F2C5FF78900D657BC /* view-WindowCaptureConfiguration.swift in Sources */,
 				2ACAD4AC2C7B0C2B00B706D1 /* style-PanelStyles.swift in Sources */,
+				2A0C99962C89104C005B799C /* sheet-initialPermissions.swift in Sources */,
 				2A9122BF2C702D46005194AC /* Configuration.swift in Sources */,
 				2ACAD4A32C7B0B1F00B706D1 /* style-Groupbox.swift in Sources */,
 				2A8D2A1A2C66C48A00E1B5EF /* protocol-Source.swift in Sources */,
@@ -781,7 +785,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = harrisonhall.castr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -815,7 +820,8 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MACOSX_DEPLOYMENT_TARGET = 13.5;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = harrisonhall.castr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

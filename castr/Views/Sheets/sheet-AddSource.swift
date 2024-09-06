@@ -7,13 +7,15 @@
 
 import Foundation
 import SwiftUI
-
+import ScreenCaptureKit
 
 struct AddSourceSheet: View {
     
     @ObservedObject var content = ContentModel.shared
     @ObservedObject var global = GlobalState.shared
     
+    @State var showScreenRecordingWarning = false
+    @State var screenRecordingEnabled = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -30,6 +32,19 @@ struct AddSourceSheet: View {
             }
             .padding(.horizontal, 60)
             .fixedSize(horizontal: false, vertical: true)
+            
+            if showScreenRecordingWarning {
+                HStack(spacing: 2) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.system(size: 10))
+                        .symbolRenderingMode(.multicolor)
+                    Text("Screen Recording Permission not enabled. Please check settings.")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                }
+                .padding(.top, 10)
+            }
+           
 
             Spacer()
             
@@ -39,6 +54,10 @@ struct AddSourceSheet: View {
             
         }
         .frame(minWidth: 500, maxWidth: 500, minHeight: 550, alignment: .top)
+        .onAppear {
+            print("checking for screen recording")
+            requestScreenRecording()
+        }
     }
     
     
@@ -73,7 +92,8 @@ struct AddSourceSheet: View {
                 text: $content.newSourceName
             )
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            .disabled(true)
+            .disabled(!screenRecordingEnabled)
+            .onSubmit { onConfirm() }
         }
         .padding(10)
         .tabItem { Text(AddSourceOption.newSource.displayName) }
@@ -109,6 +129,7 @@ struct AddSourceSheet: View {
             Button("Confirm", action: onConfirm)
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
+            .disabled(!screenRecordingEnabled)
         }
         .frame(maxWidth: .infinity)
         .padding(22)
@@ -124,7 +145,8 @@ struct AddSourceSheet: View {
         // For a New Source
         if(content.selectedAddSourceOption == .newSource) {
             guard let newSourceSelection = content.newSourceSelection else { return }
-            global.addSource(sourceType: newSourceSelection, name: newSourceSelection.name)
+            let newName = content.newSourceName.isEmpty ? newSourceSelection.name : content.newSourceName
+            global.addSource(sourceType: newSourceSelection, name: newName)
         }
         
         // TODO: Implement "Choose Existing"
@@ -142,5 +164,23 @@ struct AddSourceSheet: View {
     func onCancel() {
         print("canceling")
         content.showAddSourceSheet = false
+    }
+    
+    private func requestScreenRecording() {
+        Task {
+            do {
+                // If the app doesn't have screen recording permission, this call generates an exception.
+                try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+                screenRecordingEnabled = true
+                print("screen recoridng works boss")
+            } catch {
+                screenRecordingEnabled = false
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    showScreenRecordingWarning = true
+                }
+                
+               
+            }
+        }
     }
 }

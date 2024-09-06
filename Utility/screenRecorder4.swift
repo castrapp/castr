@@ -89,8 +89,8 @@ class ScreenRecorder4: NSObject, ObservableObject {
         
         // Configure the display content width and height.
         if captureType == .display, let display = selectedDisplay {
-            streamConfig.width = display.width * scaleFactor
-            streamConfig.height = display.height * scaleFactor
+            streamConfig.width = Int(fixedCamWidth)
+            streamConfig.height = Int(fixedCamHeight)
         }
         
         // Configure the window content width and height.

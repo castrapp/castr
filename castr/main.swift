@@ -12,7 +12,7 @@ mainApp.run()
 
 
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var window: NSWindow!
     var preferencesPanel: NSPanel?
@@ -83,6 +83,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             backing: .buffered,
             defer: false
         )
+        window.delegate = self as NSWindowDelegate
+
         
         if let titlebar = window.standardWindowButton(.closeButton)?.superview {
             
@@ -156,11 +158,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         setupMenu()
     
     }
-
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
-    }
-    
     
     
     func setupObservers() {
@@ -201,7 +198,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let quitItem = NSMenuItem(title: "Quit Castr", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         appMenuItem.submenu?.addItem(quitItem)
         
+        // Window menu
+        let windowMenuItem = NSMenuItem()
+        windowMenuItem.submenu = NSMenu(title: "Window")
+        mainMenu.addItem(windowMenuItem)
+        
+        let showWindowItem = NSMenuItem(title: "Show Window", action: #selector(showWindow), keyEquivalent: "s")
+        windowMenuItem.submenu?.addItem(showWindowItem)
+        
+        let hideWindowItem = NSMenuItem(title: "Hide Window", action: #selector(hideWindow), keyEquivalent: "h")
+        windowMenuItem.submenu?.addItem(hideWindowItem)
+        
         NSApplication.shared.mainMenu = mainMenu
+    }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return false
+    }
+    
+    func windowShouldClose(_ sender: NSWindow) -> Bool {
+        sender.orderOut(nil)  // This hides the window
+        return false  // Prevents the window from actually closing
+    }
+    
+    @objc func showWindow() {
+        window.makeKeyAndOrderFront(nil)
+    }
+
+    @objc func hideWindow() {
+        window.orderOut(nil)
     }
 
     

@@ -18,7 +18,7 @@ struct ScreenCaptureConfiguration: View {
     @State var availableDisplays = [SCDisplay]()
     @State var availableApps = [SCRunningApplication]() {
         didSet {
-            print("available apps have changed", availableApps)
+            
         }
     }
     @State var availableWindows = [SCWindow]()
@@ -29,73 +29,77 @@ struct ScreenCaptureConfiguration: View {
     var body: some View {
         ScrollView {
         VStack(spacing: 0) {
-            HStack {
-                Text("Active")
-                
-                Spacer()
-                
-                Toggle(isOn: $model.isActive) {}
-                .labelsHidden() // Hides the label for the Toggle
-                .fixedSize(horizontal: true, vertical: true)
-            }
-            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
             
-            Spacer().panelSubSeparatorStyle()
+            // TODO: Reimplement this
+//            HStack {
+//                Text("Active")
+//                
+//                Spacer()
+//                
+//                Toggle(isOn: $model.isActive) {}
+//                .labelsHidden() // Hides the label for the Toggle
+//                .fixedSize(horizontal: true, vertical: true)
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+//            .padding(.horizontal, 10)
+//            .padding(.vertical, 6)
+//            
+//            Spacer().panelSubSeparatorStyle()
+//            
+            // TODO: Reimplement this
+//            HStack {
+//                Text("Name")
+//                
+//                Spacer()
+//                
+//                TextField("Source Name", text: $model.name)
+//                    .textFieldStyle(RoundedBorderTextFieldStyle())
+//                    .fixedSize(horizontal: true, vertical: true)
+//                    .disabled(true)
+//                    .focused($isTextFieldFocused)
+//                    .onAppear {
+//                        DispatchQueue.main.async {
+//                            isTextFieldFocused = false
+//                        }
+//                    }
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+//            .padding(.horizontal, 10)
+//            .padding(.vertical, 6)
             
-            HStack {
-                Text("Name")
-                
-                Spacer()
-                
-                TextField("Source Name", text: $model.name)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .fixedSize(horizontal: true, vertical: true)
-                    .disabled(true)
-                    .focused($isTextFieldFocused)
-                    .onAppear {
-                        DispatchQueue.main.async {
-                            isTextFieldFocused = false
-                        }
-                    }
-            }
-            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            // TODO: Reimplement this
+//            Spacer().panelSubSeparatorStyle()
+//            
+//            HStack {
+//                Text("Display")
+//                
+//                Spacer()
+//                
+//                Picker("Display", selection: $selectedDisplay) {
+//                    ForEach(availableDisplays, id: \.self) { display in
+//                        Text(display.displayName)
+//                            .tag(SCDisplay?.some(display))
+//                    }
+//                }
+//                .labelsHidden()
+//                .fixedSize(horizontal: true, vertical: true)
+//                .onChange(of: selectedDisplay) { newValue in
+//                    print("selected display has changed: ", selectedDisplay)
+//                    guard let newValue = newValue else { return }
+//                    if newValue.displayName != model.selectedDisplay {
+//                        model.selectedDisplay = newValue.displayName
+//                        model.screenRecorder?.selectedDisplay = newValue
+//                    }
+//                }
+//            }
+//            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
+//            .padding(.horizontal, 10)
+//            .padding(.vertical, 6)
             
-            Spacer().panelSubSeparatorStyle()
-            
-            HStack {
-                Text("Display")
-                
-                Spacer()
-                
-                Picker("Display", selection: $selectedDisplay) {
-                    ForEach(availableDisplays, id: \.self) { display in
-                        Text(display.displayName)
-                            .tag(SCDisplay?.some(display))
-                    }
-                }
-                .labelsHidden()
-                .fixedSize(horizontal: true, vertical: true)
-                .onChange(of: selectedDisplay) { newValue in
-                    print("selected display has changed: ", selectedDisplay)
-                    guard let newValue = newValue else { return }
-                    if newValue.displayName != model.selectedDisplay {
-                        model.selectedDisplay = newValue.displayName
-                        model.screenRecorder?.selectedDisplay = newValue
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: 30, alignment: .leading)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            
-            Spacer().panelSubSeparatorStyle()
+//            Spacer().panelSubSeparatorStyle()
             
             VStack(alignment: .leading, spacing: 0) {
-                Text("Pick and choose which applications and windows you would like to display.")
+                Text("Pick and choose which applications you would like to display.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 10)

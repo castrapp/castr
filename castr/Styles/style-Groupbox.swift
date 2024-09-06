@@ -23,7 +23,7 @@ struct _GroupBox: ViewModifier {
         }
         .padding(insets)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(nsColor: .quaternarySystemFill))
+//        .background(Color(nsColor: .quaternarySystemFill))
 //        .cornerRadius(6)
         .overlay(
             RoundedRectangle(cornerRadius: 6)

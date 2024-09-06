@@ -40,7 +40,20 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $content.showInitialPermissionsSheet) {
-            initialPermissionsSheet
+            InitialPermissionsSheet()
+        }
+        .onAppear {
+            // Pre-check for initial permisisons
+            let userDefaults = UserDefaults.standard
+
+            // Check if the key "gotInitialPermissions" exists and its value
+            if userDefaults.object(forKey: "gotInitialPermissions") == nil || !userDefaults.bool(forKey: "gotInitialPermissions") {
+                //  If the key doesn't exist or is set to false, we assume this is the first time the user is opening the application
+                content.showInitialPermissionsSheet = true
+            } else {
+                // The key exists and is set to true
+                print("gotInitialPermissions is true.")
+            }
         }
         
     }
@@ -99,6 +112,7 @@ struct ContentView: View {
 //                Main.shared.onSelectlayer.setAffineTransform(CGAffineTransform(scaleX: -1.0, y: 1.0))
 //            }
             
+            
             Controls()
                 .padding(10)
             SourceConfiguration()
@@ -107,84 +121,7 @@ struct ContentView: View {
         .background(MaterialView(material: .sidebar))
         
     }
-    
 
-    
-    
-    
-    
-    
-    /// `Request Initial Permissions Sheet`
-    var initialPermissionsSheet: some View {
-        VStack(spacing: 0) {
-            Text("Permissions")
-                .font(.largeTitle)
-                .fontWeight(.bold)
-                .padding(.vertical, 40)
-            
-            
-           
-            VStack(alignment: .leading, spacing: 10) {
-                
-                HStack(spacing: 16) {
-                    Image(systemName: "rectangle.inset.filled.badge.record")
-                    .font(.system(size: 32))
-                    .padding(.leading, 6)
-                    .padding(.trailing, 2)
-                    
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Screen Recording")
-                            .font(.system(size: 14, weight: .bold))
-                        
-                        Text("This allows Castr to record the contents of your screen and system audio, even while using other applications. Castr requires this permission to be able to capture your screen.")
-                        .font(.system(size: 12))
-                        .foregroundColor(.secondary)
-                    }
-                }
-               
-                Divider()
-                
-                HStack {
-                    Spacer()
-                    Text("Click to enable this permission.")
-                        .foregroundStyle(.secondary)
-                        .font(.system(size: 12))
-                }
-                
-            }
-            .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-            ._groupBox()
-            .fixedSize(horizontal: false, vertical: true)
-            .padding(.horizontal, 30)
-            
-            
-            
-            Spacer()
-            
-            Divider()
-            
-            HStack {
-                Button("Another time") {
-                    print("canceling")
-                    content.showAddSourceSheet = false
-                }
-                .buttonStyle(.borderless)
-                .controlSize(.large)
-                
-                Spacer()
-                
-                Button("Confirm") {
-//                    print("confirming")
-                }
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(22)
-            
-        }
-        .frame(maxWidth: 700, minHeight: 500, alignment: .top)
-    }
 
 }
 
@@ -264,8 +201,11 @@ struct Scenes: View {
     var AddRemoveButtons: some View {
         PanelFooter(
             onAdd: {
-                print("Adding Scene")
-                GlobalState.shared.addScene()
+                if global.scenes.count < 1 {
+                    print("Adding Scene")
+                    GlobalState.shared.addScene()
+
+                }
             },
             onDelete: {
                 print("Deleting Delete")
@@ -354,7 +294,7 @@ struct Sources: View {
         }
         .frame(maxWidth: 26, maxHeight: .infinity)
         ._panelButton {
-            if(!global.selectedSceneId.isEmpty) {
+            if(!global.selectedSceneId.isEmpty && global.sources.count < 1) {
                 showPopover = true
             }
         }
@@ -476,6 +416,7 @@ struct VirtualCameraControl: View {
     @State private var isHovered: Bool = false
     @State var isStarting: Bool = false
     @State var isStreaming: Bool = false
+    @State var isVirtualCameraInstalled: Bool = false
     @ObservedObject var global = GlobalState.shared
     @State private var timer: Timer? = nil
     @State private var elapsedTime: TimeInterval = 0
@@ -499,17 +440,21 @@ struct VirtualCameraControl: View {
                         .fontWeight(.bold)
                         .font(.system(size: 12))
                         .foregroundColor(.primary)
-                    if isHovered && !isStarting && !isStreaming {
+                    if isHovered && !isStarting && !isStreaming && isVirtualCameraInstalled {
                         Text("Start")
                             .font(.system(size: 12))
                             .foregroundColor(.secondary)
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
-                    else if isStarting && !isStreaming{
-                        Text("Starting")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                            .transition(.move(edge: .top).combined(with: .opacity))
+                    else if isHovered && !isStarting && !isStreaming && !isVirtualCameraInstalled{
+                        HStack(spacing: 2) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .font(.system(size: 10))
+                                .symbolRenderingMode(.multicolor)
+                            Text("Virtual Camera not detected")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
                     }
                     else if isStreaming && !isHovered {
                         Text("Streaming: \(formatTime(elapsedTime))")
@@ -532,14 +477,6 @@ struct VirtualCameraControl: View {
                         .padding(.trailing, 10)
                         .transition(.move(edge: .leading).combined(with: .opacity))
                 }
-                else if isStarting && !isStreaming {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .scaleEffect(0.55)
-                        .padding(.trailing, 6)
-                        .transition(.move(edge: .leading).combined(with: .opacity))
-                }
-                
             }
             .frame(maxWidth: .infinity, minHeight: 42, maxHeight: 42, alignment: .leading)
             .overlay(
@@ -548,6 +485,9 @@ struct VirtualCameraControl: View {
                     .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1) // Apply border with curved corners
             )
             .onHover { hovering in
+                
+                isVirtualCameraInstalled = checkForCastrVirtualCamera()
+                
                 withAnimation(.easeInOut(duration: 0.2)) {
                     isHovered = hovering
                 }
@@ -555,18 +495,11 @@ struct VirtualCameraControl: View {
         }
         .buttonStyle(PlainButtonStyle())
         .padding(10)
-//        .onChange(of: global.streamToVirtualCamera) { newValue in
-//            if newValue {
-//                isStarting = false
-//                isStreaming = true
-//                OutputService.shared.isStreamingToVirtualCamera = true
-//            }
-//          
-//            print("global.streamToVirtualCamera is now: ", newValue)
-//        }
+        
     }
     
     func onPress() {
+        if !isVirtualCameraInstalled { return }
         print("button being pressed")
         if isStreaming {
             isStreaming = false
@@ -574,7 +507,6 @@ struct VirtualCameraControl: View {
             stopTimer()
         }
         else {
-//            isStarting = false
             isStreaming = true
             CameraViewModel.shared.start()
             OutputService.shared.isStreamingToVirtualCamera = true
