@@ -31,7 +31,7 @@ enum SourceType: String {
     
     var imageName: String {
         switch self {
-            case .screenCapture: return "rectangle.inset.filled.badge.record"
+            case .screenCapture: return "rectangle.fill.on.rectangle.fill"
             case .windowCapture: return "macwindow"
             case .video: return "video"
             case .image: return "photo"
@@ -47,7 +47,7 @@ enum SourceType: String {
                     Circle()
                     .fill(active ? Color.accentColor : Color.secondary )
                     
-                    Image(systemName: "rectangle.inset.filled.badge.record")
+                    Image(systemName: "rectangle.fill.on.rectangle.fill")
                     .font(.system(size: 14))
                 }
                 .frame(minWidth: 30, maxWidth: 30, minHeight: 30, maxHeight: 30)
