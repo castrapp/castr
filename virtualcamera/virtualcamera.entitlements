@@ -8,8 +8,7 @@
 	<array>
 		<string>$(TeamIdentifierPrefix)harrisonhall.castr</string>
 		<string>$(TeamIdentifierPrefix)harrisonhall.castr.settings</string>
+		<string>67C4BBFCAC.harrisonhall.castr</string>
 	</array>
-	<key>com.apple.security.device.camera</key>
-	<true/>
 </dict>
 </plist>
