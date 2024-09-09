@@ -235,6 +235,7 @@ struct Sources: View {
     @ObservedObject var global = GlobalState.shared
     @State private var showPopover = false
     
+//    @available(macOS 14.0, *)
     var body: some View {
         
         VStack(spacing: 0) {
@@ -280,7 +281,7 @@ struct Sources: View {
     //            .fixedSize()
             }
             .frame(maxWidth: .infinity, maxHeight: 32, alignment: .leading)
-            .background(WindowBackgroundShapeStyle.windowBackground.opacity(0.5))
+//            .background(WindowBackgroundShapeStyle.windowBackground.opacity(0.5))
         }
         ._groupBox(padding: 10)
     }
@@ -397,7 +398,7 @@ struct Controls: View {
         }
 //        ._groupBox(padding: 10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .background(Color(nsColor: .quaternarySystemFill))
+//        .background(Color(nsColor: .quaternarySystemFill))
 //        .padding(10)
         
         .overlay(
@@ -479,10 +480,22 @@ struct VirtualCameraControl: View {
                 }
             }
             .frame(maxWidth: .infinity, minHeight: 42, maxHeight: 42, alignment: .leading)
+//            .overlay(
+//                RoundedRectangle(cornerRadius: 6)
+//                    .fill(Color(isHovered ? NSColor.quaternaryLabelColor : (isStarting ? NSColor.quaternaryLabelColor : NSColor.windowBackgroundColor))) // Use windowBackgroundColor as a fallback for quaternarySystemFill
+//                    .overlay(
+//                        RoundedRectangle(cornerRadius: 6)
+//                            .stroke(Color(isHovered ? NSColor.tertiaryLabelColor : NSColor.secondaryLabelColor), lineWidth: 1) // Apply border with curved corners
+//                    )
+//            )
             .overlay(
                 RoundedRectangle(cornerRadius: 6)
-                    .fill(Color( isHovered ? NSColor.quaternaryLabelColor : (isStarting ? NSColor.quaternaryLabelColor : NSColor.quaternarySystemFill)))
-                    .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1) // Apply border with curved corners
+                    .fill(Color( isHovered ? NSColor.quaternaryLabelColor : (isStarting ? NSColor.quaternaryLabelColor : NSColor.quinaryLabel)))
+                    .overlay (
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1)
+                    )
+//                    .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1) // Apply border with curved corners
             )
             .onHover { hovering in
                 
@@ -607,11 +620,7 @@ struct RecordingControl: View {
                 
             }
             .frame(maxWidth: .infinity, minHeight: 42, maxHeight: 42, alignment: .leading)
-            .overlay(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color( isHovered ? NSColor.quaternaryLabelColor : (isStarting ? NSColor.quaternaryLabelColor : NSColor.quaternarySystemFill)))
-                    .stroke(Color( isHovered ? NSColor.tertiaryLabelColor : NSColor.quinaryLabel), lineWidth: 1) // Apply border with curved corners
-            )
+            
             .onHover { hovering in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     isHovered = hovering
@@ -769,7 +778,7 @@ struct PanelFooter: View {
 //            .fixedSize()
         }
         .frame(maxWidth: .infinity, maxHeight: 32, alignment: .leading)
-        .background(WindowBackgroundShapeStyle.windowBackground.opacity(0.5))
+//        .background(WindowBackgroundShapeStyle.windowBackground.opacity(0.5))
     }
     
     
