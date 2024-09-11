@@ -102,6 +102,7 @@ struct PermissionsSettingsView: View {
             // Listen for app focus change notifications
             NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { _ in
                 requestScreenRecording()
+                print("Permissions window is focused again, requesting screen recording")
             }
             
 //            requestCamera()
@@ -178,70 +179,87 @@ struct PermissionsSettingsView: View {
     }
     
     
+    private func requestScreenRecording() {
+        print("ATTEMPTING TO GET SCREEN RECORDING PERMISSIONS")
+        Task {
+            do {
+                // If the app doesn't have screen recording permission, this call generates an exception.
+                try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+                screenRecordingEnabled = true
+                screenRecordingDenied = false
+                print("Screen Recording is true and granted")
+            } catch {
+                screenRecordingEnabled = false
+                screenRecordingDenied = true
+                print("Screen Recording is not true and not granted")
+            }
+        }
+    }
+    
     
     
     
     /// `Camera/Video Permission View
     
-    var CameraView: some View {
-        
-        VStack(alignment: .leading, spacing: 10) {
-            
-            HStack(spacing: 10) {
-                Image(systemName: "video.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 35, height: 35)
-                .padding(.leading, 6)
-                .padding(.trailing, 2)
-
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Camera")
-                        .font(.system(size: 13))
-                    
-                    Text("This allows Castr to access your camera. Castr requires this permission to be able to capture your camera.")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                }
-            }
-           
-            Divider()
-            
-            HStack {
-                Text("Enabled")
-                Spacer()
-                HStack(spacing: 0) {
-                    Text(cameraEnabled ? "Yes" : "No")
-                    Image(systemName: "circle.fill")
-                            .foregroundColor(cameraEnabled ? .green : .red)
-                            .font(.system(size: 7))
-                            .padding(.leading, 5)
-                }
-            }
-            
-            Divider()
-            
-            HStack {
-                if(cameraDenied && !cameraEnabled) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 10))
-                            .symbolRenderingMode(.multicolor)
-                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Camera' to enable it.'")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                    }
-                }
-                Spacer()
-                Button("Request Permission") { requestCamera() }
-            }
-        }
-        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-        ._groupBox()
-        .fixedSize(horizontal: false, vertical: true)
-       
-    }
+//    var CameraView: some View {
+//        
+//        VStack(alignment: .leading, spacing: 10) {
+//            
+//            HStack(spacing: 10) {
+//                Image(systemName: "video.fill")
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .frame(width: 35, height: 35)
+//                .padding(.leading, 6)
+//                .padding(.trailing, 2)
+//
+//                
+//                VStack(alignment: .leading, spacing: 4) {
+//                    Text("Camera")
+//                        .font(.system(size: 13))
+//                    
+//                    Text("This allows Castr to access your camera. Castr requires this permission to be able to capture your camera.")
+//                    .font(.system(size: 12))
+//                    .foregroundColor(.secondary)
+//                }
+//            }
+//           
+//            Divider()
+//            
+//            HStack {
+//                Text("Enabled")
+//                Spacer()
+//                HStack(spacing: 0) {
+//                    Text(cameraEnabled ? "Yes" : "No")
+//                    Image(systemName: "circle.fill")
+//                            .foregroundColor(cameraEnabled ? .green : .red)
+//                            .font(.system(size: 7))
+//                            .padding(.leading, 5)
+//                }
+//            }
+//            
+//            Divider()
+//            
+//            HStack {
+//                if(cameraDenied && !cameraEnabled) {
+//                    HStack(spacing: 8) {
+//                        Image(systemName: "exclamationmark.triangle.fill")
+//                            .font(.system(size: 10))
+//                            .symbolRenderingMode(.multicolor)
+//                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Camera' to enable it.'")
+//                            .font(.system(size: 12))
+//                            .foregroundColor(.secondary)
+//                    }
+//                }
+//                Spacer()
+//                Button("Request Permission") { requestCamera() }
+//            }
+//        }
+//        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+//        ._groupBox()
+//        .fixedSize(horizontal: false, vertical: true)
+//       
+//    }
     
     
     
@@ -249,109 +267,97 @@ struct PermissionsSettingsView: View {
     
     /// `Microphone Permission View`
     
-    var MicrophoneView: some View {
-            
-        VStack(alignment: .leading, spacing: 10) {
-            
-            HStack(spacing: 10) {
-                Image(systemName: "mic.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 35, height: 35)
-                .padding(.leading, 6).padding(.trailing, 2)
+//    var MicrophoneView: some View {
+//            
+//        VStack(alignment: .leading, spacing: 10) {
+//            
+//            HStack(spacing: 10) {
+//                Image(systemName: "mic.fill")
+//                .resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .frame(width: 35, height: 35)
+//                .padding(.leading, 6).padding(.trailing, 2)
+//
+//                
+//                VStack(alignment: .leading, spacing: 4) {
+//                    Text("Mircophone")
+//                        .font(.system(size: 13))
+//                    
+//                    Text("This allows Castr to access your microphone. Castr requires this permission to be able to capture your microphone.")
+//                    .font(.system(size: 12))
+//                    .foregroundColor(.secondary)
+//                }
+//            }
+//           
+//            Divider()
+//            
+//            HStack {
+//                Text("Enabled")
+//                Spacer()
+//                HStack(spacing: 0) {
+//                    Text(microphoneEnabled ? "Yes" : "No")
+//                    Image(systemName: "circle.fill")
+//                            .foregroundColor(microphoneEnabled ? .green : .red)
+//                            .font(.system(size: 7))
+//                            .padding(.leading, 5)
+//                }
+//            }
+//            
+//            Divider()
+//            
+//            HStack {
+//                if(microphoneDenied && !microphoneEnabled) {
+//                    HStack(spacing: 8) {
+//                        Image(systemName: "exclamationmark.triangle.fill")
+//                            .font(.system(size: 10))
+//                            .symbolRenderingMode(.multicolor)
+//                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Microphone' to enable it.'")
+//                            .font(.system(size: 12))
+//                            .foregroundColor(.secondary)
+//                    }
+//                }
+//                Spacer()
+//                Button("Request Permission") { requestMicrophone() }
+//            }
+//        }
+//        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
+//        ._groupBox()
+//        .fixedSize(horizontal: false, vertical: true)
+//    }
+    
 
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Mircophone")
-                        .font(.system(size: 13))
-                    
-                    Text("This allows Castr to access your microphone. Castr requires this permission to be able to capture your microphone.")
-                    .font(.system(size: 12))
-                    .foregroundColor(.secondary)
-                }
-            }
-           
-            Divider()
-            
-            HStack {
-                Text("Enabled")
-                Spacer()
-                HStack(spacing: 0) {
-                    Text(microphoneEnabled ? "Yes" : "No")
-                    Image(systemName: "circle.fill")
-                            .foregroundColor(microphoneEnabled ? .green : .red)
-                            .font(.system(size: 7))
-                            .padding(.leading, 5)
-                }
-            }
-            
-            Divider()
-            
-            HStack {
-                if(microphoneDenied && !microphoneEnabled) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                            .font(.system(size: 10))
-                            .symbolRenderingMode(.multicolor)
-                        Text("This permission has been denied. Please go 'System Preferences -> Privacy & Security -> Microphone' to enable it.'")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                    }
-                }
-                Spacer()
-                Button("Request Permission") { requestMicrophone() }
-            }
-        }
-        .padding(EdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10))
-        ._groupBox()
-        .fixedSize(horizontal: false, vertical: true)
-    }
     
-    private func requestScreenRecording() {
-        Task {
-            do {
-                // If the app doesn't have screen recording permission, this call generates an exception.
-                try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-                screenRecordingEnabled = true
-                screenRecordingDenied = false
-            } catch {
-                screenRecordingEnabled = false
-                screenRecordingDenied = true
-            }
-        }
-    }
-    
-    private func requestCamera() {
-        AVCaptureDevice.requestAccess(for: .video) { granted in
-            if granted {
-                print("Camera access granted")
-                // Proceed with setting up the camera session
-                cameraEnabled = true
-            } else {
-                print("Camera access denied")
-                // Inform the user they need to grant camera access
-                // You might want to show an alert here or guide them to System Settings
-                cameraEnabled = false
-                cameraDenied = true
-            }
-        }
-    }
-    
-    
-    private func requestMicrophone() {
-        AVCaptureDevice.requestAccess(for: .audio) { granted in
-                if granted {
-                    print("Microphone access granted")
-                    microphoneEnabled = true
-                } else {
-                    print("Microphone access denied")
-                    // Inform the user they need to grant microphone access
-                    // You might want to show an alert here or guide them to System Settings
-                    microphoneEnabled = false
-                    microphoneDenied = true
-                }
-            }
-    }
+//    private func requestCamera() {
+//        AVCaptureDevice.requestAccess(for: .video) { granted in
+//            if granted {
+//                print("Camera access granted")
+//                // Proceed with setting up the camera session
+//                cameraEnabled = true
+//            } else {
+//                print("Camera access denied")
+//                // Inform the user they need to grant camera access
+//                // You might want to show an alert here or guide them to System Settings
+//                cameraEnabled = false
+//                cameraDenied = true
+//            }
+//        }
+//    }
+//    
+//    
+//    private func requestMicrophone() {
+//        AVCaptureDevice.requestAccess(for: .audio) { granted in
+//                if granted {
+//                    print("Microphone access granted")
+//                    microphoneEnabled = true
+//                } else {
+//                    print("Microphone access denied")
+//                    // Inform the user they need to grant microphone access
+//                    // You might want to show an alert here or guide them to System Settings
+//                    microphoneEnabled = false
+//                    microphoneDenied = true
+//                }
+//            }
+//    }
     
 }
 
@@ -522,12 +528,14 @@ struct VirtualCameraSettingsView: View {
     }
     
     private func installVirtualCamera() {
+        print("Attempting to install virtual camera")
         SystemExtensionManager.shared.installExtension(extensionIdentifier: appVirtualCameraBundleId) { success, error in
             if success {
                 print("Castr Virtual Camera installed successfully")
                 installationStatus = true
             } else {
                 installationStatus = false
+                print("Failed to install the extension. If theres an error, this is it: ", error)
                 if let error = error {
                     print("Failed to install Castr Virtual Camera: \(error.localizedDescription)")
                 } else {

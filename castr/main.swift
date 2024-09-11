@@ -195,7 +195,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         appMenuItem.submenu?.addItem(NSMenuItem.separator())
         
         // Add the Quit menu item
-        let quitItem = NSMenuItem(title: "Quit Castr", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: "Quit Castr", action: #selector(closeApplication), keyEquivalent: "q")
         appMenuItem.submenu?.addItem(quitItem)
         
         // Window menu
@@ -229,6 +229,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         window.orderOut(nil)
     }
 
+    @objc func closeApplication() {
+        print("request to close application")
+        // Close the InitialPermissionsSheet
+        ContentModel.shared.showInitialPermissionsSheet = false
+       
+        // Ensure any modal views or sheets are dismissed before quitting
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // Terminate the application after dismissing the sheet
+            NSApp.terminate(nil)
+        }
+    }
     
     
     

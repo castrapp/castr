@@ -16,7 +16,6 @@ class SystemExtensionManager: NSObject, OSSystemExtensionRequestDelegate {
         print("System extension identifier: ", extensionIdentifier)
         let activationRequest = OSSystemExtensionRequest.activationRequest(forExtensionWithIdentifier: extensionIdentifier, queue: .main)
         activationRequest.delegate = self
-        
         self.currentCompletion = completion
         
         OSSystemExtensionManager.shared.submitRequest(activationRequest)

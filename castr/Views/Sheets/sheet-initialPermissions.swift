@@ -9,15 +9,23 @@ import Foundation
 import SwiftUI
 import ScreenCaptureKit
 
+class PermissionsModel: ObservableObject {
+    static var shared = PermissionsModel()
+    
+    private init() {}
+    
+    @Published var isVirtualCameraInstalled = checkForCastrVirtualCamera()
+    @Published var isScreenRecordingGranted = false
+}
+
 
 
 struct InitialPermissionsSheet: View {
     
     @ObservedObject var content = ContentModel.shared
+    @ObservedObject var permissions = PermissionsModel.shared
+    @State private var eventMonitor: Any?
 
-    @State var screenRecordingEnabled: Bool = false
-    @State var showScreenRecordingWarning = false
-    @State var promptedForScreenRecording = false
 
     
     var body: some View {
@@ -34,10 +42,13 @@ struct InitialPermissionsSheet: View {
             
             // MARK: - Virtual Camera
             VirtualCamera()
-            Text("Restart the application after installing the extension, if you do not see it available in the list of camera devices.")
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
-                .padding(.top, 10)
+            if isLaunchingFromApplicationsFolder() {
+                Text("It is recommended to restart the application after installing the extension, or if you do not see it available in the list of camera devices.")
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+                    .padding(.top, 10)
+            }
+            
             
             // MARK: - Screen Recording
             ScreenRecording()
@@ -47,34 +58,95 @@ struct InitialPermissionsSheet: View {
             Divider()
             
             HStack {
-                Button("Another time") { closeSheet() }
+                Button("Another time") { content.showInitialPermissionsSheet = false }
                 .buttonStyle(.borderless)
                 .controlSize(.large)
                 
                 Spacer()
                 
-                Button("Done") { closeSheet() }
+                Button("Restart Application") { closeSheet() }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
+                .disabled(!(permissions.isVirtualCameraInstalled && permissions.isScreenRecordingGranted))
             }
             .frame(maxWidth: .infinity)
             .padding(22)
             
         }
         .frame(maxWidth: 700, minHeight: 580, alignment: .top)
+        .onAppear(perform: startListeningForCommandQ)
+        .onDisappear(perform: stopListeningForCommandQ)
        
     }
     
     
     func closeSheet() {
-        content.showInitialPermissionsSheet = false
         
         // Set the "gotInitialPermissions" property in the UserDefaults to true
         let userDefaults = UserDefaults.standard
         userDefaults.set(true, forKey: "gotInitialPermissions")
+        
+        
+        // Then close the modal
+        content.showInitialPermissionsSheet = false
+        
+        
+        // Then attempt to sestart the application
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+           restartApplication()
+        }
+    }
+    
+    func restartApplication() {
+        // Get the path to the current executable
+        let path = Bundle.main.bundlePath
+
+        // Prepare the relaunch process
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/open")
+        task.arguments = [path]
+
+        do {
+            try task.run()
+        } catch {
+            print("Failed to relaunch application: \(error)")
+        }
+
+        // Terminate the current app
+        NSApp.terminate(nil)
     }
     
     
+    
+    // Function to start listening for Command+Q
+    func startListeningForCommandQ() {
+        eventMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+            if event.modifierFlags.contains(.command) && event.keyCode == 12 {
+                
+                // Close the InitialPermissionsSheet
+                ContentModel.shared.showInitialPermissionsSheet = false
+                
+                // Ensure any modal views or sheets are dismissed before quitting
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    // Terminate the application after dismissing the sheet
+                    NSApp.terminate(nil)
+                }
+                
+                print("Attempting to quit application")
+                
+                return nil // Swallow the event
+            }
+            return event
+        }
+    }
+
+    // Function to stop listening for Command+Q
+    func stopListeningForCommandQ() {
+        if let eventMonitor = eventMonitor {
+            NSEvent.removeMonitor(eventMonitor)
+            self.eventMonitor = nil
+        }
+    }
     
     
   
@@ -102,8 +174,13 @@ func isLaunchingFromApplicationsFolder() -> Bool {
 
 struct VirtualCamera: View {
     
+    @State var hasInstallButtonBeenPressed = false
     @State var showSystemExtensionWarning = false
-    @State var isInstalled = checkForCastrVirtualCamera()
+    @State var isInstalled = checkForCastrVirtualCamera() {
+        didSet {
+            PermissionsModel.shared.isVirtualCameraInstalled = isInstalled
+        }
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -164,7 +241,7 @@ struct VirtualCamera: View {
                 // the SystemExtensionWarning
                 // Standby
                 else if !isInstalled && !showSystemExtensionWarning {
-                    Text("Click to install the virtual camera")
+                    Text(hasInstallButtonBeenPressed ? "Installation attempted. Please check System Settings -> Privacy & Security and click on 'Allow' to enable it." : "Click to install the virtual camera")
                         .foregroundStyle(.secondary)
                         .font(.system(size: 12))
                 }
@@ -198,7 +275,10 @@ struct VirtualCamera: View {
                 }
                 
                 else if !isInstalled && !showSystemExtensionWarning {
-                    Button("Install") { installVirtualCamera() }
+                    Button("Install") { 
+                        hasInstallButtonBeenPressed = true
+                        installVirtualCamera()
+                    }
                 }
                 
                 else if !isInstalled  && showSystemExtensionWarning {
@@ -222,8 +302,11 @@ struct VirtualCamera: View {
             // Setup a window focus listener
             NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { _ in
                 
-                // Everytime the window is focused, we recheck the installed status
-                isInstalled = checkForCastrVirtualCamera()
+                // Everytime the window is focused, if the installationStatus is still false then we recheck the installed status
+                if !isInstalled {
+                    isInstalled = checkForCastrVirtualCamera()
+                }
+                
             }
         }
         .onDisappear {
@@ -265,7 +348,11 @@ struct VirtualCamera: View {
 
 struct ScreenRecording: View {
     
-    @State var screenRecordingEnabled = false
+    @State var screenRecordingEnabled = false {
+        didSet {
+            PermissionsModel.shared.isScreenRecordingGranted = screenRecordingEnabled
+        }
+    }
     @State var showScreenRecordingWarning = false
     
     @State var hasUserClickedInstallButton = false
@@ -306,6 +393,10 @@ struct ScreenRecording: View {
                         Text("Screen Recording successfully enabled.")
                             .foregroundStyle(.secondary)
                             .font(.system(size: 12))
+                    }
+                    .onAppear {
+                        print("screen recording is: ", PermissionsModel.shared.isScreenRecordingGranted)
+                        print("Virtual Camera is: ", PermissionsModel.shared.isVirtualCameraInstalled)
                     }
                 }
                 
